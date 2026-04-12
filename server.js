@@ -3,7 +3,7 @@ const express   = require('express');
 const cors      = require('cors');
 const path      = require('path');
 const mongoose  = require('mongoose');
-const { Team, Standing, Season, CoreMember, Decision, Comment } = require('./models');
+const { Team, Standing, Season, CoreMember, Decision, Comment, Config } = require('./models');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -136,6 +136,17 @@ app.post('/api/comments', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── Admin verify password ─────────────────────────────────────────────
+app.post('/api/admin/verify', async (req, res) => {
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ ok: false });
+  try {
+    const cfg = await Config.findOne({ key: 'admin_password' });
+    if (!cfg) return res.status(503).json({ ok: false, error: 'Not configured' });
+    res.json({ ok: cfg.value === password });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
 // ── Seed ──────────────────────────────────────────────────────────────
 app.post('/api/seed', async (req, res) => {
   if (!dbConnected) return res.status(503).json({ error: 'Database not connected' });
@@ -153,6 +164,7 @@ app.post('/api/seed', async (req, res) => {
       Season.deleteMany({}),
       CoreMember.deleteMany({}),
       Decision.deleteMany({}),
+      Config.deleteMany({}),
     ]);
 
     say('Inserting teams...');
@@ -177,6 +189,10 @@ app.post('/api/seed', async (req, res) => {
     say('Inserting decisions...');
     await Decision.insertMany(seedData.decisions);
     say(`✓ ${seedData.decisions.length} decisions inserted`);
+
+    say('Inserting config...');
+    await Config.insertMany(seedData.config);
+    say(`✓ ${seedData.config.length} config entries inserted`);
 
     say('✅ Seed complete');
     res.json({ success: true, log });

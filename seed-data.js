@@ -182,5 +182,8 @@ const season = {
   notes: 'Founding season. All 5 teams in Mini. Nano activates Season 2.',
 };
 
-  return { teams, standings, coreMembers, decisions, season };
+  const config = [
+    { key: 'admin_password', value: 'fvladmin' },
+  ];
+  return { teams, standings, coreMembers, decisions, season, config };
 })();

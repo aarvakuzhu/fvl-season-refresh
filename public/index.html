@@ -211,48 +211,76 @@
 </nav>
 
 <!-- SUMMARY BANNER -->
-<div style="margin-top:52px;background:linear-gradient(135deg,rgba(26,53,102,.9),rgba(15,30,61,1));border-bottom:1px solid rgba(201,168,76,.2);padding:28px 24px 24px">
+<div style="margin-top:52px;background:linear-gradient(135deg,rgba(26,53,102,.85),rgba(15,30,61,1));border-bottom:1px solid rgba(201,168,76,.2);padding:22px 24px 20px">
   <div style="max-width:1060px;margin:0 auto">
 
-    <!-- Title row -->
-    <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:18px;flex-wrap:wrap">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;color:var(--wh);line-height:1">FVL <span style="color:var(--go)">Season 2</span></div>
-      <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gr)">April 2026 · Final month of Season 1</div>
-      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
-        <a href="#standings" class="btn bg" style="padding:7px 16px;font-size:12px">Standings</a>
-        <a href="#decisions" class="btn bo" style="padding:7px 16px;font-size:12px">Open Decisions</a>
-        <a href="/FVL_Governance.docx" download class="btn bo" style="padding:7px 16px;font-size:12px">⬇ Doc</a>
+    <!-- Title + actions -->
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;color:var(--wh);line-height:1">
+          FVL <span style="color:var(--go)">Season 2</span>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--gr);vertical-align:middle;margin-left:10px">PROPOSAL</span>
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <a href="#standings" class="btn bg" style="padding:6px 14px;font-size:12px">Standings</a>
+        <a href="#decisions" class="btn bo" style="padding:6px 14px;font-size:12px">Open Decisions</a>
+        <a href="/FVL_Governance.docx" download class="btn bo" style="padding:6px 14px;font-size:12px">⬇ Doc</a>
       </div>
     </div>
 
-    <!-- 4 stat cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+    <!-- Two-column: proposal summary + status snapshot -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
 
-      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.25);border-radius:10px;padding:14px 16px">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--go);margin-bottom:6px">Season Leader</div>
-        <div style="font-size:16px;font-weight:700;color:var(--wh)">FVL Falcons 🏆🏆</div>
-        <div style="font-size:12px;color:var(--gr);margin-top:2px">21 pts · 2 championships</div>
+      <!-- Left: what we are proposing -->
+      <div style="background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:16px 18px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--go);margin-bottom:10px">What We're Proposing for Season 2</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;gap:10px;font-size:13px;line-height:1.4">
+            <span style="color:var(--go);flex-shrink:0;margin-top:1px">🌱</span>
+            <span><strong style="color:var(--wh)">Activate Nano.</strong> 2 new teams join at the entry tier — the bottom Mini team drops down, Nano champion rises up every month.</span>
+          </div>
+          <div style="display:flex;gap:10px;font-size:13px;line-height:1.4">
+            <span style="color:var(--go);flex-shrink:0;margin-top:1px">⚡</span>
+            <span><strong style="color:var(--wh)">Reset rosters.</strong> Full auction draft before Season 2 — every player goes back into the pool, captains bid with equal budgets.</span>
+          </div>
+          <div style="display:flex;gap:10px;font-size:13px;line-height:1.4">
+            <span style="color:var(--go);flex-shrink:0;margin-top:1px">🏆</span>
+            <span><strong style="color:var(--wh)">Earn your place.</strong> No team stays in Mini by default — performance decides tier every single month.</span>
+          </div>
+        </div>
       </div>
 
-      <div style="background:rgba(198,40,40,.07);border:1px solid rgba(198,40,40,.3);border-radius:10px;padding:14px 16px">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#ff8a80;margin-bottom:6px">Relegation Risk</div>
-        <div style="font-size:16px;font-weight:700;color:var(--wh)">FVL Panthers 📉</div>
-        <div style="font-size:12px;color:var(--gr);margin-top:2px">10 pts · 0 titles · bottom seed</div>
-      </div>
+      <!-- Right: snapshot -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 
-      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gr);margin-bottom:6px">Season 2 Change</div>
-        <div style="font-size:16px;font-weight:700;color:var(--wh)">2 new Nano teams</div>
-        <div style="font-size:12px;color:var(--gr);margin-top:2px">7 teams total · promotion live</div>
-      </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:12px 14px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gr);margin-bottom:5px">Season Leader</div>
+          <div style="font-size:14px;font-weight:700;color:var(--wh)">Falcons 🏆🏆</div>
+          <div style="font-size:11px;color:var(--gr);margin-top:1px">21 pts</div>
+        </div>
 
-      <div style="background:rgba(255,128,0,.06);border:1px solid rgba(255,128,0,.25);border-radius:10px;padding:14px 16px">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#ffb74d;margin-bottom:6px">Needs Decision</div>
-        <div style="font-size:16px;font-weight:700;color:var(--wh)">7 open items 🔴</div>
-        <div style="font-size:12px;color:var(--gr);margin-top:2px">RTM · Budget · Wingman assignments</div>
-      </div>
+        <div style="background:rgba(198,40,40,.07);border:1px solid rgba(198,40,40,.25);border-radius:9px;padding:12px 14px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#ff8a80;margin-bottom:5px">Relegation Risk</div>
+          <div style="font-size:14px;font-weight:700;color:var(--wh)">Panthers 📉</div>
+          <div style="font-size:11px;color:var(--gr);margin-top:1px">10 pts · 0 titles</div>
+        </div>
 
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:12px 14px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gr);margin-bottom:5px">Season 2 Size</div>
+          <div style="font-size:14px;font-weight:700;color:var(--wh)">7 teams</div>
+          <div style="font-size:11px;color:var(--gr);margin-top:1px">4 Mini · 3 Nano</div>
+        </div>
+
+        <div style="background:rgba(255,128,0,.06);border:1px solid rgba(255,128,0,.2);border-radius:9px;padding:12px 14px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#ffb74d;margin-bottom:5px">Needs Vote</div>
+          <div style="font-size:14px;font-weight:700;color:var(--wh)">7 open 🔴</div>
+          <div style="font-size:11px;color:var(--gr);margin-top:1px">RTM · Budget · Roles</div>
+        </div>
+
+      </div>
     </div>
+
   </div>
 </div>
 

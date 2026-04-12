@@ -91,3 +91,11 @@ module.exports = {
   Decision:   mongoose.model('Decision',   DecisionSchema),
   Comment:    mongoose.model('Comment',    CommentSchema),
 };
+
+// ── App Config (key-value settings, e.g. admin password) ─────────────
+const ConfigSchema = new mongoose.Schema({
+  key:   { type: String, required: true, unique: true },
+  value: { type: String, required: true },
+}, { timestamps: true });
+
+module.exports.Config = mongoose.model('Config', ConfigSchema);
