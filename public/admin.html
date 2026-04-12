@@ -51,27 +51,14 @@
       <span id="db-label">Checking database...</span>
     </div>
 
-    <!-- Password gate -->
-    <div id="auth-section">
-      <div style="display:flex;gap:8px">
-        <input type="password" id="pw" placeholder="Admin password" autocomplete="off"
-          style="flex:1;padding:11px 14px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;outline:none"
-          onkeydown="if(event.key==='Enter')verify()">
-        <button class="btn btn-seed" style="padding:11px 20px;width:auto" onclick="verify()">Unlock</button>
-      </div>
-      <div id="auth-err" style="margin-top:8px;font-size:13px;color:#ff8a80;display:none">Incorrect password.</div>
+    <div class="warning">
+      <strong>⚠️ This will clear and re-seed all data.</strong><br>
+      Safe to run multiple times — always resets to the canonical Season 1 state.
     </div>
 
-    <!-- Seed section (shown after auth) -->
-    <div id="seed-section" style="display:none">
-      <div class="warning">
-        <strong>⚠️ This will clear and re-seed all data.</strong><br>
-        Safe to run multiple times — always resets to the canonical Season 1 state.
-      </div>
-      <button class="btn btn-seed" id="seed-btn" onclick="runSeed()">
-        🌱 Seed Database
-      </button>
-    </div>
+    <button class="btn btn-seed" id="seed-btn" onclick="runSeed()">
+      🌱 Seed Database
+    </button>
 
     <div class="log" id="log"></div>
     <div class="status" id="status"></div>
@@ -81,32 +68,6 @@
   </div>
 
   <script>
-    // ── Verify password ───────────────────────────────────────────
-    async function verify() {
-      const pw = document.getElementById('pw').value.trim();
-      if (!pw) return;
-      try {
-        const r = await fetch('/api/admin/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: pw }),
-        });
-        const d = await r.json();
-        if (d.ok) {
-          document.getElementById('auth-section').style.display = 'none';
-          document.getElementById('seed-section').style.display = 'block';
-          document.getElementById('auth-err').style.display = 'none';
-        } else {
-          document.getElementById('auth-err').style.display = 'block';
-          document.getElementById('pw').value = '';
-          document.getElementById('pw').focus();
-        }
-      } catch (e) {
-        document.getElementById('auth-err').textContent = 'Could not reach server.';
-        document.getElementById('auth-err').style.display = 'block';
-      }
-    }
-
     // ── Check DB status on load ────────────────────────────────────
     async function checkHealth() {
       try {
