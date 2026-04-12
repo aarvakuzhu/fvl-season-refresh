@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FVL Season 2 — League Refresh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:    #0f1e3d;
+      --navy2:   #1a3566;
+      --navy3:   #2b5ba8;
+      --gold:    #c9a84c;
+      --gold2:   #f0c040;
+      --cream:   #fdf6e3;
+      --white:   #ffffff;
+      --gray:    #8892a4;
+      --light:   #e8eef8;
+      --red:     #c62828;
+      --green:   #2e7d32;
+      --purple:  #4527a0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      padding: 60px 24px;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 800px; height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 14vw, 160px);
+      letter-spacing: 4px;
+      line-height: 0.9;
+      color: var(--white);
+      animation: fadeUp 0.7s 0.1s ease both;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 span {
+      color: var(--gold);
+      display: block;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--gray);
+      margin-top: 24px;
+      max-width: 480px;
+      line-height: 1.6;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-sub strong { color: var(--white); }
+
+    .hero-cta {
+      margin-top: 48px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: fadeUp 1s 0.5s ease both;
+    }
+
+    .scroll-hint::after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gray), transparent);
+      animation: scrollLine 1.5s ease infinite;
+    }
+
+    @keyframes scrollLine {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 100px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 64px);
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 48px;
+      line-height: 1;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(201,168,76,0.3), transparent);
+      margin: 0 auto;
+    }
+
+    /* ── STANDINGS ── */
+    .standings-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .standing-row {
+      display: grid;
+      grid-template-columns: 36px 1fr auto auto;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 16px 20px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .standing-row:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(201,168,76,0.3);
+      transform: translateX(4px);
+    }
+
+    .standing-row.first  { border-color: rgba(201,168,76,0.5); background: rgba(201,168,76,0.08); }
+    .standing-row.danger { border-color: rgba(198,40,40,0.4);  background: rgba(198,40,40,0.06); }
+
+    .standing-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      border-radius: 3px 0 0 3px;
+    }
+    .standing-row.first::before  { background: var(--gold); }
+    .standing-row.second::before { background: #aab4c8; }
+    .standing-row.third::before  { background: #cd7f32; }
+    .standing-row.danger::before { background: var(--red); }
+
+    .pos {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--gray);
+      text-align: center;
+    }
+    .standing-row.first .pos { color: var(--gold); }
+
+    .team-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .trophies { font-size: 16px; }
+
+    .pts-bar-wrap { display: flex; align-items: center; gap: 12px; }
+
+    .pts-bar {
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.1);
+      width: 120px;
+      overflow: hidden;
+    }
+
+    .pts-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--gold);
+      transition: width 1s ease;
+    }
+
+    .pts-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      color: var(--gold);
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .relegated-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      background: rgba(198,40,40,0.2);
+      color: #ff8a80;
+      border: 1px solid rgba(198,40,40,0.4);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+
+    /* ── SEASON 2 STRUCTURE ── */
+    .structure-grid {
+      display: grid;
+      grid-template-columns: 1fr 80px 1fr;
+      gap: 0;
+      align-items: center;
+    }
+
+    .tier-card {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .tier-header {
+      padding: 28px 24px 20px;
+      text-align: center;
+    }
+
+    .tier-header.mini  { background: linear-gradient(135deg, #1a3566, #2b5ba8); }
+    .tier-header.nano  { background: linear-gradient(135deg, #1b3a6b, #3d6cbf); }
+
+    .tier-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+
+    .tier-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 3px;
+      color: var(--white);
+    }
+    .tier-header.mini .tier-title { color: var(--gold); }
+
+    .tier-body {
+      background: rgba(255,255,255,0.03);
+      padding: 20px 24px;
+    }
+
+    .tier-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+      color: var(--gray);
+    }
+    .tier-stat:last-child { border-bottom: none; }
+    .tier-stat strong { color: var(--white); }
+
+    .swap-arrow {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .swap-icon {
+      font-size: 36px;
+      display: block;
+      animation: pulse 2s ease infinite;
+    }
+
+    .swap-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-top: 8px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.8; }
+    }
+
+    /* ── PATH UP ── */
+    .path-track {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .path-node {
+      text-align: center;
+      padding: 24px 32px;
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .path-node.nano-node  { background: linear-gradient(135deg, rgba(43,91,168,0.3), rgba(43,91,168,0.1)); border: 1px solid rgba(43,91,168,0.5); }
+    .path-node.mini-node  { background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid rgba(201,168,76,0.4); }
+    .path-node.major-node { background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(201,168,76,0.1)); border: 1px solid rgba(201,168,76,0.6); }
+
+    .path-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+
+    .path-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: var(--white);
+    }
+
+    .path-desc {
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 4px;
+    }
+
+    .path-arrow {
+      font-size: 28px;
+      color: var(--gold);
+      padding: 0 12px;
+      opacity: 0.6;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .tl-row {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      align-items: stretch;
+      gap: 12px;
+      min-height: 52px;
+    }
+
+    .tl-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      border-right: 2px solid rgba(255,255,255,0.08);
+    }
+
+    .tl-bar {
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 600;
+      gap: 8px;
+      align-self: center;
+    }
+
+    .tl-bar.mini-rr1  { background: linear-gradient(90deg, #1a3566, #2b5ba8); color: white; }
+    .tl-bar.mini-rr2  { background: linear-gradient(90deg, #2b5ba8, #3d70c8); color: white; }
+    .tl-bar.break     { background: rgba(201,168,76,0.2); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+    .tl-bar.playoffs  { background: linear-gradient(90deg, #2e7d32, #43a047); color: white; }
+    .tl-bar.nano-rr1  { background: linear-gradient(90deg, #1b3a6b, #2d5499); color: #aac4ff; }
+    .tl-bar.nano-rr2  { background: linear-gradient(90deg, #2d5499, #3d6cbf); color: #aac4ff; }
+    .tl-bar.nano-fin  { background: linear-gradient(90deg, #1b5e20, #2e7d32); color: white; }
+
+    .tl-duration {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .tl-section-head {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 24px 0 8px 116px;
+    }
+
+    /* ── DECISIONS ── */
+    .decisions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .decision-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .decision-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .decision-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-3px); }
+    .decision-card:hover::before { opacity: 1; }
+
+    .decision-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+    .decision-title { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+    .decision-desc  { font-size: 13px; color: var(--gray); line-height: 1.5; }
+
+    /* ── CORE MEMBERS ── */
+    .members-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 32px;
+      justify-content: center;
+    }
+
+    .member-chip {
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold);
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .member-chip:hover { background: rgba(201,168,76,0.2); transform: scale(1.04); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 60px 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: var(--gray);
+      font-size: 13px;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer strong { color: var(--gold); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .structure-grid { grid-template-columns: 1fr; }
+      .swap-arrow { transform: rotate(90deg); }
+      .path-track { flex-direction: column; align-items: stretch; }
+      .path-arrow { transform: rotate(90deg); text-align: center; }
+      .tl-row { grid-template-columns: 80px 1fr; }
+      .tl-duration { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <span class="hero-badge">🏐 Friendly Volleyball League</span>
+    <h1>Season<span>Two.</span></h1>
+    <p class="hero-sub">
+      <strong>April 2026 — the final month of Season 1.</strong><br>
+      Two new teams. Nano activates. Every team earns their place.
+    </p>
+    <div class="hero-cta">
+      <a href="#standings" class="btn btn-primary">View Standings</a>
+      <a href="#decisions" class="btn btn-ghost">Core Member Actions</a>
+    </div>
+    <div class="scroll-hint">scroll</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── STANDINGS ── -->
+  <section id="standings">
+    <span class="section-label">Season 1 · As of March 2026</span>
+    <h2>Current Standings</h2>
+
+    <div class="standings-grid reveal">
+      <div class="standing-row first">
+        <div class="pos">1</div>
+        <div>
+          <div class="team-name">FVL Falcons <span class="trophies">🏆🏆</span></div>
+          <div style="font-size:12px;color:var(--gray);margin-top:2px;">Champions: Nov 2025, Feb 2026</div>
+        </div>
+        <div class="pts-bar-wrap">
+          <div class="pts-bar"><div class="pts-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="pts-val">21 pts</div>
+      </div>
+
+      <div class="standing-row second">
+        <div class="pos">2</div>
+        <div>
+          <div class="team-name">FVL Spartans <span class="trophies">🏆🏆</span></div>
+          <div style="font-size:12px;color:var(--gray);margin-top:2px;">Champions: Dec 2025, Jan 2026</div>
+        </div>
+        <div class="pts-bar-wrap">
+          <div class="pts-bar"><div class="pts-bar-fill" style="width:86%"></div></div>
+        </div>
+        <div class="pts-val">18 pts</div>
+      </div>
+
+      <div class="standing-row third">
+        <div class="pos">3</div>
+        <div>
+          <div class="team-name">FVL Titans</div>
+          <div style="font-size:12px;color:var(--gray);margin-top:2px;">Consistent performers</div>
+        </div>
+        <div class="pts-bar-wrap">
+          <div class="pts-bar"><div class="pts-bar-fill" style="width:76%"></div></div>
+        </div>
+        <div class="pts-val">16 pts</div>
+      </div>
+
+      <div class="standing-row">
+        <div class="pos">4</div>
+        <div>
+          <div class="team-name">FVL Dragons <span class="trophies">🏆</span></div>
+          <div style="font-size:12px;color:var(--gray);margin-top:2px;">Champions: Mar 2026</div>
+        </div>
+        <div class="pts-bar-wrap">
+          <div class="pts-bar"><div class="pts-bar-fill" style="width:48%"></div></div>
+        </div>
+        <div class="pts-val">10 pts</div>
+      </div>
+
+      <div class="standing-row danger">
+        <div class="pos">5</div>
+        <div>
+          <div class="team-name">FVL Panthers</div>
+          <div style="font-size:12px;color:#ff8a80;margin-top:2px;">Current relegation candidate</div>
+        </div>
+        <div class="pts-bar-wrap">
+          <div class="pts-bar"><div class="pts-bar-fill" style="width:48%;background:var(--red)"></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <div class="pts-val" style="color:#ff8a80">10 pts</div>
+          <span class="relegated-tag">↓ Nano risk</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px;font-size:13px;color:var(--gray);font-style:italic;">
+      ⚡ April 2026 remaining — final standings determine Season 2 seedings and relegation.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SEASON 2 STRUCTURE ── -->
+  <section id="structure">
+    <span class="section-label">What's new</span>
+    <h2>Season 2 Structure</h2>
+
+    <div class="structure-grid reveal">
+      <div class="tier-card">
+        <div class="tier-header mini">
+          <span class="tier-icon">⚡</span>
+          <div class="tier-title">Mini</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:4px;">Competitive tier</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-stat"><span>Teams</span><strong>4</strong></div>
+          <div class="tier-stat"><span>Players / team</span><strong>8</strong></div>
+          <div class="tier-stat"><span>Courts</span><strong>1 & 2</strong></div>
+          <div class="tier-stat"><span>Time</span><strong>9 AM – 12 PM</strong></div>
+          <div class="tier-stat"><span>Leadership</span><strong>Captain + Wingman</strong></div>
+          <div class="tier-stat"><span>Monthly champion</span><strong>🏆 Recognised</strong></div>
+        </div>
+      </div>
+
+      <div class="swap-arrow">
+        <span class="swap-icon">⇅</span>
+        <span class="swap-label">Monthly<br>swap</span>
+      </div>
+
+      <div class="tier-card">
+        <div class="tier-header nano">
+          <span class="tier-icon">🌱</span>
+          <div class="tier-title">Nano</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:4px;">Entry & development</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-stat"><span>Teams</span><strong>3</strong></div>
+          <div class="tier-stat"><span>Players / team</span><strong>8</strong></div>
+          <div class="tier-stat"><span>Court</span><strong>Court 1 only</strong></div>
+          <div class="tier-stat"><span>Time</span><strong>12 PM – 3 PM</strong></div>
+          <div class="tier-stat"><span>Leadership</span><strong>Player-run</strong></div>
+          <div class="tier-stat"><span>Nano champion</span><strong>⬆️ Promoted to Mini</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;">
+      <span class="section-label">The path to the top</span>
+      <div class="path-track reveal">
+        <div class="path-node nano-node">
+          <span class="path-icon">🌱</span>
+          <div class="path-name">Nano</div>
+          <div class="path-desc">Win the monthly final</div>
+        </div>
+        <div class="path-arrow">→</div>
+        <div class="path-node mini-node">
+          <span class="path-icon">⚡</span>
+          <div class="path-name">Mini</div>
+          <div class="path-desc">Perform consistently</div>
+        </div>
+        <div class="path-arrow">→</div>
+        <div class="path-node major-node">
+          <span class="path-icon">🏆</span>
+          <div class="path-name">Major</div>
+          <div class="path-desc">Flagship event · open to all</div>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:20px;font-size:13px;color:var(--gray);">
+        No team is locked in any tier forever. Every game, every month counts.
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── MONTHLY SCHEDULE ── -->
+  <section id="schedule">
+    <span class="section-label">Event day</span>
+    <h2>Monthly Schedule</h2>
+
+    <div class="reveal">
+      <div class="tl-section-head">⚡ Mini Block — Courts 1 & 2</div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-label">9:00</div>
+          <div class="tl-bar mini-rr1">Round Robin 1 — Slot 1 &nbsp;·&nbsp; M1 vs M2 &amp; M3 vs M4</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">9:25</div>
+          <div class="tl-bar mini-rr1">Round Robin 1 — Slot 2 &nbsp;·&nbsp; M1 vs M3 &amp; M2 vs M4</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">9:50</div>
+          <div class="tl-bar mini-rr1">Round Robin 1 — Slot 3 &nbsp;·&nbsp; M1 vs M4 &amp; M2 vs M3</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">10:15</div>
+          <div class="tl-bar mini-rr2">Round Robin 2 — Slot 4 &nbsp;·&nbsp; M1 vs M2 &amp; M3 vs M4</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">10:40</div>
+          <div class="tl-bar mini-rr2">Round Robin 2 — Slot 5 &nbsp;·&nbsp; M1 vs M3 &amp; M2 vs M4</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">11:05</div>
+          <div class="tl-bar mini-rr2">Round Robin 2 — Slot 6 &nbsp;·&nbsp; M1 vs M4 &amp; M2 vs M3</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">11:30</div>
+          <div class="tl-bar break">☕ Break &nbsp;·&nbsp; Standings announced</div>
+          <div class="tl-duration">5 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">11:35</div>
+          <div class="tl-bar playoffs">🏆 Playoffs &nbsp;·&nbsp; #1 vs #2 (Championship) &amp; #3 vs #4 (Relegation) — simultaneously</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label" style="color:var(--gold);font-weight:600;">12:00</div>
+          <div style="display:flex;align-items:center;font-size:13px;color:var(--gold);font-weight:500;padding-left:4px;">Mini concludes →  Nano begins</div>
+          <div class="tl-duration"></div>
+        </div>
+      </div>
+
+      <div class="tl-section-head" style="margin-top:32px;">🌱 Nano Block — Court 1 only</div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-label">12:00</div>
+          <div class="tl-bar nano-rr1">Round Robin 1 — Slot 1 &nbsp;·&nbsp; N1 vs N2 (N3 bye)</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">12:25</div>
+          <div class="tl-bar nano-rr1">Round Robin 1 — Slot 2 &nbsp;·&nbsp; N1 vs N3 (N2 bye)</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">12:50</div>
+          <div class="tl-bar nano-rr1">Round Robin 1 — Slot 3 &nbsp;·&nbsp; N2 vs N3 (N1 bye)</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">1:15</div>
+          <div class="tl-bar nano-rr2">Round Robin 2 — Slot 4 &nbsp;·&nbsp; N1 vs N2 (N3 bye)</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">1:40</div>
+          <div class="tl-bar nano-rr2">Round Robin 2 — Slot 5 &nbsp;·&nbsp; N1 vs N3 (N2 bye)</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">2:05</div>
+          <div class="tl-bar nano-rr2">Round Robin 2 — Slot 6 &nbsp;·&nbsp; N2 vs N3 (N1 bye)</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">2:30</div>
+          <div class="tl-bar break">☕ Break &nbsp;·&nbsp; Standings announced</div>
+          <div class="tl-duration">5 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label">2:35</div>
+          <div class="tl-bar nano-fin">🌱 Nano Championship Final &nbsp;·&nbsp; N1 vs N2 — Winner promoted to Mini</div>
+          <div class="tl-duration">25 min</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-label" style="color:var(--gold);font-weight:600;">3:00</div>
+          <div style="display:flex;align-items:center;font-size:13px;color:var(--gold);font-weight:500;padding-left:4px;">Full event day complete</div>
+          <div class="tl-duration"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── DECISIONS ── -->
+  <section id="decisions">
+    <span class="section-label">Action required</span>
+    <h2>Core Member Decisions</h2>
+
+    <div class="decisions-grid reveal">
+      <div class="decision-card">
+        <span class="decision-icon">🔴</span>
+        <div class="decision-title">RTM Rule</div>
+        <div class="decision-desc">Confirm Right-to-Match: 1 per captain, 60-second window, same tier only. Recommended but needs core member vote.</div>
+      </div>
+      <div class="decision-card">
+        <span class="decision-icon">💰</span>
+        <div class="decision-title">Auction Budget</div>
+        <div class="decision-desc">Set starting budget per team (e.g. 100 units). Define how captain values are assigned before draft day.</div>
+      </div>
+      <div class="decision-card">
+        <span class="decision-icon">🤝</span>
+        <div class="decision-title">Wingman Assignments</div>
+        <div class="decision-desc">Which core member covers which Mini team for Season 2? Random draw, preference, or consensus?</div>
+      </div>
+      <div class="decision-card">
+        <span class="decision-icon">🌱</span>
+        <div class="decision-title">New Team Captains</div>
+        <div class="decision-desc">2 new Nano teams joining. Names and captains needed before the Season 2 draft.</div>
+      </div>
+      <div class="decision-card">
+        <span class="decision-icon">📋</span>
+        <div class="decision-title">Relegated Team Gap</div>
+        <div class="decision-desc">If a relegated Mini team loses players who won't play Nano — how is the gap filled?</div>
+      </div>
+      <div class="decision-card">
+        <span class="decision-icon">⚙️</span>
+        <div class="decision-title">Nano Captain Criteria</div>
+        <div class="decision-desc">Formal minimum requirements for Nano captains, or fully at Nano Coordinator's discretion?</div>
+      </div>
+    </div>
+
+    <div style="margin-top:64px;text-align:center;">
+      <span class="section-label" style="display:block;text-align:center;">The six</span>
+      <h2 style="margin-bottom:8px;">Core Members</h2>
+      <p style="color:var(--gray);font-size:14px;margin-bottom:0;">FVL founders · Wingmen · Governance leads</p>
+      <div class="members-row">
+        <span class="member-chip">Amrendra</span>
+        <span class="member-chip">Ashok</span>
+        <span class="member-chip">Naren</span>
+        <span class="member-chip">Rahul</span>
+        <span class="member-chip">Sachin</span>
+        <span class="member-chip">Sunil</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <footer>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;margin-bottom:8px;">FVL</div>
+    <strong>Friendly Volleyball League</strong> · Season 2 Proposal · April 2026
+    <div style="margin-top:8px;font-size:11px;opacity:0.5;">Full governance documentation available from core members</div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
+</html>
