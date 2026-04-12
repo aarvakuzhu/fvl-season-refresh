@@ -136,7 +136,62 @@ app.post('/api/comments', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ── Frontend ──────────────────────────────────────────────────────────
+// ── Seed ──────────────────────────────────────────────────────────────
+app.post('/api/seed', async (req, res) => {
+  if (!dbConnected) return res.status(503).json({ error: 'Database not connected' });
+
+  const log = [];
+  const say = msg => { log.push(msg); console.log(msg); };
+
+  try {
+    const seedData = require('./seed-data');
+
+    say('Clearing existing data...');
+    await Promise.all([
+      Team.deleteMany({}),
+      Standing.deleteMany({}),
+      Season.deleteMany({}),
+      CoreMember.deleteMany({}),
+      Decision.deleteMany({}),
+    ]);
+
+    say('Inserting teams...');
+    const insertedTeams = await Team.insertMany(seedData.teams);
+    say(`✓ ${insertedTeams.length} teams inserted`);
+
+    say('Inserting standings...');
+    const teamMap = {};
+    insertedTeams.forEach(t => { teamMap[t.name] = t._id; });
+    const standingsWithIds = seedData.standings.map(s => ({ ...s, teamId: teamMap[s.teamName] }));
+    await Standing.insertMany(standingsWithIds);
+    say(`✓ ${standingsWithIds.length} standings inserted`);
+
+    say('Inserting season config...');
+    await Season.create(seedData.season);
+    say('✓ Season config inserted');
+
+    say('Inserting core members...');
+    await CoreMember.insertMany(seedData.coreMembers);
+    say(`✓ ${seedData.coreMembers.length} core members inserted`);
+
+    say('Inserting decisions...');
+    await Decision.insertMany(seedData.decisions);
+    say(`✓ ${seedData.decisions.length} decisions inserted`);
+
+    say('✅ Seed complete');
+    res.json({ success: true, log });
+  } catch (e) {
+    say('❌ Error: ' + e.message);
+    res.status(500).json({ success: false, error: e.message, log });
+  }
+});
+
+// ── Admin page ───────────────────────────────────────────────────────
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// ── Frontend (catch-all) ─────────────────────────────────────────────
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

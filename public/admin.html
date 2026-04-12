@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FVL Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--n:#0f1e3d;--n2:#1a3566;--go:#c9a84c;--wh:#fff;--gr:#8892a4;--tx:#cdd5e0;--rd:#c62828;--gn:#2e7d32}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--n);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
+    .panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:40px;max-width:560px;width:100%}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--go);margin-bottom:6px;text-align:center}
+    .title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--wh);text-align:center;margin-bottom:6px}
+    .subtitle{font-size:13px;color:var(--gr);text-align:center;margin-bottom:32px;line-height:1.5}
+    .warning{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:28px;line-height:1.6}
+    .warning strong{color:var(--go)}
+    .btn{width:100%;padding:14px;border-radius:9px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-seed{background:var(--go);color:var(--n)}
+    .btn-seed:hover:not(:disabled){background:#f0c040;transform:translateY(-1px)}
+    .btn-seed:disabled{opacity:.5;cursor:not-allowed}
+    .log{margin-top:24px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;min-height:60px;display:none}
+    .log.show{display:block}
+    .log-line{display:flex;gap:8px}
+    .log-line.ok{color:#81c784}
+    .log-line.err{color:#ff8a80}
+    .log-line.info{color:var(--tx)}
+    .status{margin-top:16px;text-align:center;font-size:14px;font-weight:600;display:none}
+    .status.success{color:#81c784;display:block}
+    .status.error{color:#ff8a80;display:block}
+    .spin{display:inline-block;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .divider{height:1px;background:rgba(255,255,255,.08);margin:24px 0}
+    .db-status{display:flex;align-items:center;gap:8px;font-size:13px;justify-content:center;margin-bottom:20px}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .dot.green{background:#81c784}
+    .dot.red{background:#ff8a80}
+    .dot.gray{background:var(--gr)}
+    .back{display:block;text-align:center;margin-top:20px;color:var(--gr);font-size:13px;text-decoration:none;transition:color .2s}
+    .back:hover{color:var(--go)}
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div class="logo">🏐 FVL</div>
+    <div class="title">Database Admin</div>
+    <p class="subtitle">Seed the database with Season 1 data —<br>teams, standings, core members, and decisions.</p>
+
+    <div class="db-status">
+      <div class="dot gray" id="db-dot"></div>
+      <span id="db-label">Checking database...</span>
+    </div>
+
+    <div class="warning">
+      <strong>⚠️ This will clear and re-seed all data.</strong><br>
+      Safe to run multiple times — it always starts fresh. Use this to reset to the canonical Season 1 state.
+    </div>
+
+    <button class="btn btn-seed" id="seed-btn" onclick="runSeed()">
+      🌱 Seed Database
+    </button>
+
+    <div class="log" id="log"></div>
+    <div class="status" id="status"></div>
+
+    <div class="divider"></div>
+    <a class="back" href="/">← Back to FVL Site</a>
+  </div>
+
+  <script>
+    // ── Check DB status on load ────────────────────────────────────
+    async function checkHealth() {
+      try {
+        const r = await fetch('/api/health');
+        const d = await r.json();
+        const dot   = document.getElementById('db-dot');
+        const label = document.getElementById('db-label');
+        if (d.db === 'connected') {
+          dot.className = 'dot green';
+          label.textContent = 'MongoDB connected';
+        } else {
+          dot.className = 'dot red';
+          label.textContent = 'Database not connected';
+          document.getElementById('seed-btn').disabled = true;
+        }
+      } catch (e) {
+        document.getElementById('db-label').textContent = 'Could not reach server';
+      }
+    }
+
+    // ── Run seed ───────────────────────────────────────────────────
+    async function runSeed() {
+      const btn    = document.getElementById('seed-btn');
+      const log    = document.getElementById('log');
+      const status = document.getElementById('status');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spin">⏳</span> Seeding...';
+      log.className = 'log show';
+      log.innerHTML = '';
+      status.className = 'status';
+      status.textContent = '';
+
+      try {
+        const r = await fetch('/api/seed', { method: 'POST' });
+        const d = await r.json();
+
+        log.innerHTML = (d.log || []).map(line => {
+          const cls = line.startsWith('✅') ? 'ok' : line.startsWith('❌') ? 'err' : 'info';
+          return `<div class="log-line ${cls}">${line}</div>`;
+        }).join('');
+
+        if (d.success) {
+          status.textContent = '✅ Database seeded successfully!';
+          status.className = 'status success';
+          btn.innerHTML = '✅ Done';
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = '🌱 Seed Again';
+          }, 2000);
+        } else {
+          status.textContent = '❌ Seed failed — ' + (d.error || 'unknown error');
+          status.className = 'status error';
+          btn.disabled = false;
+          btn.innerHTML = '🌱 Try Again';
+        }
+      } catch (e) {
+        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
+        status.textContent = '❌ Could not reach server';
+        status.className = 'status error';
+        btn.disabled = false;
+        btn.innerHTML = '🌱 Try Again';
+      }
+    }
+
+    checkHealth();
+  </script>
+</body>
+</html>
