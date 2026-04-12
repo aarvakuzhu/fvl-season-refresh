@@ -12,12 +12,18 @@
     html{scroll-behavior:smooth}
     body{background:var(--n);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
     /* NAV */
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,30,61,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,.15);padding:0 20px;display:flex;align-items:center;height:52px;gap:2px;overflow-x:auto}
-    .nb{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--go);letter-spacing:2px;white-space:nowrap;margin-right:12px;flex-shrink:0}
-    .nl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gr);text-decoration:none;padding:5px 8px;border-radius:5px;white-space:nowrap;transition:all .2s}
-    .nl:hover{color:var(--go);background:rgba(201,168,76,.1)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,30,61,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,168,76,.15);padding:0 20px;display:flex;align-items:center;height:52px;gap:4px}
+    .nb{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--go);letter-spacing:2px;white-space:nowrap;margin-right:16px;flex-shrink:0}
+    .nl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gr);text-decoration:none;padding:6px 10px;border-radius:5px;white-space:nowrap;transition:all .2s;border:none;background:none;cursor:pointer}
+    .nl:hover,.nl:focus{color:var(--go);background:rgba(201,168,76,.1);outline:none}
     .nd{margin-left:auto;background:var(--go);color:var(--n);padding:6px 14px;border-radius:7px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .2s}
     .nd:hover{background:var(--go2)}
+    /* Dropdown groups */
+    .ndrop{position:relative}
+    .ndropmenu{display:none;position:absolute;top:calc(100% + 4px);left:0;background:rgba(15,30,61,.98);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:4px;min-width:160px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    .ndrop:hover .ndropmenu,.ndrop:focus-within .ndropmenu{display:flex;flex-direction:column}
+    .ndropmenu a{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--gr);text-decoration:none;padding:8px 12px;border-radius:5px;white-space:nowrap;transition:all .15s}
+    .ndropmenu a:hover{color:var(--go);background:rgba(201,168,76,.1)}
     /* LAYOUT */
     .sec{padding:72px 24px;max-width:1060px;margin:0 auto}
     .sec-sm{padding:52px 24px;max-width:1060px;margin:0 auto}
@@ -25,21 +31,10 @@
     h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5vw,54px);letter-spacing:2px;color:var(--wh);margin-bottom:28px;line-height:1}
     h3{font-size:15px;font-weight:600;color:var(--wh);margin-bottom:8px}
     .dv{height:1px;background:linear-gradient(to right,transparent,rgba(201,168,76,.22),transparent)}
-    /* HERO */
-    .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden}
-    .hero::after{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-    .hbadge{display:inline-block;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);color:var(--go);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:22px;animation:fu .6s ease both}
-    .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(68px,13vw,144px);letter-spacing:3px;line-height:.9;color:var(--wh);animation:fu .7s .1s ease both;position:relative;z-index:1}
-    .hero h1 span{color:var(--go);display:block}
-    .hsub{font-size:17px;color:var(--gr);margin-top:18px;max-width:440px;line-height:1.65;animation:fu .7s .2s ease both}
-    .hsub strong{color:var(--wh)}
-    .hbtns{margin-top:36px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;animation:fu .7s .3s ease both}
+
     .btn{padding:10px 22px;border-radius:7px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s;border:none;cursor:pointer;display:inline-block}
     .bg{background:var(--go);color:var(--n)}.bg:hover{background:var(--go2);transform:translateY(-2px)}
     .bo{background:transparent;color:var(--wh);border:1px solid rgba(255,255,255,.18)}.bo:hover{border-color:var(--go);color:var(--go);transform:translateY(-2px)}
-    .sh{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--gr);font-size:10px;letter-spacing:2px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:5px;animation:fu 1s .5s ease both}
-    .sh::after{content:'';display:block;width:1px;height:32px;background:linear-gradient(to bottom,var(--gr),transparent);animation:sl 1.6s ease infinite}
-    @keyframes sl{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
     @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     /* REVEAL */
     .rv{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
@@ -179,31 +174,86 @@
 
 <nav>
   <span class="nb">🏐 FVL</span>
-  <a class="nl" href="#standings">Standings</a>
-  <a class="nl" href="#teams">Teams</a>
-  <a class="nl" href="#structure">Structure</a>
-  <a class="nl" href="#schedule">Schedule</a>
-  <a class="nl" href="#tiers">Tiers</a>
-  <a class="nl" href="#wingman">Wingman</a>
-  <a class="nl" href="#draft">Draft</a>
-  <a class="nl" href="#rules">Rules</a>
-  <a class="nl" href="#decisions">Decisions</a>
-  <a class="nl" href="#nextsteps">Next Steps</a>
-  <a class="nl" href="#checklists">Checklists</a>
+
+  <!-- Group: Season -->
+  <div class="ndrop">
+    <button class="nl ndropbtn">Season ▾</button>
+    <div class="ndropmenu">
+      <a href="#standings">Standings</a>
+      <a href="#teams">Teams</a>
+      <a href="#structure">Season 2</a>
+    </div>
+  </div>
+
+  <!-- Group: Format -->
+  <div class="ndrop">
+    <button class="nl ndropbtn">Format ▾</button>
+    <div class="ndropmenu">
+      <a href="#schedule">Schedule</a>
+      <a href="#tiers">Player Tiers</a>
+      <a href="#wingman">Wingman System</a>
+    </div>
+  </div>
+
+  <!-- Group: Governance -->
+  <div class="ndrop">
+    <button class="nl ndropbtn">Governance ▾</button>
+    <div class="ndropmenu">
+      <a href="#draft">Captains & Draft</a>
+      <a href="#rules">Game Rules</a>
+      <a href="#decisions">Decision Log</a>
+      <a href="#nextsteps">Next Steps</a>
+      <a href="#checklists">Checklists</a>
+    </div>
+  </div>
+
   <a class="nd" href="/FVL_Governance.docx" download>⬇ Full Doc</a>
 </nav>
 
-<!-- HERO -->
-<div class="hero" style="margin-top:52px">
-  <span class="hbadge">🏐 Friendly Volleyball League</span>
-  <h1>Season<span>Two.</span></h1>
-  <p class="hsub"><strong>April 2026 — final month of Season 1.</strong><br>Two new teams. Nano activates. Every team earns their place.</p>
-  <div class="hbtns">
-    <a href="#standings" class="btn bg">View Standings</a>
-    <a href="#decisions" class="btn bo">Core Member Actions</a>
-    <a href="/FVL_Governance.docx" download class="btn bo">⬇ Full Doc</a>
+<!-- SUMMARY BANNER -->
+<div style="margin-top:52px;background:linear-gradient(135deg,rgba(26,53,102,.9),rgba(15,30,61,1));border-bottom:1px solid rgba(201,168,76,.2);padding:28px 24px 24px">
+  <div style="max-width:1060px;margin:0 auto">
+
+    <!-- Title row -->
+    <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:18px;flex-wrap:wrap">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;color:var(--wh);line-height:1">FVL <span style="color:var(--go)">Season 2</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gr)">April 2026 · Final month of Season 1</div>
+      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+        <a href="#standings" class="btn bg" style="padding:7px 16px;font-size:12px">Standings</a>
+        <a href="#decisions" class="btn bo" style="padding:7px 16px;font-size:12px">Open Decisions</a>
+        <a href="/FVL_Governance.docx" download class="btn bo" style="padding:7px 16px;font-size:12px">⬇ Doc</a>
+      </div>
+    </div>
+
+    <!-- 4 stat cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.25);border-radius:10px;padding:14px 16px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--go);margin-bottom:6px">Season Leader</div>
+        <div style="font-size:16px;font-weight:700;color:var(--wh)">FVL Falcons 🏆🏆</div>
+        <div style="font-size:12px;color:var(--gr);margin-top:2px">21 pts · 2 championships</div>
+      </div>
+
+      <div style="background:rgba(198,40,40,.07);border:1px solid rgba(198,40,40,.3);border-radius:10px;padding:14px 16px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#ff8a80;margin-bottom:6px">Relegation Risk</div>
+        <div style="font-size:16px;font-weight:700;color:var(--wh)">FVL Panthers 📉</div>
+        <div style="font-size:12px;color:var(--gr);margin-top:2px">10 pts · 0 titles · bottom seed</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gr);margin-bottom:6px">Season 2 Change</div>
+        <div style="font-size:16px;font-weight:700;color:var(--wh)">2 new Nano teams</div>
+        <div style="font-size:12px;color:var(--gr);margin-top:2px">7 teams total · promotion live</div>
+      </div>
+
+      <div style="background:rgba(255,128,0,.06);border:1px solid rgba(255,128,0,.25);border-radius:10px;padding:14px 16px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#ffb74d;margin-bottom:6px">Needs Decision</div>
+        <div style="font-size:16px;font-weight:700;color:var(--wh)">7 open items 🔴</div>
+        <div style="font-size:12px;color:var(--gr);margin-top:2px">RTM · Budget · Wingman assignments</div>
+      </div>
+
+    </div>
   </div>
-  <div class="sh">scroll</div>
 </div>
 
 <div class="dv"></div>
