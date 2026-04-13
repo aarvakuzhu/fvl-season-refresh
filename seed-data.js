@@ -178,7 +178,7 @@ const decisions = [
 const season = {
   number: 1, label: 'Season 1', status: 'active',
   startDate: new Date('2025-11-01'), endDate: new Date('2026-04-30'),
-  miniTeams: 5, nanoTeams: 0, draftFormat: 'auction',
+  miniTeams: 5, nanoTeams: 0, recommendedPlayersPerTeam: 7, draftFormat: 'auction',
   notes: 'Founding season. All 5 teams in Mini. Nano activates Season 2.',
 };
 
