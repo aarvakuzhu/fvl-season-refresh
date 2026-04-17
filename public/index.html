@@ -10,7 +10,6 @@
 </head>
 <body>
 
-<!-- ── HEADER ─────────────────────────────────────────── -->
 <div id="header">
   <div class="header-bar">
     <div class="hlogo">
@@ -32,7 +31,7 @@
   </div>
 </div>
 
-<!-- ── PANELS — overview inlined, others loaded on demand ─ -->
+<!-- Overview panel — inlined for instant first load -->
 <div class="panel active" id="panel-overview">
 <div class="page"><div class="pgrid">
 <div class="main">
@@ -159,14 +158,15 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════
+</div>
 
+<!-- Other panels — empty shells, loaded on first tab click -->
 <div class="panel" id="panel-feedback"></div>
 <div class="panel" id="panel-teams"></div>
 <div class="panel" id="panel-format"></div>
 <div class="panel" id="panel-governance"></div>
 <div class="panel" id="panel-actions"></div>
 
-<!-- ── BOTTOM NAV ──────────────────────────────────────── -->
 <nav id="bottom-nav">
   <button class="bnav-item active" id="bnav-overview" onclick="switchTab('overview')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
