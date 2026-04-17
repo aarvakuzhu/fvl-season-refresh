@@ -3,771 +3,1027 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>FVL Season 2</title>
+  <title>FVL — Season 2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Source+Sans+3:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream:  #faf7f2;
-      --white:  #ffffff;
-      --navy:   #1a3566;
-      --navy2:  #2b5ba8;
-      --navy3:  #e8eef8;
-      --gold:   #b8860b;
-      --gold2:  #f5c842;
-      --gold3:  #fdf3d0;
-      --red:    #b71c1c;
-      --red2:   #ffebee;
-      --green:  #1b5e20;
+      --red:    #cc0000;
+      --red2:   #e60000;
+      --red3:   #fff0f0;
+      --navy:   #1a1f36;
+      --navy2:  #2a3254;
+      --blue:   #1565c0;
+      --blue2:  #e3f2fd;
+      --green:  #1b7a1b;
       --green2: #e8f5e9;
-      --amber:  #e65100;
+      --amber:  #d35400;
       --amber2: #fff3e0;
-      --border: #dde3ec;
-      --text:   #1c2b3a;
-      --muted:  #5a6e85;
-      --light:  #f0f4fb;
+      --gold:   #b8860b;
+      --gold2:  #fdf3d0;
+      --white:  #ffffff;
+      --bg:     #f5f5f5;
+      --bg2:    #ebebeb;
+      --card:   #ffffff;
+      --border: #ddd;
+      --border2:#e8e8e8;
+      --text:   #1a1a1a;
+      --muted:  #666;
+      --light:  #f8f8f8;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 15px; scroll-behavior: smooth; }
-    body { background: var(--cream); color: var(--text); font-family: 'DM Sans', sans-serif; line-height: 1.6; }
+    html { font-size: 14px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Source Sans 3', sans-serif; }
 
-    /* ── TOPBAR ─────────────────────────────── */
-    #topbar {
+    /* ── HEADER ───────────────────────────── */
+    #header {
       background: var(--navy);
-      padding: 0 20px;
-      display: flex; align-items: center; height: 54px; gap: 12px;
-      position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 2px 12px rgba(26,53,102,.25);
+      padding: 0;
+      position: sticky; top: 0; z-index: 200;
     }
-    .logo { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: #fff; white-space: nowrap; }
-    .logo em { color: var(--gold2); font-style: normal; }
-    .top-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-    .btn { display: inline-block; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; transition: all .15s; border: none; cursor: pointer; white-space: nowrap; }
-    .btn-gold { background: var(--gold2); color: var(--navy); }
-    .btn-gold:hover { background: #ffe066; }
-    .btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.3); }
-    .btn-outline:hover { border-color: var(--gold2); color: var(--gold2); }
-
-    /* ── LAYOUT ─────────────────────────────── */
-    .page { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
-
-    /* ── HERO BANNER ─────────────────────────── */
-    #hero {
-      background: linear-gradient(135deg, var(--navy) 0%, #2b5ba8 100%);
-      padding: 36px 20px 32px;
-      color: #fff;
+    .header-top {
+      display: flex; align-items: center; height: 48px;
+      padding: 0 16px; gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
     }
-    #hero .page { display: grid; grid-template-columns: 1fr; gap: 24px; }
-    .hero-title { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 48px); font-weight: 700; line-height: 1.1; margin-bottom: 10px; }
-    .hero-title em { color: var(--gold2); font-style: normal; }
-    .hero-sub { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.6; }
-    .hero-bullets { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-    .hero-bullet { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; }
-    .hero-bullet strong { color: #fff; }
-    .hero-bullet .ic { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-    .hero-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    @media(min-width:500px) { .hero-stats { grid-template-columns: repeat(4, 1fr); } }
-    .hstat { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); border-radius: 8px; padding: 10px 12px; }
-    .hstat-val { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--gold2); line-height: 1; }
-    .hstat-lbl { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 3px; }
+    .espn-logo {
+      background: var(--red);
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 11px; font-weight: 700;
+      color: #fff; padding: 3px 7px;
+      border-radius: 3px; letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+    .site-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 18px; font-weight: 700;
+      color: #fff; letter-spacing: .5px;
+    }
+    .site-title span { color: var(--red2); }
+    .header-meta {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 10px; color: rgba(255,255,255,.5);
+      margin-left: 8px; white-space: nowrap;
+    }
+    .header-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .hbtn {
+      font-size: 12px; font-weight: 600;
+      padding: 5px 12px; border-radius: 3px;
+      text-decoration: none; transition: all .15s;
+      border: none; cursor: pointer;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+    .hbtn-red  { background: var(--red); color: #fff; }
+    .hbtn-red:hover { background: var(--red2); }
+    .hbtn-outline { background: transparent; color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.25); }
+    .hbtn-outline:hover { border-color: #fff; color: #fff; }
 
-    /* ── SECTION LAYOUT ─────────────────────── */
-    .section { padding: 32px 0; border-bottom: 1px solid var(--border); }
-    .section:last-child { border-bottom: none; }
-    .sec-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--navy2); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-    .sec-label::before { content: ''; display: inline-block; width: 20px; height: 2px; background: var(--navy2); border-radius: 2px; }
-    .sec-title { font-family: 'Fraunces', serif; font-size: clamp(20px, 4vw, 28px); font-weight: 700; color: var(--navy); margin-bottom: 20px; line-height: 1.2; }
+    /* ── TAB BAR ──────────────────────────── */
+    #tabbar {
+      background: var(--navy2);
+      display: flex; align-items: stretch;
+      padding: 0 16px; gap: 0;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    #tabbar::-webkit-scrollbar { display: none; }
+    .tab {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,.6);
+      padding: 0 14px; height: 38px;
+      border: none; background: none; cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap; transition: all .15s;
+      display: flex; align-items: center; gap: 5px;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .tab:hover { color: rgba(255,255,255,.9); }
+    .tab.active { color: #fff; border-bottom-color: var(--red); background: rgba(255,255,255,.06); }
+    .tab-num {
+      background: rgba(255,255,255,.15);
+      font-size: 10px; padding: 1px 5px;
+      border-radius: 10px; font-weight: 700;
+    }
+    .tab.active .tab-num { background: var(--red); }
 
-    /* Two-col layout for larger screens */
-    .two-col { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    @media(min-width: 700px) { .two-col { grid-template-columns: 1fr 1fr; } }
-    .three-col { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media(min-width: 600px) { .three-col { grid-template-columns: repeat(3, 1fr); } }
-    .five-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    @media(min-width: 700px) { .five-col { grid-template-columns: repeat(5, 1fr); } }
+    /* ── PANELS ───────────────────────────── */
+    .panel { display: none; min-height: calc(100vh - 86px); }
+    .panel.active { display: block; }
 
-    /* ── CARDS ──────────────────────────────── */
-    .card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
-    .card-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .5px; font-family: 'DM Mono', monospace; }
+    /* ── PAGE WRAPPER ─────────────────────── */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 12px; }
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 14px 0;
+    }
+    @media(min-width: 900px) {
+      .page-grid { grid-template-columns: 1fr 320px; gap: 16px; }
+    }
 
-    /* ── STANDINGS ──────────────────────────── */
-    .srow { display: grid; grid-template-columns: 28px 1fr auto 52px; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; border-left: 3px solid transparent; background: var(--light); transition: background .15s; margin-bottom: 6px; }
-    .srow:hover { background: var(--navy3); }
-    .srow.p1 { border-color: var(--gold); background: var(--gold3); }
-    .srow.p2 { border-color: #90a0b8; }
-    .srow.p3 { border-color: #cd7f32; }
-    .srow.dn { border-color: var(--red); background: var(--red2); }
-    .srow .pos { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--muted); text-align: center; }
-    .srow.p1 .pos { color: var(--gold); }
-    .srow .tn { font-size: 14px; font-weight: 600; color: var(--navy); }
-    .srow .ts { font-size: 11px; color: var(--muted); margin-top: 1px; }
-    .srow .pts { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--navy2); text-align: right; }
-    .srow.dn .pts { color: var(--red); }
-    .rel-tag { font-family: 'DM Mono', monospace; font-size: 9px; background: var(--red2); color: var(--red); border: 1px solid #ffcdd2; border-radius: 4px; padding: 2px 5px; white-space: nowrap; }
+    /* ── SECTION HEADINGS ─────────────────── */
+    .sec-hd {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--muted); padding: 10px 0 6px;
+      border-bottom: 2px solid var(--red);
+      margin-bottom: 10px; display: flex;
+      align-items: center; justify-content: space-between;
+    }
+    .sec-hd-red { color: var(--red); }
 
-    /* ── TIER CARDS (Mini / Nano) ───────────── */
-    .tier-pair { display: grid; grid-template-columns: 1fr; gap: 12px; align-items: center; }
-    @media(min-width: 600px) { .tier-pair { grid-template-columns: 1fr 48px 1fr; } }
-    .tier-card { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,.05); }
-    .tier-hd { padding: 14px 16px 10px; }
-    .tier-hd.mini { background: linear-gradient(135deg, #1a3566, #2b5ba8); color: #fff; }
-    .tier-hd.nano { background: linear-gradient(135deg, #1b3a6b, #3d6cbf); color: #fff; }
-    .tier-name { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-    .tier-sub { font-size: 11px; opacity: .7; margin-top: 2px; }
-    .tier-body { background: var(--white); padding: 12px 16px; }
-    .tier-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+    /* ── CARD ─────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .card-hd {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .8px;
+      color: var(--muted); padding: 8px 12px;
+      border-bottom: 1px solid var(--border2);
+      background: var(--light);
+    }
+    .card-body { padding: 10px 12px; }
+
+    /* ── SCORECARD TABLE ──────────────────── */
+    .scard { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .scard th {
+      background: var(--navy); color: #fff;
+      padding: 7px 10px; text-align: left;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .3px;
+    }
+    .scard th.r { text-align: right; }
+    .scard td { padding: 8px 10px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+    .scard td.r { text-align: right; font-family: 'Source Code Pro', monospace; }
+    .scard tr:last-child td { border: none; }
+    .scard tr:nth-child(even) td { background: var(--light); }
+    .scard tr:hover td { background: #f0f4ff; }
+    .scard .bold { font-weight: 700; color: var(--text); }
+    .scard .num { font-family: 'Source Code Pro', monospace; }
+    .pos-num {
+      font-family: 'Source Serif 4', serif;
+      font-size: 16px; font-weight: 700;
+      color: var(--muted); text-align: center; width: 28px;
+    }
+    .pos-1 { color: var(--gold); }
+    .pos-rel { color: var(--red); }
+
+    /* ── STANDING ROW INLINE ──────────────── */
+    .stand-row {
+      display: grid;
+      grid-template-columns: 28px 1fr auto 60px;
+      align-items: center; gap: 8px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border2);
+      transition: background .12s;
+    }
+    .stand-row:last-child { border: none; }
+    .stand-row:hover { background: var(--light); }
+    .stand-row.rel { background: #fff5f5; }
+    .stand-row.top { background: var(--gold2); }
+    .stand-name { font-size: 13px; font-weight: 600; }
+    .stand-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .stand-pts { font-family: 'Source Code Pro', monospace; font-size: 13px; font-weight: 700; color: var(--navy); text-align: right; }
+    .rel-tag { font-family: 'Source Code Pro', monospace; font-size: 9px; background: #ffebee; color: var(--red); border: 1px solid #ffcdd2; border-radius: 2px; padding: 1px 5px; }
+
+    /* ── RATING BARS ──────────────────────── */
+    .r-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border2); }
+    .r-row:last-child { border: none; }
+    .r-label { font-size: 12px; color: var(--text); min-width: 130px; flex-shrink: 0; }
+    .r-bg { flex: 1; height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+    .r-fill { height: 100%; border-radius: 3px; }
+    .r-val { font-family: 'Source Code Pro', monospace; font-size: 12px; min-width: 32px; text-align: right; font-weight: 600; }
+
+    /* ── STAT PILLS ───────────────────────── */
+    .stat-row { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+    @media(min-width:500px) { .stat-row { grid-template-columns: repeat(4,1fr); } }
+    .stat-pill { background: var(--light); border: 1px solid var(--border); border-top: 3px solid var(--navy); padding: 8px 10px; text-align: center; }
+    .stat-pill .val { font-family: 'Source Serif 4', serif; font-size: 22px; font-weight: 700; color: var(--navy); line-height: 1; }
+    .stat-pill .lbl { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+    /* ── FEEDBACK THEMES ──────────────────── */
+    .fb { border: 1px solid var(--border); margin-bottom: 10px; }
+    .fb-hd { padding: 7px 10px; font-size: 12px; font-weight: 700; border-left: 4px solid; display: flex; align-items: center; gap: 6px; }
+    .fb-body { padding: 8px 10px 6px; background: var(--white); }
+    .fb-item { font-size: 13px; color: var(--text); display: flex; gap: 7px; line-height: 1.5; margin-bottom: 6px; }
+    .fb-item:last-child { margin-bottom: 0; }
+    .fb-item::before { content: '–'; color: var(--muted); flex-shrink: 0; }
+
+    /* ── FOCUS AREAS ──────────────────────── */
+    .focus-item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border2); align-items: start; }
+    .focus-item:last-child { border: none; }
+    .focus-n { width: 24px; height: 24px; background: var(--red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 1px; }
+    .focus-t { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+    .focus-d { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── ACTION PLAN ──────────────────────── */
+    .ap-item { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border2); align-items: flex-start; }
+    .ap-item:last-child { border: none; }
+    .ap-tag { font-family: 'Source Code Pro', monospace; font-size: 10px; background: var(--navy); color: #fff; padding: 2px 7px; border-radius: 2px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .ap-t { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .ap-d { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── QUOTE ────────────────────────────── */
+    .quote-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media(min-width:600px) { .quote-grid { grid-template-columns: 1fr 1fr; } }
+    .quote { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--navy2); padding: 11px 13px; }
+    .quote p { font-family: 'Source Serif 4', serif; font-size: 13px; line-height: 1.65; color: var(--text); font-style: italic; }
+    .q-tag { font-family: 'Source Code Pro', monospace; font-size: 10px; color: var(--muted); margin-top: 7px; text-transform: uppercase; letter-spacing: .5px; }
+
+    /* ── TIER CARDS ───────────────────────── */
+    .tier-pair { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media(min-width:600px) { .tier-pair { grid-template-columns: 1fr 44px 1fr; align-items: center; } }
+    .tier-card { border: 1px solid var(--border); overflow: hidden; }
+    .tier-hd { padding: 10px 12px 8px; }
+    .tier-hd.mini { background: linear-gradient(135deg,#1a3566,#2b5ba8); }
+    .tier-hd.nano { background: linear-gradient(135deg,#1b3a6b,#3d6cbf); }
+    .tier-name { font-family: 'Source Serif 4', serif; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+    .tier-sub { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 1px; }
+    .tier-body { background: var(--white); }
+    .tier-row { display: flex; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--border2); font-size: 13px; color: var(--muted); }
     .tier-row:last-child { border: none; }
     .tier-row strong { color: var(--text); }
-    .swap-col { text-align: center; padding: 12px 4px; }
-    .swap-icon { font-size: 24px; color: var(--navy2); display: block; animation: pulse 2s ease infinite; }
-    .swap-lbl { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); display: block; margin-top: 4px; }
-    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+    .swap-c { text-align: center; }
+    .swap-ic { font-size: 22px; color: var(--navy2); display: block; animation: pulse 2s ease infinite; }
+    .swap-lb { font-family: 'Source Code Pro', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); display: block; margin-top: 3px; }
+    @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.15)} }
 
-    /* ── SURVEY RATINGS ─────────────────────── */
-    .rating-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
-    .rating-row:last-child { border: none; }
-    .rating-label { font-size: 13px; color: var(--text); min-width: 140px; flex-shrink: 0; }
-    .rating-bar-bg { flex: 1; height: 8px; background: var(--light); border-radius: 4px; overflow: hidden; }
-    .rating-bar-fill { height: 100%; border-radius: 4px; }
-    .rating-val { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; min-width: 36px; text-align: right; }
+    /* ── PATH ─────────────────────────────── */
+    .path { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .path-n { flex: 1; min-width: 80px; text-align: center; padding: 10px 12px; border: 1px solid var(--border); background: var(--white); }
+    .path-n.a { border-top: 3px solid var(--navy2); }
+    .path-n.b { border-top: 3px solid var(--red); }
+    .path-ic { font-size: 18px; display: block; margin-bottom: 3px; }
+    .path-nm { font-family: 'Source Serif 4', serif; font-size: 14px; font-weight: 700; color: var(--navy); }
+    .path-ds { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .path-arr { font-size: 18px; color: var(--muted); }
 
-    /* ── FEEDBACK THEMES ─────────────────────── */
-    .fb-theme { border-radius: 8px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 10px; }
-    .fb-theme:last-child { margin-bottom: 0; }
-    .fb-hd { padding: 9px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .fb-body { padding: 10px 14px; }
-    .fb-item { font-size: 13px; color: var(--text); display: flex; gap: 8px; line-height: 1.5; margin-bottom: 7px; }
-    .fb-item:last-child { margin-bottom: 0; }
-    .fb-item::before { content: '→'; color: var(--muted); flex-shrink: 0; font-size: 12px; margin-top: 2px; }
+    /* ── TEAM CARDS ───────────────────────── */
+    .teams-g { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media(min-width:700px) { .teams-g { grid-template-columns: repeat(5,1fr); } }
+    .team-card { border: 1px solid var(--border); overflow: hidden; }
+    .team-hd { padding: 7px 9px 5px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .team-pts-lbl { font-family: 'Source Code Pro', monospace; font-size: 10px; opacity: .75; }
+    .p-row { padding: 4px 9px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,.06); background: #fff; }
+    .p-row:nth-child(even) { background: var(--light); }
+    .p-cap  { color: var(--blue); font-weight: 600; }
+    .p-wing { color: var(--green); font-weight: 600; }
+    .p-badge { font-family: 'Source Code Pro', monospace; font-size: 9px; padding: 1px 5px; border-radius: 2px; font-weight: 600; }
 
-    /* ── PLAYER QUOTES ──────────────────────── */
-    .quote-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media(min-width:700px) { .quote-grid { grid-template-columns: 1fr 1fr; } }
-    .quote { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 14px; border-left: 3px solid var(--navy2); }
-    .quote p { font-size: 13px; line-height: 1.6; color: var(--text); font-style: italic; }
-    .quote-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    /* ── SCHEDULE ─────────────────────────── */
+    .sch-block { margin-bottom: 14px; }
+    .sch-hd { font-family: 'Source Code Pro', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--navy); margin-bottom: 5px; padding: 5px 8px; background: var(--navy3, var(--light)); border-left: 3px solid var(--navy2); }
+    .sch-row { display: grid; grid-template-columns: 60px 1fr 34px; align-items: center; gap: 4px; margin-bottom: 3px; }
+    .sch-t { font-family: 'Source Code Pro', monospace; font-size: 10px; color: var(--muted); text-align: right; padding-right: 7px; border-right: 2px solid var(--border); }
+    .sch-bar { border-radius: 3px; padding: 0 9px; font-size: 11px; font-weight: 600; height: 24px; display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sch-d { font-family: 'Source Code Pro', monospace; font-size: 10px; color: var(--muted); }
+    .sch-end { font-size: 11px; font-weight: 700; color: var(--navy); padding-left: 2px; display: flex; align-items: center; }
+    .rr1{background:linear-gradient(90deg,#1a3566,#2b5ba8);color:#fff}
+    .rr2{background:linear-gradient(90deg,#2b5ba8,#3d70c8);color:#fff}
+    .brk{background:#fff3e0;color:#d35400;border:1px solid #ffcc80}
+    .po{background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff}
+    .nr1{background:linear-gradient(90deg,#1b3a6b,#2d5499);color:#aac4ff}
+    .nr2{background:linear-gradient(90deg,#2d5499,#3d6cbf);color:#aac4ff}
+    .nf{background:linear-gradient(90deg,#1b5e20,#388e3c);color:#fff}
 
-    /* ── TEAM CARDS ─────────────────────────── */
-    .teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    @media(min-width: 700px) { .teams-grid { grid-template-columns: repeat(5, 1fr); } }
-    .team-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,.04); }
-    .team-hd { padding: 8px 10px 6px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: #fff; }
-    .team-pts { font-family: 'DM Mono', monospace; font-size: 10px; opacity: .75; }
-    .player-r { padding: 4px 10px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,.06); background: #fff; }
-    .player-r:nth-child(even) { background: var(--light); }
-    .pr-cap { color: #1565c0; font-weight: 600; }
-    .pr-wing { color: var(--green); font-weight: 600; }
-    .pr-badge { font-family: 'DM Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
-
-    /* ── SCHEDULE ───────────────────────────── */
-    .sched-block { margin-bottom: 16px; }
-    .sched-hd { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--navy2); margin-bottom: 6px; padding-left: 72px; }
-    .sched-row { display: grid; grid-template-columns: 64px 1fr 34px; align-items: center; gap: 5px; margin-bottom: 3px; }
-    .sched-t { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-align: right; padding-right: 8px; border-right: 2px solid var(--border); }
-    .sched-bar { border-radius: 4px; padding: 0 10px; font-size: 11px; font-weight: 600; height: 26px; display: flex; align-items: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .sched-dur { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
-    .sched-end { font-size: 11px; font-weight: 600; color: var(--navy); padding-left: 2px; display: flex; align-items: center; }
-    .rr1 { background: linear-gradient(90deg,#1a3566,#2b5ba8); color:#fff; }
-    .rr2 { background: linear-gradient(90deg,#2b5ba8,#3d70c8); color:#fff; }
-    .brk { background: var(--gold3); color: var(--gold); border: 1px solid #f5d76e; }
-    .po  { background: linear-gradient(90deg,#1b5e20,#2e7d32); color:#fff; }
-    .nr1 { background: linear-gradient(90deg,#1b3a6b,#2d5499); color:#aac4ff; }
-    .nr2 { background: linear-gradient(90deg,#2d5499,#3d6cbf); color:#aac4ff; }
-    .nf  { background: linear-gradient(90deg,#1b5e20,#388e3c); color:#fff; }
-
-    /* ── RULES ───────────────────────────────── */
-    .rule-block { margin-bottom: 12px; }
-    .rule-hd { background: var(--navy); color: var(--gold2); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .5px; padding: 7px 12px; border-radius: 6px 6px 0 0; }
-    .rule-hd.red { background: var(--red); color: #fff; }
-    .rule-hd.amber { background: #bf360c; color: #fff; }
-    .rule-bd { background: var(--white); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; padding: 8px 12px; }
-    .ri { padding: 4px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); display: flex; gap: 7px; line-height: 1.45; }
+    /* ── RULE BLOCKS ──────────────────────── */
+    .rule-b { margin-bottom: 10px; }
+    .rule-hd { font-family: 'Source Code Pro', monospace; font-size: 11px; letter-spacing: .3px; padding: 6px 10px; }
+    .rule-hd.navy { background: var(--navy); color: #fff; }
+    .rule-hd.red  { background: var(--red); color: #fff; }
+    .rule-hd.amb  { background: #bf360c; color: #fff; }
+    .rule-bd { background: var(--white); border: 1px solid var(--border); border-top: none; padding: 7px 10px; }
+    .ri { padding: 4px 0; border-bottom: 1px solid var(--border2); font-size: 12px; color: var(--text); display: flex; gap: 6px; line-height: 1.45; }
     .ri:last-child { border: none; }
-    .ri::before { content: '·'; color: var(--navy2); flex-shrink: 0; font-weight: 700; }
+    .ri::before { content: '·'; color: var(--red); flex-shrink: 0; font-weight: 700; font-size: 14px; line-height: 1.2; }
 
-    /* ── CALLOUTS ────────────────────────────── */
-    .callout { border-radius: 7px; padding: 10px 13px; font-size: 13px; line-height: 1.55; }
-    .callout strong { font-weight: 600; }
-    .callout.gold  { background: var(--gold3); border: 1px solid #f5d76e; }
-    .callout.gold strong { color: var(--gold); }
-    .callout.red   { background: var(--red2); border: 1px solid #ffcdd2; }
-    .callout.red strong { color: var(--red); }
-    .callout.blue  { background: var(--navy3); border: 1px solid #c5d4f0; }
-    .callout.blue strong { color: var(--navy); }
-    .callout.green { background: var(--green2); border: 1px solid #c8e6c9; }
-    .callout.green strong { color: var(--green); }
+    /* ── CALLOUT ──────────────────────────── */
+    .co { padding: 9px 11px; font-size: 12px; line-height: 1.55; border-left: 3px solid; margin-bottom: 8px; }
+    .co:last-child { margin-bottom: 0; }
+    .co strong { font-weight: 700; }
+    .co.red   { background: #fff0f0; border-color: var(--red); }.co.red strong { color: var(--red); }
+    .co.blue  { background: #e8eef8; border-color: var(--navy2); }.co.blue strong { color: var(--navy); }
+    .co.green { background: var(--green2); border-color: var(--green); }.co.green strong { color: var(--green); }
+    .co.amber { background: var(--amber2); border-color: var(--amber); }.co.amber strong { color: var(--amber); }
 
-    /* ── STEPS ───────────────────────────────── */
-    .steplist { display: flex; flex-direction: column; gap: 8px; }
-    .step { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; }
-    .step-n { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 14px; font-weight: 700; color: var(--gold2); flex-shrink: 0; margin-top: 1px; }
-    .step-t { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
-    .step-d { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    /* ── STEPS ────────────────────────────── */
+    .step-list { display: flex; flex-direction: column; gap: 0; }
+    .step-item { display: grid; grid-template-columns: 28px 1fr; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border2); align-items: start; }
+    .step-item:last-child { border: none; }
+    .step-n { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 2px; }
+    .step-t { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+    .step-d { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
-    /* ── DECISIONS ───────────────────────────── */
-    .dec-closed { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    .dec-closed-row { display: grid; grid-template-columns: 36px 1fr; gap: 6px; align-items: baseline; padding: 7px 12px; border-bottom: 1px solid var(--border); }
-    .dec-closed-row:last-child { border: none; }
-    .dec-ref { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
-    .dec-open-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 8px; align-items: start; padding: 10px 12px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; border-left: 3px solid; }
-    .dec-t { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+    /* ── DECISIONS ────────────────────────── */
+    .dec-closed { border: 1px solid var(--border); background: var(--white); }
+    .dec-c-row { display: grid; grid-template-columns: 36px 1fr; gap: 6px; align-items: baseline; padding: 6px 10px; border-bottom: 1px solid var(--border2); }
+    .dec-c-row:last-child { border: none; }
+    .dec-c-row:nth-child(even) { background: var(--light); }
+    .dec-ref { font-family: 'Source Code Pro', monospace; font-size: 10px; color: var(--muted); }
+    .dec-open { border: 1px solid var(--border); background: var(--white); border-left: 4px solid; margin-bottom: 6px; }
+    .dec-open-body { padding: 9px 11px; }
+    .dec-t { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
     .dec-d { font-size: 12px; color: var(--muted); line-height: 1.5; }
-    .priority-badge { font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 600; white-space: nowrap; margin-top: 2px; display: inline-block; }
+    .pri-hi  { border-left-color: var(--red); }
+    .pri-med { border-left-color: var(--amber); }
+    .pri-lo  { border-left-color: var(--muted); }
+    .pri-tag { font-family: 'Source Code Pro', monospace; font-size: 9px; padding: 2px 6px; font-weight: 700; border-radius: 2px; float: right; margin-top: 2px; }
+    .tag-hi  { background: #ffebee; color: var(--red); }
+    .tag-med { background: var(--amber2); color: var(--amber); }
+    .tag-lo  { background: var(--light); color: var(--muted); }
 
-    /* ── CHECKLIST ───────────────────────────── */
-    .chk-hd { font-size: 12px; font-weight: 700; color: var(--navy2); text-transform: uppercase; letter-spacing: .5px; margin: 12px 0 5px; font-family: 'DM Mono', monospace; }
-    .chk-item { display: flex; gap: 8px; padding: 6px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 5px; font-size: 13px; line-height: 1.45; margin-bottom: 4px; align-items: flex-start; }
-    .chk-box { width: 15px; height: 15px; border-radius: 3px; border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 1px; }
+    /* ── CHECKLIST ────────────────────────── */
+    .chk-sh { font-family: 'Source Code Pro', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--navy2); padding: 8px 0 4px; margin-top: 4px; }
+    .chk-item { display: flex; gap: 7px; padding: 5px 8px; font-size: 12px; line-height: 1.45; border-bottom: 1px solid var(--border2); align-items: flex-start; }
+    .chk-item:last-child { border: none; }
+    .chk-box { width: 13px; height: 13px; border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 1px; border-radius: 1px; }
 
-    /* ── NEXT STEPS ──────────────────────────── */
-    .ns-row { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; padding: 8px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 7px; margin-bottom: 5px; }
-    @media(min-width:600px) { .ns-row { grid-template-columns: 30px 80px 1fr 110px; } }
-    .ns-n { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--navy); text-align: center; line-height: 1; padding-top: 2px; }
-    .ns-o { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); padding-top: 3px; }
+    /* ── NEXT STEPS ───────────────────────── */
+    .ns-item { display: grid; grid-template-columns: 28px 1fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border2); }
+    @media(min-width:600px) { .ns-item { grid-template-columns: 28px 72px 1fr 100px; } }
+    .ns-item:last-child { border: none; }
+    .ns-n { font-family: 'Source Serif 4', serif; font-size: 17px; font-weight: 700; color: var(--red); text-align: center; line-height: 1; padding-top: 3px; }
+    .ns-o { font-family: 'Source Code Pro', monospace; font-size: 10px; color: var(--muted); padding-top: 3px; }
     .ns-t { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
     .ns-d { font-size: 12px; color: var(--muted); line-height: 1.4; }
-    .ns-w { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--navy2); text-align: right; padding-top: 3px; }
+    .ns-w { font-family: 'Source Code Pro', monospace; font-size: 10px; color: var(--navy2); text-align: right; padding-top: 3px; }
 
-    /* ── PATH ────────────────────────────────── */
-    .path { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
-    .path-node { text-align: center; padding: 14px 18px; border-radius: 10px; flex: 1; min-width: 90px; }
-    .path-node.a { background: var(--navy3); border: 1px solid #c5d4f0; }
-    .path-node.b { background: var(--gold3); border: 1px solid #f5d76e; }
-    .path-arr { font-size: 20px; color: var(--navy2); opacity: .5; }
-    .path-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-    .path-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: var(--navy); }
-    .path-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    /* ── SIDEBAR WIDGET ───────────────────── */
+    .widget { background: var(--white); border: 1px solid var(--border); margin-bottom: 14px; }
+    .widget-hd { background: var(--navy); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 7px 10px; }
+    .widget-body { padding: 10px; }
 
-    /* ── CORE MEMBER CHIPS ───────────────────── */
-    .member-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-    .chip { background: var(--navy3); border: 1px solid #c5d4f0; color: var(--navy); padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+    /* ── SKEL ─────────────────────────────── */
+    .skel { background: linear-gradient(90deg,var(--light) 25%,var(--bg2) 50%,var(--light) 75%); background-size: 200% 100%; animation: sk 1.4s infinite; }
+    @keyframes sk { 0%{background-position:200% 0}100%{background-position:-200% 0} }
 
-    /* ── SKEL ────────────────────────────────── */
-    .skel { background: linear-gradient(90deg,var(--light) 25%,var(--border) 50%,var(--light) 75%); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 6px; }
-    @keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    /* ── WORKING WELL ─────────────────────── */
+    .ww-item { display: flex; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border2); font-size: 13px; align-items: flex-start; line-height: 1.45; }
+    .ww-item:last-child { border: none; }
+    .ww-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 4px; }
 
-    /* ── NAV ANCHOR ──────────────────────────── */
-    .nav-link { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,.65); text-decoration: none; padding: 3px 6px; border-radius: 4px; transition: all .15s; }
-    .nav-link:hover { color: var(--gold2); background: rgba(255,255,255,.08); }
-    .nav-links { display: none; gap: 2px; align-items: center; }
-    @media(min-width:700px) { .nav-links { display: flex; } }
+    /* ── CORE MEMBER ROW ──────────────────── */
+    .cm-row { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 7px 10px; border-bottom: 1px solid var(--border2); }
+    .cm-row:last-child { border: none; }
+    .cm-row:nth-child(even) { background: var(--light); }
+    .cm-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+    .cm-team { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .cm-role { font-family: 'Source Code Pro', monospace; font-size: 10px; color: var(--muted); text-align: right; }
 
-    /* ── MISC ────────────────────────────────── */
-    .divider { height: 1px; background: var(--border); margin: 16px 0; }
-    .tag { font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; display: inline-block; }
-    .tag.hi { background: #ffebee; color: var(--red); border: 1px solid #ffcdd2; }
-    .tag.med { background: var(--amber2); color: var(--amber); border: 1px solid #ffcc80; }
-    .tag.lo { background: var(--light); color: var(--muted); border: 1px solid var(--border); }
-    footer { background: var(--navy); color: rgba(255,255,255,.6); text-align: center; padding: 28px 20px; font-size: 12px; }
-    footer strong { color: var(--gold2); }
+    footer { background: var(--navy); color: rgba(255,255,255,.5); text-align: center; padding: 24px 16px; font-size: 12px; }
+    footer strong { color: rgba(255,255,255,.85); }
+
+    @media(max-width:500px) {
+      .header-meta { display: none; }
+      .hbtn-outline { display: none; }
+    }
   </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div id="topbar">
-  <div class="logo">🏐 FVL <em>Season 2</em></div>
-  <nav class="nav-links">
-    <a class="nav-link" href="#standings">Standings</a>
-    <a class="nav-link" href="#s2proposal">Season 2</a>
-    <a class="nav-link" href="#feedback">Feedback</a>
-    <a class="nav-link" href="#teams">Teams</a>
-    <a class="nav-link" href="#format">Format</a>
-    <a class="nav-link" href="#governance">Governance</a>
-    <a class="nav-link" href="#actions">Actions</a>
-  </nav>
-  <div class="top-right">
-    <a href="#actions" class="btn btn-outline" style="display:none" id="action-btn">Actions</a>
-    <a href="/FVL_Governance.docx" download class="btn btn-gold">⬇ Full Doc</a>
+<!-- ══ HEADER ════════════════════════════════ -->
+<div id="header">
+  <div class="header-top">
+    <span class="espn-logo">FVL</span>
+    <div class="site-title">Friendly Volleyball <span>League</span></div>
+    <span class="header-meta">Season 2 Proposal · April 2026</span>
+    <div class="header-right">
+      <a href="#" class="hbtn hbtn-outline" onclick="showTab('actions');return false">Actions</a>
+      <a href="/FVL_Governance.docx" download class="hbtn hbtn-red">⬇ Full Doc</a>
+    </div>
+  </div>
+  <div id="tabbar">
+    <button class="tab active" onclick="showTab('overview')"   data-tab="overview">Overview</button>
+    <button class="tab"        onclick="showTab('feedback')"   data-tab="feedback">Player Feedback</button>
+    <button class="tab"        onclick="showTab('teams')"      data-tab="teams">Teams &amp; Squads</button>
+    <button class="tab"        onclick="showTab('format')"     data-tab="format">Format &amp; Rules</button>
+    <button class="tab"        onclick="showTab('governance')" data-tab="governance">Governance</button>
+    <button class="tab"        onclick="showTab('actions')"    data-tab="actions">Actions <span class="tab-num" id="open-count">7</span></button>
   </div>
 </div>
 
-<!-- HERO -->
-<div id="hero">
-  <div class="page">
-    <div>
-      <div class="hero-title">Season <em>2</em> Proposal</div>
-      <div class="hero-sub">April 2026 · Final month of Season 1 · Core member review</div>
-      <div class="hero-bullets">
-        <div class="hero-bullet"><span class="ic">🌱</span><span><strong>Activate Nano.</strong> 2 new teams enter at entry level. Bottom Mini drops down, Nano champion rises up every month.</span></div>
-        <div class="hero-bullet"><span class="ic">⚡</span><span><strong>Reset rosters.</strong> Full auction draft — every player back in the pool. Captains bid with equal budgets.</span></div>
-        <div class="hero-bullet"><span class="ic">🏆</span><span><strong>Earn your place.</strong> No team stays in Mini by default — performance decides tier every month.</span></div>
-      </div>
-    </div>
-    <div class="hero-stats">
-      <div class="hstat"><div class="hstat-val">4.43</div><div class="hstat-lbl">Overall rating</div></div>
-      <div class="hstat"><div class="hstat-val">83%</div><div class="hstat-lbl">Playing Season 2</div></div>
-      <div class="hstat"><div class="hstat-val">100%</div><div class="hstat-lbl">Fee worth it</div></div>
-      <div class="hstat"><div class="hstat-val">34</div><div class="hstat-lbl">Survey responses</div></div>
-    </div>
-  </div>
-</div>
+<!-- ══════════════════════════════════════════
+     TAB: OVERVIEW
+══════════════════════════════════════════════ -->
+<div class="panel active" id="panel-overview">
+<div class="wrap">
+<div class="page-grid">
 
-<div class="page">
-
-<!-- ═══════════════════════════════════
-     STANDINGS
-════════════════════════════════════ -->
-<div class="section" id="standings">
-  <div class="sec-label">Season 1</div>
-  <div class="sec-title">Current Standings</div>
-  <div id="standings-list">
-    <div class="skel" style="height:46px;margin-bottom:6px"></div>
-    <div class="skel" style="height:46px;margin-bottom:6px"></div>
-    <div class="skel" style="height:46px;margin-bottom:6px"></div>
-    <div class="skel" style="height:46px;margin-bottom:6px"></div>
-    <div class="skel" style="height:46px"></div>
-  </div>
-  <p style="margin-top:12px;font-size:12px;color:var(--muted);font-style:italic">April 2026 remaining. Panthers &amp; Dragons both on 10 pts — Dragons edge ahead on titles (1 vs 0). Final standings confirm Season 2 seedings and relegation.</p>
-</div>
-
-<!-- ═══════════════════════════════════
-     SEASON 2 STRUCTURE
-════════════════════════════════════ -->
-<div class="section" id="s2proposal">
-  <div class="sec-label">What's proposed</div>
-  <div class="sec-title">Season 2 Structure</div>
-
-  <div class="tier-pair" style="margin-bottom:16px">
-    <div class="tier-card">
-      <div class="tier-hd mini">
-        <div class="tier-name">⚡ Mini</div>
-        <div class="tier-sub">Competitive tier</div>
-      </div>
-      <div class="tier-body">
-        <div class="tier-row"><span>Teams</span><strong>4</strong></div>
-        <div class="tier-row"><span>Players / team</span><strong>7 <span style="font-size:11px;color:var(--gold);font-weight:400">(recommended)</span></strong></div>
-        <div class="tier-row"><span>Courts</span><strong>1 &amp; 2</strong></div>
-        <div class="tier-row"><span>Time</span><strong>9 AM – 12 PM</strong></div>
-        <div class="tier-row"><span>Format</span><strong>2× RR + Playoffs</strong></div>
-        <div class="tier-row"><span>Leadership</span><strong>Captain + Wingman</strong></div>
-        <div class="tier-row"><span>Bottom team</span><strong style="color:var(--red)">📉 → Nano</strong></div>
-      </div>
-    </div>
-    <div class="swap-col">
-      <span class="swap-icon">⇅</span>
-      <span class="swap-lbl">monthly swap</span>
-    </div>
-    <div class="tier-card">
-      <div class="tier-hd nano">
-        <div class="tier-name">🌱 Nano</div>
-        <div class="tier-sub">Entry &amp; development</div>
-      </div>
-      <div class="tier-body">
-        <div class="tier-row"><span>Teams</span><strong>3 (2 new)</strong></div>
-        <div class="tier-row"><span>Players / team</span><strong>7 <span style="font-size:11px;color:var(--gold);font-weight:400">(recommended)</span></strong></div>
-        <div class="tier-row"><span>Court</span><strong>Court 1 only</strong></div>
-        <div class="tier-row"><span>Time</span><strong>12 PM – 3 PM</strong></div>
-        <div class="tier-row"><span>Format</span><strong>2× RR + Final</strong></div>
-        <div class="tier-row"><span>Leadership</span><strong>Player-run</strong></div>
-        <div class="tier-row"><span>Champion</span><strong style="color:var(--green)">⬆️ → Mini</strong></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="two-col" style="margin-bottom:16px">
-    <div class="callout green"><strong>⬆️ Nano champion</strong> → promoted to Mini next month. Team as a unit moves together.</div>
-    <div class="callout red"><strong>📉 Mini bottom team</strong> → drops to Nano next month. Determined by final monthly standings.</div>
-  </div>
-
-  <div style="margin-bottom:16px">
-    <div class="sec-label" style="margin-bottom:8px">Path to the top</div>
-    <div class="path">
-      <div class="path-node a"><span class="path-icon">🌱</span><div class="path-name">Nano</div><div class="path-desc">Win monthly final</div><div class="path-desc" style="color:var(--gold);font-size:11px;margin-top:3px">As fast as 1 month</div></div>
-      <div class="path-arr">→</div>
-      <div class="path-node b"><span class="path-icon">⚡</span><div class="path-name">Mini</div><div class="path-desc">Perform consistently</div></div>
-      <div class="path-arr">→</div>
-      <div class="path-node b" style="background:var(--navy3);border-color:#c5d4f0"><span class="path-icon">🏆</span><div class="path-name">Major</div><div class="path-desc">Open to all — no eligibility</div></div>
-    </div>
-    <p style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted);font-style:italic">No team is locked in any tier forever. Every game, every month counts.</p>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════
-     PLAYER FEEDBACK
-════════════════════════════════════ -->
-<div class="section" id="feedback">
-  <div class="sec-label">Survey results</div>
-  <div class="sec-title">Player Feedback</div>
-
-  <!-- Ratings -->
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">Category Ratings — 28 responses</div>
-    <div id="ratings-list">
-      <div class="rating-row"><div class="rating-label">Communications</div><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:94.2%;background:#2e7d32"></div></div><div class="rating-val" style="color:#2e7d32">4.71</div></div>
-      <div class="rating-row"><div class="rating-label">Schedule</div><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:89.2%;background:#2e7d32"></div></div><div class="rating-val" style="color:#2e7d32">4.46</div></div>
-      <div class="rating-row"><div class="rating-label">Overall Experience</div><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:88.6%;background:#2e7d32"></div></div><div class="rating-val" style="color:#2e7d32">4.43</div></div>
-      <div class="rating-row"><div class="rating-label">Food &amp; Snacks</div><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:85%;background:#1565c0"></div></div><div class="rating-val" style="color:#1565c0">4.25</div></div>
-      <div class="rating-row"><div class="rating-label">Rules Clarity</div><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:82.8%;background:#1565c0"></div></div><div class="rating-val" style="color:#1565c0">4.14</div></div>
-      <div class="rating-row"><div class="rating-label">Game Quality</div><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:79.2%;background:#e65100"></div></div><div class="rating-val" style="color:#e65100">3.96 ⚠</div></div>
-    </div>
-    <div class="divider"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
-      <div style="text-align:center;padding:8px;background:var(--light);border-radius:6px"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--navy)">46%</div><div style="font-size:11px;color:var(--muted)">Perfectly balanced</div></div>
-      <div style="text-align:center;padding:8px;background:var(--light);border-radius:6px"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--navy)">83%</div><div style="font-size:11px;color:var(--muted)">Playing Season 2</div></div>
-      <div style="text-align:center;padding:8px;background:var(--light);border-radius:6px"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--navy)">43%</div><div style="font-size:11px;color:var(--muted)">Skill improved significantly</div></div>
-      <div style="text-align:center;padding:8px;background:var(--light);border-radius:6px"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--navy)">100%</div><div style="font-size:11px;color:var(--muted)">Fee worth it</div></div>
-    </div>
-  </div>
-
-  <!-- What's working -->
-  <div class="two-col" style="margin-bottom:16px">
-    <div class="card">
-      <div class="card-title">✅ What's Working Well</div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--green);flex-shrink:0">●</span><span><strong>Communications &amp; scheduling</strong> rated highest (4.71) — players feel informed and well-organised</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--green);flex-shrink:0">●</span><span><strong>Fun + competitive matches</strong> — the format is working; games are engaging and contested</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--green);flex-shrink:0">●</span><span><strong>Strong organisation &amp; volunteers</strong> — players recognise and appreciate the effort core members put in</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--green);flex-shrink:0">●</span><span><strong>Real skill growth</strong> — 82% of players feel their game has improved since joining FVL Mini</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">📋 Top 3 Focus Areas (High Impact)</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start">
-          <div style="width:26px;height:26px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">1</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--navy)">Improve team balance &amp; keep rosters stable</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Stop mid-season shuffles. Allow up to 3 retentions. Stable teams = better chemistry and results.</div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start">
-          <div style="width:26px;height:26px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">2</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--navy)">Ensure equal playtime &amp; rotations for everyone</div><div style="font-size:12px;color:var(--muted);margin-top:2px">7 players per team is the structural fix. Captains to track rotations — every player gets 2–3 full games minimum.</div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start">
-          <div style="width:26px;height:26px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">3</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--navy)">Define clear rules for new players, swaps &amp; transfers</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Publish the process before Season 2 starts. Players want to know the rules in advance, not discover them mid-season.</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Themes -->
-  <div style="margin-bottom:16px">
-    <div class="sec-label" style="margin-bottom:10px">What players asked for</div>
-    <div class="fb-theme">
-      <div class="fb-hd" style="background:#ffebee;color:var(--red)">🔴 Must Address</div>
-      <div class="fb-body">
-        <div class="fb-item">Referees for playoff / knockout games — the single most repeated request across all open responses</div>
-        <div class="fb-item">8 players means some sit out too much — bench time kills morale. Multiple explicit requests for max 7</div>
-        <div class="fb-item">No mid-season player transfers — destroys team identity and the chemistry players have built</div>
-        <div class="fb-item">Equal playtime for all — every player should get at least 2–3 full games per event, not just the stronger ones</div>
-      </div>
-    </div>
-    <div class="fb-theme">
-      <div class="fb-hd" style="background:var(--amber2);color:var(--amber)">🟡 High Value Changes</div>
-      <div class="fb-body">
-        <div class="fb-item">Auction / IPL-style draft — players are genuinely excited. Multiple responses called it out specifically as the right format</div>
-        <div class="fb-item">Captains need more voice — the committee should enable and support decisions, not make all decisions itself</div>
-        <div class="fb-item">Player retention (up to 3 per team) — allows chemistry to carry forward while still refreshing the pool</div>
-        <div class="fb-item">Clear rules for new players, swaps, and transfers — publish these before the season so everyone knows</div>
-      </div>
-    </div>
-    <div class="fb-theme">
-      <div class="fb-hd" style="background:var(--green2);color:var(--green)">🟢 Positive Signals</div>
-      <div class="fb-body">
-        <div class="fb-item">Nano / B-division concept well received — players see value in developing beginners separately before entering Mini</div>
-        <div class="fb-item">Team identity matters — players want to belong to one team for the full season, not be moved around</div>
-        <div class="fb-item">68% definitely or highly likely to play Season 2. Strong pipeline — momentum is there to build on</div>
-        <div class="fb-item">Communications and scheduling are working well — rated highest of all categories (4.71)</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Secondary improvements -->
-  <div class="two-col" style="margin-bottom:16px">
-    <div class="card">
-      <div class="card-title">🟡 Secondary Improvements</div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--amber);flex-shrink:0">→</span><span><strong>Better food options</strong> — quality of snacks declining. Players suggest simplifying or exploring alternatives to samosas. Morning games need food bought the night before.</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--amber);flex-shrink:0">→</span><span><strong>More practice games</strong> — players want at least one practice session per week to develop formations and skills between events</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--amber);flex-shrink:0">→</span><span><strong>Referees for fair play</strong> — at minimum for knockout and playoff stage games where stakes are highest</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--amber);flex-shrink:0">→</span><span><strong>Captains more involved</strong> in team decisions — consult captains before any roster change, don't make unilateral calls</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--amber);flex-shrink:0">→</span><span><strong>Beginner / B division</strong> — develop weaker players in a separate entry tier before they join competitive Mini (exactly what Nano addresses)</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--amber);flex-shrink:0">→</span><span><strong>Points table system</strong> — one player suggested: Winner 3pts, Runner-up 2pts, 3rd place 1pt per event instead of win-only tracking</span></div>
-        <div style="display:flex;gap:8px;font-size:13px;line-height:1.45"><span style="color:var(--amber);flex-shrink:0">→</span><span><strong>Game recording &amp; skill drills</strong> — record games for review; introduce player skill drills to raise overall game quality</span></div>
-      </div>
-    </div>
-    <div class="card" style="border-left:3px solid var(--navy2)">
-      <div class="card-title">🗓️ Action Plan for Next Season</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:var(--light);border-radius:6px;padding:9px 11px">
-          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px">Before Season starts</div>
-          <div style="font-size:12px;color:var(--muted)">Finalise teams + draft / waitlist process. Publish all rules for new players, swaps, and transfers before Day 1.</div>
-        </div>
-        <div style="background:var(--light);border-radius:6px;padding:9px 11px">
-          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px">Each event day</div>
-          <div style="font-size:12px;color:var(--muted)">Rotation tracking for equal playtime — Wingmen &amp; captains responsible. Simple snacks. Optional referee for playoffs.</div>
-        </div>
-        <div style="background:var(--light);border-radius:6px;padding:9px 11px">
-          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px">Monthly</div>
-          <div style="font-size:12px;color:var(--muted)">Brief feedback check-in. Wingmen log tier observations. Nano captain pipeline updated. Conduct issues escalated.</div>
-        </div>
-        <div style="background:var(--light);border-radius:6px;padding:9px 11px">
-          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px">Mid-season window</div>
-          <div style="font-size:12px;color:var(--muted)">Controlled transfer window — one agreed window where swaps can happen. No unilateral moves outside this window.</div>
-        </div>
-        <div class="callout blue" style="font-size:12px"><strong>Note:</strong> This action plan comes directly from the player survey (Slide 10). These are the commitments players are expecting to see implemented in Season 2.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Player quotes -->
-  <div class="sec-label" style="margin-bottom:10px">Voices from players</div>
-  <div class="quote-grid">
-    <div class="quote"><p>"7 players a team are enough. The 7th and 8th player doesn't get to do much or improve upon."</p><div class="quote-tag">On team size</div></div>
-    <div class="quote"><p>"Please organise a gala like IPL for team selection with everyone involved. Bidding will be even more interesting than round robin."</p><div class="quote-tag">On draft format</div></div>
-    <div class="quote"><p>"Captains need to voice out their opinions more and their voice should be considered. Don't make every judgement within the organising committee."</p><div class="quote-tag">On decision-making</div></div>
-    <div class="quote"><p>"I really think umpiring should be made compulsory, at least after the group games. We've had quite a few conflicts lately, especially in high-stakes matches."</p><div class="quote-tag">On referees</div></div>
-    <div class="quote"><p>"Moving players from one team to another is not something I liked. I feel the culture should be team mentality — players associated with one team throughout the season."</p><div class="quote-tag">On team stability</div></div>
-    <div class="quote"><p>"With 8 in a team not all are getting games. Same players are sitting more than others. Frequent sitting loses interest."</p><div class="quote-tag">On playtime equality</div></div>
-    <div class="quote"><p>"Drop beginner skill players from Mini to improve quality of playing. Stop shuffling teams often, allow player retention and trades to maintain team chemistry."</p><div class="quote-tag">On Mini quality</div></div>
-    <div class="quote"><p>"Thank you organisers for going above and beyond to get the tournament happen, love playing game with you all."</p><div class="quote-tag">On the team</div></div>
-    <div class="quote"><p>"If at all next season we are reshuffling, there must be optional retentions (maximum 3 per team) and a pool of 50 players for captains to pick from. Organise a gala like IPL for team selection with everyone involved."</p><div class="quote-tag">On draft &amp; retention</div></div>
-    <div class="quote"><p>"Umpires in knockouts, healthy competition under friendly atmosphere, player skill drills, recording for both all games."</p><div class="quote-tag">On operations</div></div>
-    <div class="quote"><p>"Keep team changes minimal for next season so that team coordination gets better."</p><div class="quote-tag">On team stability</div></div>
-    <div class="quote"><p>"The team's quality has gradually improved. Moving forward we need to focus on developing new formations — this responsibility lies primarily with the captains and wingmen."</p><div class="quote-tag">On development</div></div>
-    <div class="quote"><p>"Introducing a points table for the season rather than going by wins. Winner 3, Runner-up 2, third place 1 point per edition. Umpiring — teams are still fighting over fouls which is unprofessional."</p><div class="quote-tag">On scoring &amp; conduct</div></div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════
-     TEAMS & SQUADS
-════════════════════════════════════ -->
-<div class="section" id="teams">
-  <div class="sec-label">Season 1 rosters</div>
-  <div class="sec-title">All Teams &amp; Squads</div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Ordered by Season 1 standings. <span style="color:#1565c0;font-weight:600">Wing</span> = Wingman (core member) &nbsp;·&nbsp; <span style="color:#1b5e20;font-weight:600">Cap</span> = Captain &nbsp;·&nbsp; then alphabetical.</p>
-  <div id="teams-grid" class="teams-grid"></div>
-
-  <div style="margin-top:20px">
-    <div class="sec-label" style="margin-bottom:10px">Core members — Season 1 assignments</div>
-    <div id="core-members-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-      <div class="skel" style="height:38px"></div><div class="skel" style="height:38px"></div>
-      <div class="skel" style="height:38px"></div><div class="skel" style="height:38px"></div>
-      <div class="skel" style="height:38px"></div><div class="skel" style="height:38px"></div>
-    </div>
-    <div class="callout blue" style="margin-top:10px;font-size:13px"><strong>Core principle:</strong> Core members are never captains. Roles are fixed — no rotation between seasons.</div>
-  </div>
-
-  <div style="margin-top:16px">
-    <div class="sec-label" style="margin-bottom:8px">Player tier system</div>
-    <div class="card">
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:var(--light)"><th style="padding:7px 10px;text-align:left;color:var(--muted);font-size:11px;font-weight:600">Tier</th><th style="padding:7px 10px;text-align:left;color:var(--muted);font-size:11px;font-weight:600">Label</th><th style="padding:7px 10px;text-align:left;color:var(--muted);font-size:11px;font-weight:600">Home</th><th style="padding:7px 10px;text-align:left;color:var(--muted);font-size:11px;font-weight:600">Captain track</th></tr></thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 10px"><span style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--gold)">S</span></td><td style="padding:7px 10px;font-weight:600">Elite</td><td style="padding:7px 10px;color:var(--muted)">Any</td><td style="padding:7px 10px;color:var(--muted)">All formats</td></tr>
-          <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 10px"><span style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#1565c0">A</span></td><td style="padding:7px 10px;font-weight:600">Competitive</td><td style="padding:7px 10px;color:var(--muted)">Mini</td><td style="padding:7px 10px;color:var(--muted)">Mini / Major</td></tr>
-          <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 10px"><span style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#1b5e20">B</span></td><td style="padding:7px 10px;font-weight:600">Developing</td><td style="padding:7px 10px;color:var(--muted)">Mini/Nano</td><td style="padding:7px 10px;color:var(--muted)">Nano captain track</td></tr>
-          <tr><td style="padding:7px 10px"><span style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--muted)">C</span></td><td style="padding:7px 10px;font-weight:600">Recreational</td><td style="padding:7px 10px;color:var(--muted)">Nano</td><td style="padding:7px 10px;color:var(--muted)">—</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════
-     FORMAT & RULES
-════════════════════════════════════ -->
-<div class="section" id="format">
-  <div class="sec-label">Monthly event</div>
-  <div class="sec-title">Format &amp; Rules</div>
-
-  <div class="two-col" style="margin-bottom:20px">
-    <div class="card">
-      <div class="card-title">Event Day Schedule — 6 Hours</div>
-      <div id="schedule-tl"></div>
-      <div class="divider"></div>
-      <div class="callout gold" style="font-size:12px;margin-bottom:6px">🏆 #1 vs #2 → Champion / Runner-up &nbsp;·&nbsp; 📉 #3 vs #4 → 3rd / Nano Transfer</div>
-      <div class="callout blue" style="font-size:12px">⬆️ Nano champion → promoted to Mini &nbsp;·&nbsp; 2nd &amp; 3rd stay in Nano</div>
-    </div>
-    <div>
-      <div class="card" style="margin-bottom:12px">
-        <div class="card-title">Wingman System</div>
+  <!-- MAIN -->
+  <div>
+    <!-- Season 2 Proposal -->
+    <div class="sec-hd">Season 2 Proposal</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:12px">
         <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="background:var(--light);border-radius:6px;padding:9px 11px"><div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px">🤝 4 Mini Wingmen</div><div style="font-size:12px;color:var(--muted)">One per Mini team — permanently assigned. Advise captains, flag tier changes, co-sign trades. Mini only.</div></div>
-          <div style="background:var(--light);border-radius:6px;padding:9px 11px"><div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px">🌱 1 Nano Coordinator</div><div style="font-size:12px;color:var(--muted)">Runs full Nano event. Schedules, scores, identifies champion. Scouts future Mini captain candidates.</div></div>
-          <div style="background:var(--light);border-radius:6px;padding:9px 11px"><div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px">⚙️ 1 Floating / League Manager</div><div style="font-size:12px;color:var(--muted)">League-wide admin, dispute resolution, backup Wingman. Sunil fills this in Season 1.</div></div>
+          <div style="display:flex;gap:10px;font-size:13px;line-height:1.5;padding:8px;background:#f8f8f8;border-left:3px solid var(--navy2)"><span style="font-size:16px;flex-shrink:0">🌱</span><span><strong>Activate Nano.</strong> 2 new teams join at entry level. The bottom Mini team drops down and the Nano champion rises up — every single month.</span></div>
+          <div style="display:flex;gap:10px;font-size:13px;line-height:1.5;padding:8px;background:#f8f8f8;border-left:3px solid var(--navy2)"><span style="font-size:16px;flex-shrink:0">⚡</span><span><strong>Reset rosters via auction draft.</strong> Every player goes back in the pool. Captains bid with equal budgets — transparent, fair, and player-driven.</span></div>
+          <div style="display:flex;gap:10px;font-size:13px;line-height:1.5;padding:8px;background:#f8f8f8;border-left:3px solid var(--red)"><span style="font-size:16px;flex-shrink:0">🏆</span><span><strong>Earn your place.</strong> No team stays in Mini by default. Performance decides tier every month — results matter at every event.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Standings -->
+    <div class="sec-hd">Season 1 Standings <span style="font-size:10px;font-weight:400;color:var(--muted)">5 of 6 months played</span></div>
+    <div class="card">
+      <div id="standings-list">
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+      </div>
+      <div style="padding:7px 10px;font-size:11px;color:var(--muted);font-style:italic;border-top:1px solid var(--border2)">Panthers &amp; Dragons tied on 10 pts — Dragons ahead on titles (1 vs 0). April 2026 confirms final standings.</div>
+    </div>
+
+    <!-- Season 2 Structure -->
+    <div class="sec-hd" style="margin-top:14px">Season 2 Structure</div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-body">
+        <div class="tier-pair">
+          <div class="tier-card">
+            <div class="tier-hd mini"><div class="tier-name">⚡ Mini</div><div class="tier-sub">Competitive Tier</div></div>
+            <div class="tier-body">
+              <div class="tier-row"><span>Teams</span><strong>4</strong></div>
+              <div class="tier-row"><span>Players / team</span><strong>7 <span style="font-size:11px;color:var(--gold);font-weight:400">(recommended)</span></strong></div>
+              <div class="tier-row"><span>Time</span><strong>9 AM – 12 PM</strong></div>
+              <div class="tier-row"><span>Courts</span><strong>1 &amp; 2</strong></div>
+              <div class="tier-row"><span>Format</span><strong>2× RR + Playoffs</strong></div>
+              <div class="tier-row"><span>Bottom team</span><strong style="color:var(--red)">📉 → Nano</strong></div>
+            </div>
+          </div>
+          <div class="swap-c"><span class="swap-ic">⇅</span><span class="swap-lb">monthly swap</span></div>
+          <div class="tier-card">
+            <div class="tier-hd nano"><div class="tier-name">🌱 Nano</div><div class="tier-sub">Entry Tier — NEW</div></div>
+            <div class="tier-body">
+              <div class="tier-row"><span>Teams</span><strong>3 (2 new)</strong></div>
+              <div class="tier-row"><span>Players / team</span><strong>7 <span style="font-size:11px;color:var(--gold);font-weight:400">(recommended)</span></strong></div>
+              <div class="tier-row"><span>Time</span><strong>12 PM – 3 PM</strong></div>
+              <div class="tier-row"><span>Court</span><strong>Court 1 only</strong></div>
+              <div class="tier-row"><span>Format</span><strong>2× RR + Final</strong></div>
+              <div class="tier-row"><span>Champion</span><strong style="color:var(--green)">⬆️ → Mini</strong></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div class="co green" style="margin:0"><strong>⬆️ Nano champion</strong> → promoted to Mini next month</div>
+          <div class="co red" style="margin:0"><strong>📉 Mini bottom team</strong> → drops to Nano next month</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="sec-hd">Path to the Top</div>
+      <div class="path" style="gap:8px">
+        <div class="path-n a"><span class="path-ic">🌱</span><div class="path-nm">Nano</div><div class="path-ds">Win monthly final</div><div style="font-size:10px;color:var(--red);margin-top:2px;font-family:'Source Code Pro',monospace">AS FAST AS 1 MONTH</div></div>
+        <div class="path-arr">→</div>
+        <div class="path-n a"><span class="path-ic">⚡</span><div class="path-nm">Mini</div><div class="path-ds">Consistent performance</div></div>
+        <div class="path-arr">→</div>
+        <div class="path-n b"><span class="path-ic">🏆</span><div class="path-nm">Major</div><div class="path-ds">Open to all · no eligibility</div></div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:8px;font-style:italic">No team is locked in any tier forever. Every game, every month counts.</p>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <div class="widget">
+      <div class="widget-hd">Survey at a Glance</div>
+      <div class="widget-body">
+        <div class="stat-row" style="margin-bottom:10px">
+          <div class="stat-pill"><div class="val">4.43</div><div class="lbl">Overall rating</div></div>
+          <div class="stat-pill"><div class="val">4.71</div><div class="lbl">Comms rating</div></div>
+          <div class="stat-pill"><div class="val" style="color:var(--amber)">3.96</div><div class="lbl">Game quality ⚠</div></div>
+          <div class="stat-pill"><div class="val">83%</div><div class="lbl">Playing Season 2</div></div>
+        </div>
+        <div class="r-row"><div class="r-label">Communications</div><div class="r-bg"><div class="r-fill" style="width:94%;background:#2e7d32"></div></div><div class="r-val" style="color:#2e7d32">4.71</div></div>
+        <div class="r-row"><div class="r-label">Schedule</div><div class="r-bg"><div class="r-fill" style="width:89%;background:#2e7d32"></div></div><div class="r-val" style="color:#2e7d32">4.46</div></div>
+        <div class="r-row"><div class="r-label">Overall Exp.</div><div class="r-bg"><div class="r-fill" style="width:89%;background:#2e7d32"></div></div><div class="r-val" style="color:#2e7d32">4.43</div></div>
+        <div class="r-row"><div class="r-label">Food &amp; Snacks</div><div class="r-bg"><div class="r-fill" style="width:85%;background:#1565c0"></div></div><div class="r-val" style="color:#1565c0">4.25</div></div>
+        <div class="r-row"><div class="r-label">Rules Clarity</div><div class="r-bg"><div class="r-fill" style="width:83%;background:#1565c0"></div></div><div class="r-val" style="color:#1565c0">4.14</div></div>
+        <div class="r-row"><div class="r-label">Game Quality</div><div class="r-bg"><div class="r-fill" style="width:79%;background:#d35400"></div></div><div class="r-val" style="color:#d35400">3.96</div></div>
+      </div>
+    </div>
+    <div class="widget">
+      <div class="widget-hd">Open Decisions</div>
+      <div id="decisions-sidebar" class="widget-body" style="padding:8px 10px">
+        <div class="skel" style="height:20px;margin-bottom:5px"></div>
+        <div class="skel" style="height:20px;margin-bottom:5px"></div>
+        <div class="skel" style="height:20px"></div>
+      </div>
+    </div>
+    <div class="widget">
+      <div class="widget-hd">Key Feedback Themes</div>
+      <div class="widget-body" style="padding:0">
+        <div style="padding:7px 10px;border-bottom:1px solid var(--border2);background:#fff5f5">
+          <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px">🔴 Must Address</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.5">Referees · Team size 7 · No mid-season transfers · Equal playtime</div>
+        </div>
+        <div style="padding:7px 10px;border-bottom:1px solid var(--border2);background:#fffbf0">
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px">🟡 High Value</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.5">Auction draft · More captain voice · RTM retention · Rules published upfront</div>
+        </div>
+        <div style="padding:7px 10px;background:var(--green2)">
+          <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">🟢 Positive</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.5">Nano idea loved · Team identity · 68% definitely returning · Comms excellent</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">Game Rules</div>
-    <div class="callout red" style="margin-bottom:12px"><strong>⚖️ Referee's call is final.</strong> Only captains may address the referee during a game.</div>
-    <div class="two-col">
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB: PLAYER FEEDBACK
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-feedback">
+<div class="wrap">
+<div class="page-grid">
+  <div>
+    <!-- Working well -->
+    <div class="sec-hd">What's Working Well</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:6px 10px">
+        <div class="ww-item"><div class="ww-dot"></div><div><strong>Communications &amp; scheduling</strong> rated highest (4.71) — players feel informed and well-organised throughout the season</div></div>
+        <div class="ww-item"><div class="ww-dot"></div><div><strong>Fun + competitive matches</strong> — the format is working; games are engaging and contested at all levels</div></div>
+        <div class="ww-item"><div class="ww-dot"></div><div><strong>Strong organisation &amp; volunteers</strong> — players explicitly recognise and appreciate the effort core members put in</div></div>
+        <div class="ww-item"><div class="ww-dot"></div><div><strong>Real skill growth</strong> — 82% of players (28/34) feel their game has improved since joining FVL Mini</div></div>
+        <div class="ww-item"><div class="ww-dot"></div><div><strong>100% fee satisfaction</strong> — every respondent felt the tournament fee provides value for money</div></div>
+      </div>
+    </div>
+
+    <!-- Top 3 focus areas -->
+    <div class="sec-hd">Top 3 Focus Areas — High Impact</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:6px 10px">
+        <div class="focus-item"><div class="focus-n">1</div><div><div class="focus-t">Improve team balance &amp; keep rosters stable</div><div class="focus-d">Stop mid-season shuffles. Allow up to 3 retentions per team. Stable teams build better chemistry and deliver better results. Players want to belong to one team for the entire season.</div></div></div>
+        <div class="focus-item"><div class="focus-n">2</div><div><div class="focus-t">Ensure equal playtime &amp; rotations for every player</div><div class="focus-d">7 players per team is the structural fix. Captains and Wingmen to track rotations actively — every player should get at least 2–3 full games per event, not just the stronger ones.</div></div></div>
+        <div class="focus-item"><div class="focus-n">3</div><div><div class="focus-t">Define clear rules for new players, swaps &amp; transfers</div><div class="focus-d">Publish the process before Season 2 starts. Players want to know the rules in advance — not discover them mid-season. This builds trust and reduces disputes.</div></div></div>
+      </div>
+    </div>
+
+    <!-- What players asked -->
+    <div class="sec-hd">Detailed Feedback — What Players Asked For</div>
+    <div style="margin-bottom:14px">
+      <div class="fb">
+        <div class="fb-hd" style="background:#fff0f0;border-color:var(--red);color:var(--red)">🔴 Must Address — Highest frequency requests</div>
+        <div class="fb-body">
+          <div class="fb-item">Referees for playoff &amp; knockout games — the single most repeated request. Players are frustrated by disputes in high-stakes games without independent officiating</div>
+          <div class="fb-item">Maximum 7 players per team — 8 means some players sit too much. Bench time kills morale and discourages continued participation</div>
+          <div class="fb-item">No mid-season player transfers — destroys team identity and the chemistry players have invested in building together all season</div>
+          <div class="fb-item">Equal playtime rotation — captains must ensure every player gets 2–3 full games. Same players sitting repeatedly is demotivating and unfair</div>
+        </div>
+      </div>
+      <div class="fb">
+        <div class="fb-hd" style="background:var(--amber2);border-color:var(--amber);color:var(--amber)">🟡 High Value — Players expect these changes</div>
+        <div class="fb-body">
+          <div class="fb-item">Auction / IPL-style draft — players are genuinely excited by this. Multiple responses called it out specifically as the right format — transparent, fair, competitive</div>
+          <div class="fb-item">Captains need more voice in team decisions — the committee should enable and support, not make all decisions without consulting captains</div>
+          <div class="fb-item">Player retention (up to 3 per team suggested) — allows chemistry to carry forward while still giving the league a fresh feel each season</div>
+          <div class="fb-item">Clear published rules for new players, swaps, and transfers — players want these in writing before Day 1, not communicated ad hoc</div>
+          <div class="fb-item">Points table system — one response suggested Winner 3pts, Runner-up 2pts, 3rd place 1pt per event, rather than win-only counting</div>
+        </div>
+      </div>
+      <div class="fb">
+        <div class="fb-hd" style="background:var(--green2);border-color:var(--green);color:var(--green)">🟢 Positive Signals — Keep and build on</div>
+        <div class="fb-body">
+          <div class="fb-item">Nano / B-division concept well received — players see real value in a separate entry tier for beginners before they compete in full Mini</div>
+          <div class="fb-item">Team identity matters deeply — players want to represent one team for the full season, not be moved between teams</div>
+          <div class="fb-item">68% definitely or highly likely to play Season 2, 15% maybe — strong pipeline and momentum to build on</div>
+          <div class="fb-item">Communications rated highest at 4.71 — players feel well-informed. Scheduling also rated very highly at 4.46</div>
+        </div>
+      </div>
+      <div class="fb">
+        <div class="fb-hd" style="background:var(--blue2);border-color:var(--navy2);color:var(--navy2)">🔵 Secondary Improvements — Worth considering</div>
+        <div class="fb-body">
+          <div class="fb-item">Better food / snack options — quality slipping recently. Explore alternatives. Morning games need food ready the night before</div>
+          <div class="fb-item">More practice games — at least one session per week to develop formations and improve game quality between events</div>
+          <div class="fb-item">Player skill drills — structured drills at events to raise overall standard, particularly for setters and hitters</div>
+          <div class="fb-item">Game recording — record all games for player review and development purposes</div>
+          <div class="fb-item">Beginner / B-division — develop weaker players in a separate entry tier (exactly what Nano addresses in Season 2)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action plan from survey -->
+    <div class="sec-hd">Action Plan for Next Season <span style="font-size:10px;color:var(--muted);font-weight:400">(from player survey, Slide 10)</span></div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:4px 10px">
+        <div class="ap-item"><span class="ap-tag">Before Season</span><div><div class="ap-t">Finalise teams + draft / waitlist process</div><div class="ap-d">Publish all rules for new players, swaps, and transfers before Day 1. No more ad hoc rule announcements mid-season.</div></div></div>
+        <div class="ap-item"><span class="ap-tag">Each Event</span><div><div class="ap-t">Rotation tracking for equal playtime</div><div class="ap-d">Wingmen and captains responsible. Simple snacks. Optional referee for playoffs as minimum. Record games where possible.</div></div></div>
+        <div class="ap-item"><span class="ap-tag">Monthly</span><div><div class="ap-t">Feedback check-in</div><div class="ap-d">Brief pulse check after each event. Wingmen log tier observations. Nano captain pipeline updated. Any conduct issues escalated immediately.</div></div></div>
+        <div class="ap-item"><span class="ap-tag">Mid-Season</span><div><div class="ap-t">Controlled transfer window</div><div class="ap-d">One agreed window where swaps can happen with captain consent. No unilateral player moves outside this window under any circumstances.</div></div></div>
+      </div>
+    </div>
+
+    <!-- Quotes -->
+    <div class="sec-hd">Voices from Players</div>
+    <div class="quote-grid">
+      <div class="quote"><p>"7 players a team are enough. The 7th and 8th player doesn't get to do much or improve upon."</p><div class="q-tag">On team size</div></div>
+      <div class="quote"><p>"Please organise a gala like IPL for team selection with everyone involved. Bidding will be even more interesting than round robin."</p><div class="q-tag">On draft format</div></div>
+      <div class="quote"><p>"Captains need to voice out their opinions more and their voice should be considered. Don't make every judgement within the organising committee."</p><div class="q-tag">On decision-making</div></div>
+      <div class="quote"><p>"I really think umpiring should be made compulsory, at least after the group games. We've had quite a few conflicts lately, especially in high-stakes matches."</p><div class="q-tag">On referees</div></div>
+      <div class="quote"><p>"Moving players from one team to another is not something I liked. The culture should be team mentality — players associated with one team throughout the season."</p><div class="q-tag">On team stability</div></div>
+      <div class="quote"><p>"With 8 in a team not all are getting games. Same players are sitting more than others. Frequent sitting loses interest."</p><div class="q-tag">On playtime equality</div></div>
+      <div class="quote"><p>"If at all we are reshuffling, there must be optional retentions (max 3 per team) and a pool of 50 players for captains to pick from. Bidding will be even more interesting."</p><div class="q-tag">On retention &amp; draft</div></div>
+      <div class="quote"><p>"Keep team changes minimal for next season so that team coordination gets better."</p><div class="q-tag">On stability</div></div>
+      <div class="quote"><p>"Umpires in knockouts, healthy competition under friendly atmosphere, player skill drills, recording for both all games."</p><div class="q-tag">On operations</div></div>
+      <div class="quote"><p>"The team's quality has gradually improved. Moving forward we need to focus on developing new formations — this responsibility lies primarily with captains and wingmen."</p><div class="q-tag">On development</div></div>
+      <div class="quote"><p>"Drop beginner skill players from Mini to improve quality. Stop shuffling teams often. Allow player retention and trades to maintain team chemistry."</p><div class="q-tag">On Mini quality</div></div>
+      <div class="quote"><p>"Thank you organisers for going above and beyond to get the tournament happen, love playing game with you all."</p><div class="q-tag">On the team</div></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <div class="widget">
+      <div class="widget-hd">Survey Stats</div>
+      <div class="widget-body" style="padding:0">
+        <table class="scard" style="font-size:12px">
+          <tr><td>Responses</td><td class="r num bold">34</td></tr>
+          <tr><td>Participation rate</td><td class="r num bold">83%</td></tr>
+          <tr><td>Feel skill improved</td><td class="r num bold">82%</td></tr>
+          <tr><td>Playing Season 2</td><td class="r num bold">83%</td></tr>
+          <tr><td>Fee worth it</td><td class="r num bold" style="color:var(--green)">100%</td></tr>
+          <tr><td>Team balance: good</td><td class="r num bold">54%</td></tr>
+          <tr><td>Team balance: needs work</td><td class="r num bold" style="color:var(--amber)">46%</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="widget">
+      <div class="widget-hd">Top Requests (by frequency)</div>
+      <div class="widget-body" style="padding:0">
+        <table class="scard" style="font-size:12px">
+          <tr><td>Referees for playoffs</td><td class="r"><span style="font-family:'Source Code Pro',monospace;font-size:10px;background:#ffebee;color:var(--red);padding:1px 5px;border-radius:2px">HIGH</span></td></tr>
+          <tr><td>Max 7 players</td><td class="r"><span style="font-family:'Source Code Pro',monospace;font-size:10px;background:#ffebee;color:var(--red);padding:1px 5px;border-radius:2px">HIGH</span></td></tr>
+          <tr><td>Stable rosters</td><td class="r"><span style="font-family:'Source Code Pro',monospace;font-size:10px;background:#ffebee;color:var(--red);padding:1px 5px;border-radius:2px">HIGH</span></td></tr>
+          <tr><td>Equal playtime</td><td class="r"><span style="font-family:'Source Code Pro',monospace;font-size:10px;background:#ffebee;color:var(--red);padding:1px 5px;border-radius:2px">HIGH</span></td></tr>
+          <tr><td>Auction draft</td><td class="r"><span style="font-family:'Source Code Pro',monospace;font-size:10px;background:var(--amber2);color:var(--amber);padding:1px 5px;border-radius:2px">MED</span></td></tr>
+          <tr><td>Captain more voice</td><td class="r"><span style="font-family:'Source Code Pro',monospace;font-size:10px;background:var(--amber2);color:var(--amber);padding:1px 5px;border-radius:2px">MED</span></td></tr>
+          <tr><td>Practice games</td><td class="r"><span style="font-family:'Source Code Pro',monospace;font-size:10px;background:#f5f5f5;color:var(--muted);padding:1px 5px;border-radius:2px">LOW</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB: TEAMS & SQUADS
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-teams">
+<div class="wrap" style="padding-top:14px">
+  <div class="sec-hd">Season 1 Squads <span style="font-size:10px;color:var(--muted);font-weight:400">Wingman · Captain · Alphabetical · Ordered by standings</span></div>
+  <div id="teams-grid" class="teams-g" style="margin-bottom:16px"></div>
+
+  <div style="display:grid;grid-template-columns:1fr;gap:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div>
-        <div class="rule-block"><div class="rule-hd">12.1 Scoring</div><div class="rule-bd"><div class="ri">Games to 21, rally scoring. 20-20 → 2-point lead wins. 24-24 → first to 25 wins.</div><div class="ri">3 hits per team. No player hits twice in succession. Ball on line = in play.</div><div class="ri">Serve behind baseline, hand only. Server joins play after serving.</div></div></div>
-        <div class="rule-block"><div class="rule-hd">12.2 Blocking</div><div class="rule-bd"><div class="ri">Defensive team may jump and block. A block does NOT count as one of the 3 hits.</div></div></div>
-        <div class="rule-block"><div class="rule-hd amber">12.3 Overreach &amp; Attack — FVL Rule</div><div class="rule-bd"><div class="callout gold" style="margin-bottom:7px;font-size:12px"><strong>Before attack is finished → hands off. After attack is finished → fair game to block, even over the net.</strong></div><div class="ri">Attack = ball clearly travelling toward opponent's side — spike, pass, push, tip.</div><div class="ri">1st, 2nd, or 3rd contact — all fair once attack is complete. Umpire has final say.</div></div></div>
+        <div class="sec-hd">Core Members — Season 1</div>
+        <div class="card">
+          <div id="core-members-grid">
+            <div class="skel" style="height:36px;margin:2px"></div>
+            <div class="skel" style="height:36px;margin:2px"></div>
+            <div class="skel" style="height:36px;margin:2px"></div>
+            <div class="skel" style="height:36px;margin:2px"></div>
+            <div class="skel" style="height:36px;margin:2px"></div>
+            <div class="skel" style="height:36px;margin:2px"></div>
+          </div>
+          <div class="co blue" style="margin:8px;font-size:11px"><strong>Rule:</strong> Core members are never team captains. Roles are fixed — no rotation season to season.</div>
+        </div>
       </div>
       <div>
-        <div class="rule-block"><div class="rule-hd red">12.4 Violations</div><div class="rule-bd"><div class="ri">Foot fault on serve · net touch · ball under net · carrying.</div><div class="ri">Serve cannot be blocked or spiked. Double contact = foul (except block+hit, or first single-action hit).</div><div class="ri">Center line: violation if body crosses AND interferes. Full body crossing = foul regardless.</div></div></div>
-        <div class="rule-block"><div class="rule-hd">12.5 Rotation</div><div class="rule-bd"><div class="ri">Mandatory clockwise. Right-back serves first. Rotate after winning rally and regaining serve.</div><div class="ri">Back-row may attack from behind 10-foot line. Cannot attack/block above net in front of it.</div></div></div>
-        <div class="rule-block"><div class="rule-hd">12.7–12.8 Replacement &amp; Tiebreaker</div><div class="rule-bd"><div class="ri">Replacement: similar skill, not played that game or prior, accepted by both captains.</div><div class="ri">Tiebreaker order: 1. Wins &nbsp; 2. Points diff &nbsp; 3. Coin toss. No tiebreaker games played.</div></div></div>
+        <div class="sec-hd">Player Tier System</div>
+        <div class="card">
+          <table class="scard">
+            <thead><tr><th>Tier</th><th>Label</th><th>Home</th><th>Cap track</th></tr></thead>
+            <tbody>
+              <tr><td><span style="font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;color:var(--gold)">S</span></td><td class="bold">Elite</td><td>Any</td><td>All formats</td></tr>
+              <tr><td><span style="font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;color:var(--blue)">A</span></td><td class="bold">Competitive</td><td>Mini</td><td>Mini / Major</td></tr>
+              <tr><td><span style="font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;color:var(--green)">B</span></td><td class="bold">Developing</td><td>Mini/Nano</td><td>Nano captain</td></tr>
+              <tr><td><span style="font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;color:var(--muted)">C</span></td><td class="bold">Recreational</td><td>Nano</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-hd">Season 2 Squad Changes</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="co amber" style="margin-bottom:6px"><strong>Team size:</strong> Recommended 7 players (down from 8). Player feedback consistently and strongly requested this to reduce bench time and ensure equal participation.</div>
+          <div class="co blue" style="margin-bottom:6px"><strong>Rosters reset:</strong> Full auction draft before Season 2. Every player returns to the pool. Captains bid with equal budgets. Up to 3 RTM tokens allow targeted retention.</div>
+          <div class="co red" style="margin:0"><strong>Relegation:</strong> Bottom Mini team after April 2026 enters Season 2 in Nano. 2 new teams also join via Nano — making 3 Nano teams total.</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+</div>
 
-<!-- ═══════════════════════════════════
-     GOVERNANCE
-════════════════════════════════════ -->
-<div class="section" id="governance">
-  <div class="sec-label">How teams are formed</div>
-  <div class="sec-title">Governance &amp; Draft</div>
+<!-- ══════════════════════════════════════════
+     TAB: FORMAT & RULES
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-format">
+<div class="wrap">
+<div class="page-grid">
+  <div>
+    <div class="sec-hd">Monthly Event Day — 6 Hours</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body"><div id="schedule-tl"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 10px;border-top:1px solid var(--border2)">
+        <div class="co amber" style="margin:0;font-size:12px">🏆 #1 vs #2 → Champion / Runner-up<br>📉 #3 vs #4 → 3rd / Nano Transfer</div>
+        <div class="co blue" style="margin:0;font-size:12px">⬆️ Nano champion → promoted to Mini<br>2nd &amp; 3rd stay in Nano next month</div>
+      </div>
+    </div>
 
-  <div class="two-col" style="margin-bottom:20px">
+    <div class="sec-hd">Game Rules</div>
     <div class="card">
-      <div class="card-title">Captain Selection</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
-        <div><div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:5px">Eligibility</div><div style="font-size:12px;color:var(--muted);line-height:1.8">Not a core member<br>Tier A or S (B for Nano)<br>1+ full FVL seasons<br>≤2 absences prior season<br>No unresolved flags<br>Must explicitly accept</div></div>
-        <div><div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:5px">6-Step Process</div><div style="font-size:12px;color:var(--muted);line-height:1.8">Private nominations (up to 2 each)<br>Reveal simultaneously<br>2+ votes advance · 5 min each<br>Contact within 24 hours<br>If declined → next candidate<br>Announce with Wingman pairings</div></div>
+      <div class="card-body">
+        <div class="co red" style="margin-bottom:10px"><strong>⚖️ Referee's call is final.</strong> Only captains may address the referee. No other player may approach regarding any call.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="rule-b"><div class="rule-hd navy">12.1 Scoring</div><div class="rule-bd"><div class="ri">Games to 21, rally scoring. 20-20 → 2-point lead wins. 24-24 → first to 25 wins.</div><div class="ri">3 hits per team. No player hits twice in succession. Ball on line = in play.</div><div class="ri">Serve from behind baseline, hand only. Server joins play after serving.</div></div></div>
+            <div class="rule-b"><div class="rule-hd navy">12.2 Blocking</div><div class="rule-bd"><div class="ri">Defensive team may jump and block. A block does NOT count as one of the 3 hits.</div></div></div>
+            <div class="rule-b"><div class="rule-hd amb">12.3 Overreach &amp; Attack — FVL Rule</div><div class="rule-bd"><div class="co amber" style="margin-bottom:6px;font-size:12px"><strong>Before attack is finished → hands off. After attack is finished → fair game to block, even over the net.</strong></div><div class="ri">Attack = ball clearly going toward opponent's side — spike, pass, push, or tip.</div><div class="ri">1st, 2nd, or 3rd contact — all fair once attack is complete. Umpire has final say.</div></div></div>
+          </div>
+          <div>
+            <div class="rule-b"><div class="rule-hd red">12.4 Violations</div><div class="rule-bd"><div class="ri">Foot fault on serve · touching net · ball under net · carrying the ball.</div><div class="ri">Serve cannot be blocked or spiked. Double contact = foul (except block+hit, or first single-action hit).</div><div class="ri">Center line: violation if body crosses AND interferes. Full crossing = foul regardless.</div></div></div>
+            <div class="rule-b"><div class="rule-hd navy">12.5 Rotation</div><div class="rule-bd"><div class="ri">Mandatory clockwise. Right-back serves first. Rotate after winning rally and regaining serve.</div><div class="ri">Back-row may attack from behind 10-foot line. Cannot attack/block above net in front of it.</div></div></div>
+            <div class="rule-b"><div class="rule-hd navy">12.7–12.8 Replacement &amp; Tiebreaker</div><div class="rule-bd"><div class="ri">Replacement: similar skill level, not played that game or prior, accepted by both captains.</div><div class="ri">Tiebreaker: 1. Wins &nbsp; 2. Points differential &nbsp; 3. Coin toss. No tiebreaker games.</div></div></div>
+          </div>
+        </div>
       </div>
-      <div class="callout blue" style="font-size:12px"><strong>Nano captains</strong> selected by core members. Tier B+. Tracked as future Mini captain pipeline by the Nano Coordinator.</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Right to Match (RTM)</div>
-      <div style="font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px">When another captain bids on a player from your prior team, you may match the winning bid and retain them.</div>
-      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px">Why RTM over Keepers:</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:10px">No prior-season record keeping needed. Live bidding sets the price — you simply decide if it's worth paying. Self-correcting: rivals who overbid drain their own budget.</div>
-      <div class="callout gold" style="font-size:12px"><strong>Pending vote:</strong> 1 RTM per captain (budget pressure focus) or 3 RTM (chemistry focus)? 60-second decision window, same tier only.</div>
     </div>
   </div>
 
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">Season Transition — 4-Step Draft Process</div>
-    <div class="steplist">
-      <div class="step"><div class="step-n">1</div><div><div class="step-t">Captain Selection</div><div class="step-d">All 7 captains selected (4 Mini + 3 Nano). Captains auto-fill spot #1 — excluded from pool. Auction: captain's value deducted from team budget before bidding begins.</div></div></div>
-      <div class="step"><div class="step-n">2</div><div><div class="step-t">Player Preference Declaration — 48 hours</div><div class="step-d"><strong style="color:#1565c0">Mini-available</strong> enters the Mini draft (overflow goes to Nano). <strong style="color:#1b5e20">Nano-only</strong> skips Mini entirely. Both choices are fully respected — no pressure either way.</div></div></div>
-      <div class="step"><div class="step-n">3</div><div><div class="step-t">Mini Auction Draft</div><div class="step-d">4 Mini captains bid for 6 remaining spots each. Equal starting budget. Rotating nominations. Min bid 1 unit. Budget floor = 1 unit per remaining spot. Tier balance: max 1 Tier S + 1–2 Tier A + 2–3 Tier B per roster.</div></div></div>
-      <div class="step"><div class="step-n">4</div><div><div class="step-t">Nano Auction Draft</div><div class="step-d">3 Nano captains draft from Nano-only pool + Mini overflow. Same auction format. Flexible tier balance with a development focus.</div></div></div>
-    </div>
-  </div>
-
-  <div class="two-col">
-    <div>
-      <div class="sec-label" style="margin-bottom:8px">✅ Closed decisions</div>
-      <div class="dec-closed" id="decisions-closed-list">
-        <div class="skel" style="height:22px;margin:4px 8px"></div>
-        <div class="skel" style="height:22px;margin:4px 8px"></div>
-        <div class="skel" style="height:22px;margin:4px 8px"></div>
-      </div>
-    </div>
-    <div>
-      <div class="sec-label" style="margin-bottom:8px">🔴 Open — need vote</div>
-      <div id="decisions-open-list">
-        <div class="skel" style="height:52px;margin-bottom:6px"></div>
-        <div class="skel" style="height:52px;margin-bottom:6px"></div>
-        <div class="skel" style="height:52px"></div>
+  <!-- SIDEBAR -->
+  <div>
+    <div class="widget">
+      <div class="widget-hd">Wingman System</div>
+      <div class="widget-body" style="padding:0">
+        <div style="padding:8px 10px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px">🤝 4 Mini Wingmen</div><div style="font-size:12px;color:var(--muted);line-height:1.5">One per Mini team — permanently assigned. Advise captains, flag tier changes, co-sign trades. Mini only — not Major.</div></div>
+        <div style="padding:8px 10px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px">🌱 1 Nano Coordinator</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Runs full Nano event. Identifies champion. Scouts future Mini captain candidates.</div></div>
+        <div style="padding:8px 10px"><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px">⚙️ 1 Floating / League Manager</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Admin, dispute resolution, backup Wingman. Sunil in Season 1.</div></div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- ═══════════════════════════════════
-     ACTIONS
-════════════════════════════════════ -->
-<div class="section" id="actions">
-  <div class="sec-label">What comes next</div>
-  <div class="sec-title">Actions &amp; Checklists</div>
-
-  <div class="two-col">
-    <div>
-      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">Recommended Next Steps</div>
-      <div id="nextsteps-list"></div>
-    </div>
-    <div>
-      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">Monthly Event Checklist</div>
-      <div id="checklist-monthly"></div>
-      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-top:16px;margin-bottom:10px">End-of-Season Checklist</div>
-      <div id="checklist-season"></div>
-    </div>
-  </div>
-
-  <div style="margin-top:24px;padding:20px;background:var(--navy);border-radius:10px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;justify-content:space-between">
-    <div>
-      <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">📄 Full Governance Document</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.65)">14 sections covering all rules, draft mechanics, game rules, decision log, and appendices.</div>
-    </div>
-    <a href="/FVL_Governance.docx" download class="btn btn-gold" style="font-size:14px;padding:10px 22px">⬇ Download Full Doc</a>
-  </div>
+</div>
 </div>
 
-</div><!-- /page -->
+<!-- ══════════════════════════════════════════
+     TAB: GOVERNANCE
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-governance">
+<div class="wrap">
+<div class="page-grid">
+  <div>
+    <div class="sec-hd">Captain Selection</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:10px">
+          <div><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Eligibility</div><table class="scard" style="font-size:12px"><tr><td>Not a core member</td></tr><tr><td>Tier A or S (B for Nano)</td></tr><tr><td>1+ full FVL seasons</td></tr><tr><td>≤ 2 absences prior season</td></tr><tr><td>No unresolved flags</td></tr><tr><td>Must explicitly accept</td></tr></table></div>
+          <div><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">6-Step Process</div><div class="step-list">
+            <div class="step-item"><div class="step-n">1</div><div class="step-d">Core members nominate privately (up to 2 each)</div></div>
+            <div class="step-item"><div class="step-n">2</div><div class="step-d">Reveal simultaneously — 2+ votes advance</div></div>
+            <div class="step-item"><div class="step-n">3</div><div class="step-d">Each discussed max 5 min, confirmed by majority</div></div>
+            <div class="step-item"><div class="step-n">4</div><div class="step-d">Contact within 24 hours to accept or decline</div></div>
+            <div class="step-item"><div class="step-n">5</div><div class="step-d">If declined → next highest-voted player offered</div></div>
+            <div class="step-item"><div class="step-n">6</div><div class="step-d">Announce all 7 captains with Wingman pairings</div></div>
+          </div></div>
+        </div>
+        <div class="co blue" style="font-size:12px"><strong>Nano captains</strong> selected by core members. Tier B+ with willingness. Tracked as future Mini captain pipeline.</div>
+      </div>
+    </div>
+
+    <div class="sec-hd">Season Transition — 4-Step Draft</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:4px 10px">
+        <div class="step-item"><div class="step-n">1</div><div><div class="step-t">Captain Selection</div><div class="step-d">All 7 captains selected (4 Mini + 3 Nano). Auto-fill spot #1 — excluded from pool. Captain value deducted from budget before bidding begins.</div></div></div>
+        <div class="step-item"><div class="step-n">2</div><div><div class="step-t">Player Preference Declaration — 48 hours</div><div class="step-d"><strong style="color:var(--blue)">Mini-available</strong> enters Mini draft (overflow → Nano). <strong style="color:var(--green)">Nano-only</strong> skips Mini entirely. Both choices respected equally — no pressure either way.</div></div></div>
+        <div class="step-item"><div class="step-n">3</div><div><div class="step-t">Mini Auction Draft</div><div class="step-d">Equal budget. Rotating nominations. Min bid 1 unit. Budget floor = 1 unit per remaining spot. Tier balance: max 1S + 1–2A + 2–3B per roster.</div></div></div>
+        <div class="step-item"><div class="step-n">4</div><div><div class="step-t">Nano Auction Draft</div><div class="step-d">Nano-only pool + Mini overflow. Same auction format. Flexible tier balance — development focus.</div></div></div>
+      </div>
+    </div>
+
+    <div class="sec-hd">Right to Match (RTM)</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body">
+        <p style="font-size:13px;line-height:1.6;margin-bottom:10px;color:var(--text)">When another captain bids on a player from your prior team, you may match the winning bid and retain them. <strong>Recommended: 1 RTM per captain</strong> — 60-second window, same tier only.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="co blue" style="margin:0;font-size:12px"><strong>Why RTM:</strong> No prior-season record keeping needed. Live bidding sets the price. Self-correcting — rivals who overbid drain their own budget.</div>
+          <div class="co amber" style="margin:0;font-size:12px"><strong>Pending vote:</strong> 1 RTM per captain (budget pressure) or 3 RTM (chemistry focus)? 60-second window · same tier only.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-hd">Closed Decisions — Agreed &amp; Locked</div>
+    <div class="dec-closed" id="decisions-closed-list" style="margin-bottom:14px">
+      <div class="skel" style="height:24px;margin:2px"></div>
+      <div class="skel" style="height:24px;margin:2px"></div>
+      <div class="skel" style="height:24px;margin:2px"></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <div class="sec-hd">Open Decisions — Need Vote</div>
+    <div id="decisions-open-list">
+      <div class="skel" style="height:56px;margin-bottom:6px"></div>
+      <div class="skel" style="height:56px;margin-bottom:6px"></div>
+      <div class="skel" style="height:56px"></div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB: ACTIONS
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-actions">
+<div class="wrap">
+<div class="page-grid">
+  <div>
+    <div class="sec-hd">Recommended Next Steps</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:4px 10px">
+        <div id="nextsteps-list"></div>
+      </div>
+    </div>
+    <div class="sec-hd">Monthly Event Checklist</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:4px 10px 8px"><div id="checklist-monthly"></div></div>
+    </div>
+    <div class="sec-hd">End-of-Season Checklist</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="padding:4px 10px 8px"><div id="checklist-season"></div></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <div class="widget">
+      <div class="widget-hd">Core Members</div>
+      <div class="widget-body" style="padding:0">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;padding:10px">
+          <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--navy);padding:4px 12px;border-radius:2px;font-size:13px;font-weight:600">Amrendra</span>
+          <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--navy);padding:4px 12px;border-radius:2px;font-size:13px;font-weight:600">Ashok</span>
+          <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--navy);padding:4px 12px;border-radius:2px;font-size:13px;font-weight:600">Naren</span>
+          <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--navy);padding:4px 12px;border-radius:2px;font-size:13px;font-weight:600">Rahul</span>
+          <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--navy);padding:4px 12px;border-radius:2px;font-size:13px;font-weight:600">Sachin</span>
+          <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--navy);padding:4px 12px;border-radius:2px;font-size:13px;font-weight:600">Sunil</span>
+        </div>
+      </div>
+    </div>
+    <div class="widget">
+      <div class="widget-hd">Governance Document</div>
+      <div class="widget-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Complete governance documentation — 14 sections covering all rules, processes, draft mechanics, and appendices.</p>
+        <div style="font-family:'Source Code Pro',monospace;font-size:11px;color:var(--muted);margin-bottom:10px">v6.0 · 14 sections · Appendix A: Snake Draft</div>
+        <a href="/FVL_Governance.docx" download style="display:block;background:var(--red);color:#fff;text-align:center;padding:9px;font-size:13px;font-weight:700;text-decoration:none;border-radius:2px;font-family:'Source Sans 3',sans-serif">⬇ Download Full Governance Doc</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
 
 <footer>
-  <div style="font-family:'Fraunces',serif;font-size:20px;margin-bottom:6px"><strong>FVL</strong></div>
-  <strong>Friendly Volleyball League</strong> · Season 2 Proposal · April 2026<br>
-  <span style="opacity:.5;display:block;margin-top:4px;font-size:11px">Amrendra · Ashok · Naren · Rahul · Sachin · Sunil</span>
+  <strong>FVL · Friendly Volleyball League</strong> · Season 2 Proposal · April 2026<br>
+  <span>Amrendra · Ashok · Naren · Rahul · Sachin · Sunil</span>
 </footer>
 
 <script>
-const trophies = n => n>=2?'🏆🏆':n===1?'🏆':'';
-async function api(url){const r=await fetch(url);if(!r.ok)throw new Error(r.statusText);return r.json();}
-
-async function renderStandings(){
-  const s=await api('/api/standings?season=1');
-  const pc=['p1','p2','p3','','dn'];
-  document.getElementById('standings-list').innerHTML=s.map((d,i)=>{
-    const cm=(d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)+" '"+m.month.split(' ')[1].slice(2)).join(', ');
-    const cls=d.relegated?'dn':(pc[i]||'');
-    return `<div class="srow ${cls}"><div class="pos">${i+1}</div><div><div class="tn">${d.teamName} ${trophies(d.championships)}</div><div class="ts">${cm?'Champions: '+cm:d.relegated?'↓ Relegated to Nano':''}</div></div>${d.relegated?'<span class="rel-tag">↓ Nano</span>':'<div></div>'}<div class="pts">${d.totalPoints} pts</div></div>`;
-  }).join('');
+// ── Tabs ───────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+  window.scrollTo(0, 0);
 }
 
-async function renderTeams(){
-  const [teams,standings]=await Promise.all([api('/api/teams?season=1'),api('/api/standings?season=1')]);
-  const sm={};standings.forEach(s=>sm[s.teamName]=s);
-  teams.sort((a,b)=>(sm[b.name]?.totalPoints||0)-(sm[a.name]?.totalPoints||0)||(sm[b.name]?.championships||0)-(sm[a.name]?.championships||0));
-  document.getElementById('teams-grid').innerHTML=teams.map(t=>{
-    const st=sm[t.name]||{};
-    const players=[...t.players].sort((a,b)=>{const o={Wingman:0,Captain:1,Player:2};return o[a.role]-o[b.role]||a.name.localeCompare(b.name);});
-    const rows=players.map(p=>{
-      const cls=p.role==='Captain'?'pr-cap':p.role==='Wingman'?'pr-wing':'';
-      const badge=p.role==='Captain'?'<span class="pr-badge" style="background:#e3f2fd;color:#1565c0">Cap</span>':p.role==='Wingman'?'<span class="pr-badge" style="background:var(--green2);color:var(--green)">Wing</span>':'';
-      return `<div class="player-r"><span class="${cls}">${p.name}</span>${badge}</div>`;
+// ── API ────────────────────────────────────────────────────────────
+const trophies = n => n >= 2 ? '🏆🏆' : n === 1 ? '🏆' : '';
+async function api(url) { const r = await fetch(url); if (!r.ok) throw new Error(r.statusText); return r.json(); }
+
+// ── Standings ──────────────────────────────────────────────────────
+async function renderStandings() {
+  const s = await api('/api/standings?season=1');
+  const posClass = ['p1 top', 'p2', 'p3', '', 'rel'];
+  const html = s.map((d, i) => {
+    const cm = (d.monthlyResults || []).filter(m => m.champion).map(m => m.month.split(' ')[0].slice(0,3) + " '" + m.month.split(' ')[1].slice(2)).join(', ');
+    const cls = d.relegated ? 'rel' : (posClass[i] || '');
+    return `<div class="stand-row ${cls}">
+      <div class="pos-num ${d.relegated ? 'pos-rel' : i === 0 ? 'pos-1' : ''}">${i + 1}</div>
+      <div><div class="stand-name">${d.teamName} ${trophies(d.championships)}</div><div class="stand-sub">${cm ? 'Won: ' + cm : d.relegated ? '↓ Relegation candidate' : ''}</div></div>
+      ${d.relegated ? '<span class="rel-tag">↓ Nano</span>' : '<div></div>'}
+      <div class="stand-pts">${d.totalPoints} pts</div>
+    </div>`;
+  }).join('');
+  document.getElementById('standings-list').innerHTML = html;
+}
+
+// ── Teams ──────────────────────────────────────────────────────────
+async function renderTeams() {
+  const [teams, standings] = await Promise.all([api('/api/teams?season=1'), api('/api/standings?season=1')]);
+  const sm = {}; standings.forEach(s => sm[s.teamName] = s);
+  teams.sort((a, b) => (sm[b.name]?.totalPoints || 0) - (sm[a.name]?.totalPoints || 0) || (sm[b.name]?.championships || 0) - (sm[a.name]?.championships || 0));
+  document.getElementById('teams-grid').innerHTML = teams.map(t => {
+    const st = sm[t.name] || {};
+    const players = [...t.players].sort((a, b) => { const o = {Wingman:0,Captain:1,Player:2}; return o[a.role]-o[b.role] || a.name.localeCompare(b.name); });
+    const rows = players.map(p => {
+      const cls = p.role === 'Captain' ? 'p-cap' : p.role === 'Wingman' ? 'p-wing' : '';
+      const badge = p.role === 'Captain' ? '<span class="p-badge" style="background:#e3f2fd;color:#1565c0">Cap</span>' : p.role === 'Wingman' ? '<span class="p-badge" style="background:#e8f5e9;color:#1b7a1b">Wing</span>' : '';
+      return `<div class="p-row"><span class="${cls}">${p.name}</span>${badge}</div>`;
     }).join('');
-    return `<div class="team-card"><div class="team-hd" style="background:${t.gradient||'#1a3566'}"><span>⚡ ${t.name.replace('FVL ','')} ${trophies(st.championships||0)}</span><span class="team-pts">${st.totalPoints!=null?st.totalPoints+' pts':''}</span></div>${rows}${t.exception?`<div style="padding:3px 10px;font-size:10px;color:var(--muted);font-style:italic">* ${t.exception}</div>`:''}</div>`;
+    return `<div class="team-card"><div class="team-hd" style="background:${t.gradient || '#1a3566'}"><span>⚡ ${t.name.replace('FVL ','')} ${trophies(st.championships||0)}</span><span class="team-pts-lbl">${st.totalPoints != null ? st.totalPoints + 'pts' : ''}</span></div>${rows}${t.exception ? `<div style="padding:3px 9px;font-size:10px;color:var(--muted);font-style:italic">* ${t.exception}</div>` : ''}</div>`;
   }).join('');
 }
 
-async function renderCoreMembers(){
-  const m=await api('/api/core-members?season=1');
-  document.getElementById('core-members-grid').innerHTML=m.map(x=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--white);border:1px solid var(--border);border-radius:7px"><div><span style="font-size:13px;font-weight:600;color:var(--navy)">${x.name}</span><span style="font-size:11px;color:var(--muted);display:block">${x.assignedTeam||''}</span></div><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto">${x.role}</span></div>`).join('');
+// ── Core Members ───────────────────────────────────────────────────
+async function renderCoreMembers() {
+  const m = await api('/api/core-members?season=1');
+  document.getElementById('core-members-grid').innerHTML = m.map(x => `<div class="cm-row"><div><div class="cm-name">${x.name}</div><div class="cm-team">${x.assignedTeam || ''}</div></div><div class="cm-role">${x.role}</div></div>`).join('');
 }
 
-function renderSchedule(){
-  const row=([t,c,txt,d])=>`<div class="sched-row"><div class="sched-t">${t}</div><div class="sched-bar ${c}">${txt}</div><div class="sched-dur">${d}</div></div>`;
-  const endRow=(t,txt)=>`<div class="sched-row"><div class="sched-t" style="color:var(--navy);font-weight:600">${t}</div><div class="sched-end">${txt}</div><div></div></div>`;
-  const mini=[['9:00','rr1','RR1 Slot 1 · M1 vs M2 & M3 vs M4','25m'],['9:25','rr1','RR1 Slot 2 · M1 vs M3 & M2 vs M4','25m'],['9:50','rr1','RR1 Slot 3 · M1 vs M4 & M2 vs M3','25m'],['10:15','rr2','RR2 Slot 4 · M1 vs M2 & M3 vs M4','25m'],['10:40','rr2','RR2 Slot 5 · M1 vs M3 & M2 vs M4','25m'],['11:05','rr2','RR2 Slot 6 · M1 vs M4 & M2 vs M3','25m'],['11:30','brk','☕ Break · Seedings announced','5m'],['11:35','po','🏆 Playoffs · #1 vs #2 (Championship) & #3 vs #4 (Relegation)','25m']];
-  const nano=[['12:00','nr1','RR1 Slot 1 · N1 vs N2 (N3 bye)','25m'],['12:25','nr1','RR1 Slot 2 · N1 vs N3 (N2 bye)','25m'],['12:50','nr1','RR1 Slot 3 · N2 vs N3 (N1 bye)','25m'],['1:15','nr2','RR2 Slot 4 · N1 vs N2 (N3 bye)','25m'],['1:40','nr2','RR2 Slot 5 · N1 vs N3 (N2 bye)','25m'],['2:05','nr2','RR2 Slot 6 · N2 vs N3 (N1 bye)','25m'],['2:30','brk','☕ Break · Standings announced','5m'],['2:35','nf','🌱 Nano Championship Final · N1 vs N2 — Winner promoted to Mini','25m']];
-  document.getElementById('schedule-tl').innerHTML=`<div class="sched-block"><div class="sched-hd">⚡ Mini Block — Courts 1 & 2 · 9 AM – 12 PM</div>${mini.map(row).join('')}${endRow('12:00','Mini concludes → Nano begins immediately')}</div><div class="sched-block"><div class="sched-hd">🌱 Nano Block — Court 1 · 12 PM – 3 PM</div>${nano.map(row).join('')}${endRow('3:00','Full event day complete')}</div>`;
+// ── Schedule ───────────────────────────────────────────────────────
+function renderSchedule() {
+  const row = ([t, c, txt, d]) => `<div class="sch-row"><div class="sch-t">${t}</div><div class="sch-bar ${c}">${txt}</div><div class="sch-d">${d}</div></div>`;
+  const end = (t, txt) => `<div class="sch-row"><div class="sch-t" style="color:var(--navy);font-weight:700">${t}</div><div class="sch-end">${txt}</div><div></div></div>`;
+  const mini = [['9:00','rr1','RR1 Slot 1 · M1 vs M2 & M3 vs M4','25m'],['9:25','rr1','RR1 Slot 2 · M1 vs M3 & M2 vs M4','25m'],['9:50','rr1','RR1 Slot 3 · M1 vs M4 & M2 vs M3','25m'],['10:15','rr2','RR2 Slot 4 · M1 vs M2 & M3 vs M4','25m'],['10:40','rr2','RR2 Slot 5 · M1 vs M3 & M2 vs M4','25m'],['11:05','rr2','RR2 Slot 6 · M1 vs M4 & M2 vs M3','25m'],['11:30','brk','☕ Break · Seedings announced','5m'],['11:35','po','🏆 Playoffs · #1 vs #2 (Championship) & #3 vs #4 (Relegation)','25m']];
+  const nano = [['12:00','nr1','RR1 Slot 1 · N1 vs N2 (N3 bye)','25m'],['12:25','nr1','RR1 Slot 2 · N1 vs N3 (N2 bye)','25m'],['12:50','nr1','RR1 Slot 3 · N2 vs N3 (N1 bye)','25m'],['1:15','nr2','RR2 Slot 4 · N1 vs N2 (N3 bye)','25m'],['1:40','nr2','RR2 Slot 5 · N1 vs N3 (N2 bye)','25m'],['2:05','nr2','RR2 Slot 6 · N2 vs N3 (N1 bye)','25m'],['2:30','brk','☕ Break · Standings announced','5m'],['2:35','nf','🌱 Nano Championship Final · N1 vs N2 — Winner promoted to Mini','25m']];
+  document.getElementById('schedule-tl').innerHTML =
+    `<div class="sch-block"><div class="sch-hd">⚡ MINI — Courts 1 & 2 · 9 AM – 12 PM</div>${mini.map(row).join('')}${end('12:00','Mini concludes → Nano begins immediately')}</div>` +
+    `<div class="sch-block"><div class="sch-hd">🌱 NANO — Court 1 only · 12 PM – 3 PM</div>${nano.map(row).join('')}${end('3:00','Full event day complete')}</div>`;
 }
 
-async function renderDecisions(){
-  const all=await api('/api/decisions');
-  document.getElementById('decisions-closed-list').innerHTML=all.filter(d=>d.status==='closed').map(d=>`<div class="dec-closed-row"><span class="dec-ref">${d.ref}</span><div><span style="font-size:12px;font-weight:600;color:var(--navy)">${d.topic} — </span><span style="font-size:12px;color:var(--muted)">${d.resolution||''}</span></div></div>`).join('');
-  const pc=p=>p==='High'?'var(--red)':p==='Medium'?'var(--amber)':'var(--muted)';
-  const bg=p=>p==='High'?'var(--red2)':p==='Medium'?'var(--amber2)':'var(--light)';
-  const tc=p=>p==='High'?'hi':p==='Medium'?'med':'lo';
-  document.getElementById('decisions-open-list').innerHTML=all.filter(d=>d.status==='open').map(d=>`<div class="dec-open-row" style="border-left-color:${pc(d.priority)};background:${bg(d.priority)}"><div class="dec-ref">${d.ref}</div><div><div class="dec-t">${d.topic}</div><div class="dec-d">${d.description||''}</div></div><span class="priority-badge tag ${tc(d.priority)}">${d.priority}</span></div>`).join('');
+// ── Decisions ──────────────────────────────────────────────────────
+async function renderDecisions() {
+  const all = await api('/api/decisions');
+  const closed = all.filter(d => d.status === 'closed');
+  const open   = all.filter(d => d.status === 'open');
+
+  // Update open count badge
+  document.getElementById('open-count').textContent = open.length;
+
+  // Closed table
+  document.getElementById('decisions-closed-list').innerHTML = closed.map(d =>
+    `<div class="dec-c-row"><span class="dec-ref">${d.ref}</span><div><span style="font-size:12px;font-weight:700;color:var(--navy)">${d.topic} — </span><span style="font-size:12px;color:var(--muted)">${d.resolution || ''}</span></div></div>`
+  ).join('');
+
+  // Open cards
+  const priCls = p => p === 'High' ? 'pri-hi' : p === 'Medium' ? 'pri-med' : 'pri-lo';
+  const tagCls = p => p === 'High' ? 'tag-hi' : p === 'Medium' ? 'tag-med' : 'tag-lo';
+  const openHtml = open.map(d =>
+    `<div class="dec-open ${priCls(d.priority)}">
+      <div class="dec-open-body">
+        <span class="pri-tag ${tagCls(d.priority)}">${d.priority}</span>
+        <div class="dec-t">${d.topic}</div>
+        <div class="dec-d">${d.description || ''}</div>
+      </div>
+    </div>`
+  ).join('');
+  ['decisions-open-list', 'decisions-sidebar'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = openHtml;
+  });
 }
 
-function renderNextSteps(){
-  const steps=[['1','All 6','Review document as a core group. Align on anything unclear.','Before S2'],['2','All 6','Vote and close all High priority open decisions (RTM, budget, roles).','Before S2'],['3','All 6','Confirm Season 2 role assignments: 4 Mini Wingmen, Nano Coordinator, Floating.','Before S2'],['4','All 6','Agree auction format — starting budget and captain valuation method.','Before S2'],['5','All 6','Agree RTM: 1 or 3 per captain, 60-sec window, same tier only.','Before S2'],['6','Nano Coord.','Set up Nano registration. Recruit 3 teams. Identify 3 Nano captain candidates.','2 wks before'],['7','All 6','Run Mini captain nominations. Confirm 4 Mini captains.','2 wks before'],['8','All 6','Open 48-hr player preference window (Mini-available or Nano-only).','1 wk before draft'],['9','All 6','Publish draft pools, draft order, format to all players.','Draft day −48 hrs'],['10','Captains','Conduct Mini auction draft. Enforce tier balance.','Draft day'],['11','Captains','Conduct Nano draft from remaining pool.','Draft day'],['12','All 6','Publish all rosters. Open 48-hour appeals window.','Post-draft'],['13','All 6','Book venue. Confirm 2 courts for 6-hour block.','Before Month 1']];
-  document.getElementById('nextsteps-list').innerHTML=steps.map(([n,o,t,w])=>`<div class="ns-row"><div class="ns-n">${n}</div><div class="ns-o">${o}</div><div><div class="ns-t">${t}</div></div><div class="ns-w">${w}</div></div>`).join('');
+// ── Next Steps ─────────────────────────────────────────────────────
+function renderNextSteps() {
+  const steps = [['1','All 6','Review document as a core group. Align on anything unclear.','Before S2'],['2','All 6','Vote and close all High priority open decisions (RTM, budget, roles).','Before S2'],['3','All 6','Confirm Season 2 role assignments: 4 Mini Wingmen, Nano Coordinator, Floating.','Before S2'],['4','All 6','Agree auction format — starting budget and captain valuation method.','Before S2'],['5','All 6','Agree RTM: 1 or 3 per captain · 60-sec window · same tier only.','Before S2'],['6','Nano Coord.','Set up Nano registration. Recruit 3 teams. Identify 3 Nano captain candidates.','2 wks before'],['7','All 6','Run Mini captain nominations. Confirm 4 Mini captains.','2 wks before'],['8','All 6','Open 48-hour player preference window (Mini-available or Nano-only).','1 wk before'],['9','All 6','Publish draft pools, draft order, and format to all players.','Draft day −48 hrs'],['10','Captains','Conduct Mini auction draft. Enforce tier balance.','Draft day'],['11','Captains','Conduct Nano draft from remaining pool.','Draft day'],['12','All 6','Publish all rosters. Open 48-hour appeals window.','Post-draft'],['13','All 6','Book venue. Confirm 2 courts for 6-hour block.','Before Month 1']];
+  document.getElementById('nextsteps-list').innerHTML = steps.map(([n,o,t,w]) =>
+    `<div class="ns-item"><div class="ns-n">${n}</div><div class="ns-o">${o}</div><div><div class="ns-t">${t}</div></div><div class="ns-w">${w}</div></div>`
+  ).join('');
 }
 
-function renderChecklists(){
-  const monthly={'Before':['4 Mini teams confirmed — full rosters of 7','3 Nano teams confirmed — full rosters of 7','4 Mini Wingmen assigned (one per team)','1 Nano Coordinator confirmed','Venue and 2 courts booked','Prior month P/R swap applied to team lists','Any substitutions approved'],'Day Of':['Nano Coordinator on-site for Nano games','Mini Wingmen present with their teams','Nano champion identified and recorded','Mini bottom team identified','P/R swap confirmed with both captains'],'After':['Updated team lists published within 24 hrs','Tier observations logged by all Wingmen','Nano captain pipeline notes updated','Conduct issues reported to core group']};
-  const season={'Tiers & Pool':['All players re-tiered by core consensus','Major player pool assembled (open registration)'],'Roles':["Season 2 role assignments confirmed","No one repeating last season's assignment"],'Captains':['Captain nominations submitted privately','All 7 captains confirmed','Wingman–captain pairings announced together','Draft format confirmed and communicated','Captain values published (if auction)','RTM rules confirmed (1 or 3 per captain)'],'Draft':['48-hr preference window completed','Draft pools published','Draft order published 48 hrs ahead','Draft completed — tier balance verified','Players notified within 24 hours','48-hr appeals window opened and closed','Season schedule published']};
-  const render=data=>Object.entries(data).map(([sec,items])=>`<div class="chk-hd">${sec}</div>${items.map(t=>`<div class="chk-item"><div class="chk-box"></div><span>${t}</span></div>`).join('')}`).join('');
-  document.getElementById('checklist-monthly').innerHTML=render(monthly);
-  document.getElementById('checklist-season').innerHTML=render(season);
+// ── Checklists ─────────────────────────────────────────────────────
+function renderChecklists() {
+  const monthly = {'Before':['4 Mini teams confirmed — full rosters of 7','3 Nano teams confirmed — full rosters of 7','4 Mini Wingmen assigned (one per team)','1 Nano Coordinator confirmed','Venue and 2 courts booked','Prior month P/R swap applied','Any substitutions approved'],'Day Of':['Nano Coordinator on-site for Nano games','Mini Wingmen present with their teams','Nano champion identified and recorded','Mini bottom team confirmed','P/R swap confirmed with both captains'],'After':['Updated team lists published within 24 hrs','Tier observations logged by all Wingmen','Nano captain pipeline notes updated','Conduct issues reported to core group']};
+  const season = {'Tiers & Pool':['All players re-tiered by core consensus','Major player pool assembled (open registration)'],'Roles':['Season 2 role assignments confirmed',"No one repeating last season's assignment"],'Captains':['Captain nominations submitted privately','All 7 captains confirmed','Wingman–captain pairings announced','Draft format confirmed and communicated','Captain values published (if auction)','RTM rules confirmed (1 or 3 per captain)'],'Draft':['48-hr preference window completed','Draft pools published','Draft order published 48 hrs ahead','Draft completed — tier balance verified','Players notified within 24 hours','48-hr appeals window opened and closed','Season schedule published']};
+  const render = data => Object.entries(data).map(([sec, items]) =>
+    `<div class="chk-sh">${sec}</div>${items.map(t => `<div class="chk-item"><div class="chk-box"></div><span>${t}</span></div>`).join('')}`
+  ).join('');
+  document.getElementById('checklist-monthly').innerHTML = render(monthly);
+  document.getElementById('checklist-season').innerHTML = render(season);
 }
 
-renderSchedule();renderNextSteps();renderChecklists();
-Promise.allSettled([renderStandings(),renderTeams(),renderCoreMembers(),renderDecisions()]);
+// ── Init ───────────────────────────────────────────────────────────
+renderSchedule();
+renderNextSteps();
+renderChecklists();
+Promise.allSettled([renderStandings(), renderTeams(), renderCoreMembers(), renderDecisions()]);
 </script>
 </body>
 </html>
