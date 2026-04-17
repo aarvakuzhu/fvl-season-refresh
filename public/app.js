@@ -141,7 +141,13 @@ async function renderDecisions() {
 function renderNextSteps() {
   const steps=[['1','All 6','Review document as a core group. Align on anything unclear.','Before S2'],['2','All 6','Vote and close all High priority open decisions.','Before S2'],['3','All 6','Confirm Season 2 roles: 4 Mini Wingmen, Nano Coordinator, Floating.','Before S2'],['4','All 6','Agree auction format — budget and captain valuation method.','Before S2'],['5','All 6','Agree RTM: 1 or 3 per captain · 60-sec window · same tier.','Before S2'],['6','Nano Coord.','Set up Nano registration. Recruit 3 teams. Identify Nano captain candidates.','2 wks before'],['7','All 6','Run Mini captain nominations. Confirm 4 captains.','2 wks before'],['8','All 6','Open 48-hr player preference window (Mini or Nano-only).','1 wk before draft'],['9','All 6','Publish draft pools, order, and format to all players.','Draft day −48 hrs'],['10','Captains','Conduct Mini auction draft. Enforce tier balance.','Draft day'],['11','Captains','Conduct Nano draft from remaining pool.','Draft day'],['12','All 6','Publish rosters. Open 48-hr appeals window.','Post-draft'],['13','All 6','Book venue. Confirm 2 courts for 6-hour block.','Before Month 1']];
   document.getElementById('nextsteps-list').innerHTML = steps.map(([n,o,t,w]) =>
-    `<div class="nsitem"><div class="nsn">${n}</div><div class="nso">${o}</div><div><div class="nst">${t}</div></div><div class="nsw">${w}</div></div>`
+    `<div class="nsitem">
+      <div class="nsn">${n}</div>
+      <div>
+        <div class="nst">${t}</div>
+        <div class="nsmeta"><span class="nso">${o}</span><span class="nsw">${w}</span></div>
+      </div>
+    </div>`
   ).join('');
 }
 
