@@ -1,0 +1,404 @@
+
+    /* ── Cricinfo-accurate tokens ───────────────────────────────── */
+    :root{
+      --ci-blue:   #1a5fb4;   /* exact Cricinfo header blue */
+      --ci-blue2:  #1652a0;
+      --ci-red:    #cc0000;   /* ESPN red */
+      --ci-tab:    #2356b0;   /* tab bar bg */
+      --bg:        #f2f2f2;   /* page background */
+      --white:     #ffffff;
+      --border:    #e0e0e0;
+      --border2:   #ededed;
+      --text:      #1a1a1a;
+      --muted:     #6b6b6b;
+      --light:     #f8f8f8;
+      --green:     #1b7a1b;
+      --green2:    #e8f5e9;
+      --red:       #c62828;
+      --red2:      #ffebee;
+      --amber:     #d35400;
+      --amber2:    #fff3e0;
+      --gold:      #b8860b;
+      --gold2:     #fffde7;
+      --navy:      #0d1b2a;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:14px;-webkit-text-size-adjust:100%}
+    body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-height:100vh;padding-bottom:56px}
+
+    /* ══ HEADER — exact Cricinfo blue bar ══════════════════════ */
+    #header{
+      position:sticky;top:0;z-index:200;
+      background:var(--ci-blue);
+    }
+    .header-bar{
+      display:flex;align-items:center;height:50px;
+      padding:0 14px;gap:10px;
+    }
+    .hlogo{
+      display:flex;align-items:center;gap:6px;flex:1;
+    }
+    .hlogo-badge{
+      background:var(--ci-red);color:#fff;
+      font-size:10px;font-weight:900;letter-spacing:.5px;
+      padding:3px 6px;border-radius:2px;line-height:1;
+    }
+    .hlogo-text{
+      font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;
+    }
+    .hlogo-text span{font-weight:400;opacity:.85}
+    .hmeta{
+      font-size:10px;color:rgba(255,255,255,.6);
+      font-family:'Roboto Mono',monospace;letter-spacing:.3px;
+    }
+    .header-actions{display:flex;gap:8px;align-items:center}
+    .hbtn{
+      font-size:11px;font-weight:700;padding:5px 11px;
+      border-radius:3px;text-decoration:none;border:none;cursor:pointer;
+      font-family:'Roboto',sans-serif;letter-spacing:.2px;
+      transition:opacity .15s;
+    }
+    .hbtn:hover{opacity:.85}
+    .hbtn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.7)}
+    .hbtn-white{background:#fff;color:var(--ci-blue);font-weight:700}
+
+    /* ══ TAB BAR — exact Cricinfo pill tabs ════════════════════ */
+    #tabbar{
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;
+      padding:0 10px;gap:4px;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      white-space:nowrap;
+      position:sticky;top:50px;z-index:190;
+    }
+    #tabbar::-webkit-scrollbar{display:none}
+    .tab{
+      display:inline-flex;align-items:center;gap:5px;
+      font-size:13px;font-weight:500;color:var(--muted);
+      padding:10px 12px 8px;
+      border:none;background:none;cursor:pointer;
+      border-bottom:2.5px solid transparent;
+      white-space:nowrap;transition:all .15s;
+      font-family:'Roboto',sans-serif;
+      flex-shrink:0;
+    }
+    .tab:hover{color:var(--text)}
+    .tab.active{
+      color:var(--ci-blue);font-weight:700;
+      border-bottom-color:var(--ci-blue);
+    }
+    .tab-badge{
+      background:var(--ci-red);color:#fff;
+      font-size:10px;font-weight:700;
+      min-width:18px;height:16px;border-radius:8px;
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:0 4px;
+    }
+
+    /* ══ PANELS ════════════════════════════════════════════════ */
+    .panel{display:none}
+    .panel.active{display:block}
+
+    /* ══ LAYOUT ════════════════════════════════════════════════ */
+    .page{max-width:1100px;margin:0 auto;padding:10px 0}
+    .pgrid{display:grid;grid-template-columns:1fr;gap:0}
+    @media(min-width:900px){.pgrid{grid-template-columns:1fr 300px;gap:14px;padding:14px 12px}}
+    .main{padding:0 10px}
+    @media(min-width:900px){.main{padding:0}}
+    .side{padding:0 10px}
+    @media(min-width:900px){.side{padding:0}}
+
+    /* ══ SECTION HEADER — Cricinfo style ═══════════════════════ */
+    .sec{
+      font-size:11px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.8px;color:var(--muted);
+      padding:14px 10px 6px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    @media(min-width:900px){.sec{padding:14px 0 6px}}
+    .sec-line{
+      display:block;height:2px;background:var(--ci-blue);
+      width:100%;margin-bottom:8px;
+    }
+
+    /* ══ CARD — Cricinfo white card style ══════════════════════ */
+    .card{
+      background:#fff;
+      border:1px solid var(--border);
+      margin:0 0 10px;
+      /* Cricinfo uses very subtle shadow */
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    @media(min-width:900px){.card{margin:0 0 12px}}
+    .card-hd{
+      font-size:10px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.8px;color:var(--muted);
+      padding:7px 11px;
+      border-bottom:1px solid var(--border2);
+      background:var(--light);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .card-body{padding:10px 11px}
+
+    /* ══ SCORECARD TABLE — exact Cricinfo style ════════════════ */
+    .sct{width:100%;border-collapse:collapse;font-size:13px}
+    .sct th{
+      background:#f5f5f5;color:var(--muted);
+      padding:6px 10px;text-align:left;
+      font-size:11px;font-weight:500;letter-spacing:.2px;
+      border-bottom:1px solid var(--border);
+    }
+    .sct th.r{text-align:right}
+    .sct td{padding:8px 10px;border-bottom:1px solid var(--border2);vertical-align:middle}
+    .sct td.r{text-align:right;font-family:'Roboto Mono',monospace}
+    .sct tr:last-child td{border:none}
+    .sct tr:nth-child(odd) td{background:#fff}
+    .sct tr:nth-child(even) td{background:#fafafa}
+    .sct tr:hover td{background:#f0f5ff}
+
+    /* ══ STANDING ROWS ═════════════════════════════════════════ */
+    .srow{
+      display:grid;grid-template-columns:28px 1fr auto 58px;
+      align-items:center;gap:8px;
+      padding:9px 11px;border-bottom:1px solid var(--border2);
+      transition:background .1s;
+    }
+    .srow:last-child{border:none}
+    .srow:hover{background:#f5f8ff}
+    .srow.gold{background:#fffde7;border-left:3px solid var(--gold)}
+    .srow.rel{background:#fff5f5;border-left:3px solid var(--red)}
+    .spos{
+      font-size:16px;font-weight:700;color:var(--muted);
+      text-align:center;font-family:'Roboto Mono',monospace;
+    }
+    .srow.gold .spos{color:var(--gold)}
+    .srow.rel .spos{color:var(--red)}
+    .sname{font-size:13px;font-weight:700;color:var(--text)}
+    .ssub{font-size:11px;color:var(--muted);margin-top:1px}
+    .spts{font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;color:var(--ci-blue);text-align:right}
+    .srow.rel .spts{color:var(--red)}
+    .rtag{font-family:'Roboto Mono',monospace;font-size:9px;background:#ffebee;color:var(--red);border:1px solid #ffcdd2;border-radius:2px;padding:1px 5px;white-space:nowrap}
+
+    /* ══ RATING BARS ════════════════════════════════════════════ */
+    .rrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border2)}
+    .rrow:last-child{border:none}
+    .rlbl{font-size:12px;color:var(--text);min-width:120px;flex-shrink:0}
+    .rbg{flex:1;height:5px;background:#e8e8e8;border-radius:3px;overflow:hidden}
+    .rfill{height:100%;border-radius:3px}
+    .rval{font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;min-width:30px;text-align:right}
+
+    /* ══ STAT PILLS ═════════════════════════════════════════════ */
+    .spills{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+    @media(min-width:480px){.spills{grid-template-columns:repeat(4,1fr)}}
+    .spill{
+      background:#f5f8ff;border:1px solid #dce8ff;
+      border-top:3px solid var(--ci-blue);
+      padding:8px 9px;text-align:center;
+    }
+    .spill .v{font-size:20px;font-weight:900;color:var(--ci-blue);line-height:1;font-family:'Roboto',sans-serif}
+    .spill .l{font-size:10px;color:var(--muted);margin-top:3px}
+
+    /* ══ FEEDBACK THEMES ════════════════════════════════════════ */
+    .fb{border:1px solid var(--border);margin-bottom:8px;background:#fff}
+    .fb-hd{padding:7px 11px;font-size:12px;font-weight:700;border-left:4px solid;display:flex;align-items:center;gap:6px}
+    .fb-body{padding:8px 11px 6px}
+    .fb-item{font-size:13px;color:var(--text);display:flex;gap:7px;line-height:1.5;margin-bottom:6px}
+    .fb-item:last-child{margin-bottom:0}
+    .fb-item::before{content:'–';color:var(--muted);flex-shrink:0;font-size:12px;margin-top:1px}
+
+    /* ══ FOCUS ITEMS ════════════════════════════════════════════ */
+    .focus-item{display:grid;grid-template-columns:24px 1fr;gap:9px;padding:9px 0;border-bottom:1px solid var(--border2);align-items:start}
+    .focus-item:last-child{border:none}
+    .focus-n{width:22px;height:22px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0;margin-top:1px}
+    .focus-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+    .focus-d{font-size:12px;color:var(--muted);line-height:1.5}
+
+    /* ══ ACTION PLAN ════════════════════════════════════════════ */
+    .ap-item{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--border2);align-items:flex-start}
+    .ap-item:last-child{border:none}
+    .ap-tag{font-family:'Roboto Mono',monospace;font-size:10px;background:var(--ci-blue);color:#fff;padding:2px 7px;border-radius:2px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+    .ap-t{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+    .ap-d{font-size:12px;color:var(--muted);line-height:1.5}
+
+    /* ══ QUOTES ═════════════════════════════════════════════════ */
+    .qgrid{display:grid;grid-template-columns:1fr;gap:8px}
+    @media(min-width:600px){.qgrid{grid-template-columns:1fr 1fr}}
+    .quote{background:#fff;border:1px solid var(--border);border-left:3px solid var(--ci-blue);padding:10px 12px}
+    .quote p{font-size:13px;line-height:1.65;color:var(--text);font-style:italic}
+    .qtag{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+
+    /* ══ TIER CARDS ═════════════════════════════════════════════ */
+    .tpair{display:grid;grid-template-columns:1fr;gap:8px}
+    @media(min-width:600px){.tpair{grid-template-columns:1fr 40px 1fr;align-items:center}}
+    .tcard{border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .thd{padding:10px 11px 8px}
+    .thd.mini{background:linear-gradient(135deg,#1a3566,#2356b0)}
+    .thd.nano{background:linear-gradient(135deg,#1b3a6b,#3d6cbf)}
+    .tname{font-size:17px;font-weight:900;color:#fff;letter-spacing:.5px}
+    .tsub{font-size:11px;color:rgba(255,255,255,.65);margin-top:1px}
+    .tbody{background:#fff}
+    .trow{display:flex;justify-content:space-between;padding:6px 11px;border-bottom:1px solid var(--border2);font-size:13px;color:var(--muted)}
+    .trow:last-child{border:none}
+    .trow strong{color:var(--text)}
+    .swap{text-align:center;padding:8px 0}
+    .swap-ic{font-size:20px;color:var(--ci-blue);display:block;animation:pulse 2s infinite}
+    .swap-lb{font-family:'Roboto Mono',monospace;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);display:block;margin-top:2px}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+
+    /* ══ PATH ═══════════════════════════════════════════════════ */
+    .path{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .path-n{flex:1;min-width:80px;text-align:center;padding:10px 8px;border:1px solid var(--border);background:#fff;border-top:3px solid var(--ci-blue)}
+    .path-n.hi{border-top-color:var(--red)}
+    .path-ic{font-size:16px;display:block;margin-bottom:2px}
+    .path-nm{font-size:13px;font-weight:700;color:var(--text)}
+    .path-ds{font-size:11px;color:var(--muted);margin-top:1px}
+    .path-arr{font-size:16px;color:var(--muted)}
+
+    /* ══ TEAMS GRID ═════════════════════════════════════════════ */
+    .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    @media(min-width:700px){.tgrid{grid-template-columns:repeat(5,1fr)}}
+    .tmc{border:1px solid var(--border);overflow:hidden;background:#fff}
+    .tmhd{padding:7px 9px 5px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:#fff}
+    .tmpts{font-family:'Roboto Mono',monospace;font-size:10px;opacity:.75}
+    .prow{padding:4px 9px;font-size:12px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(0,0,0,.05);background:#fff}
+    .prow:nth-child(even){background:#fafafa}
+    .pcap{color:#1565c0;font-weight:600}
+    .pwing{color:var(--green);font-weight:600}
+    .pbdg{font-family:'Roboto Mono',monospace;font-size:9px;padding:1px 5px;border-radius:2px;font-weight:700}
+
+    /* ══ SCHEDULE ═══════════════════════════════════════════════ */
+    .sblk{margin-bottom:12px}
+    .shd{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:var(--ci-blue);padding:5px 9px;margin-bottom:4px}
+    .sched-row{display:grid;grid-template-columns:58px 1fr 30px;align-items:center;gap:4px;margin-bottom:2px}
+    .stime{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);text-align:right;padding-right:7px;border-right:2px solid var(--border)}
+    .sbar{border-radius:2px;padding:0 8px;font-size:11px;font-weight:700;height:23px;display:flex;align-items:center;overflow:hidden;white-space:nowrap}
+    .sdur{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted)}
+    .send{font-size:11px;font-weight:700;color:var(--ci-blue);padding-left:2px;display:flex;align-items:center}
+    .rr1{background:linear-gradient(90deg,#1a3566,#2356b0);color:#fff}
+    .rr2{background:linear-gradient(90deg,#2356b0,#3a70d4);color:#fff}
+    .brk{background:#fff8e1;color:#d35400;border:1px solid #ffcc80}
+    .po{background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff}
+    .nr1{background:linear-gradient(90deg,#1b3a6b,#2d5499);color:#aac4ff}
+    .nr2{background:linear-gradient(90deg,#2d5499,#3d6cbf);color:#aac4ff}
+    .nf{background:linear-gradient(90deg,#1b5e20,#388e3c);color:#fff}
+
+    /* ══ RULES ══════════════════════════════════════════════════ */
+    .rb{margin-bottom:9px}
+    .rhd{font-family:'Roboto Mono',monospace;font-size:11px;padding:6px 9px}
+    .rhd.blue{background:var(--navy);color:#fff}
+    .rhd.red{background:var(--red);color:#fff}
+    .rhd.amb{background:#bf360c;color:#fff}
+    .rbd{background:#fff;border:1px solid var(--border);border-top:none;padding:6px 9px}
+    .ri{padding:4px 0;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text);display:flex;gap:6px;line-height:1.45}
+    .ri:last-child{border:none}
+    .ri::before{content:'·';color:var(--ci-blue);flex-shrink:0;font-weight:900;font-size:14px;line-height:1.2}
+
+    /* ══ CALLOUT ════════════════════════════════════════════════ */
+    .co{padding:8px 10px;font-size:12px;line-height:1.55;border-left:3px solid;margin-bottom:7px;background:#f8f8f8}
+    .co:last-child{margin-bottom:0}
+    .co strong{font-weight:700}
+    .co.red{background:#fff0f0;border-color:var(--red)}.co.red strong{color:var(--red)}
+    .co.blue{background:#e8eef8;border-color:var(--ci-blue)}.co.blue strong{color:var(--ci-blue)}
+    .co.green{background:var(--green2);border-color:var(--green)}.co.green strong{color:var(--green)}
+    .co.amber{background:var(--amber2);border-color:var(--amber)}.co.amber strong{color:var(--amber)}
+
+    /* ══ STEPS ══════════════════════════════════════════════════ */
+    .slist{display:flex;flex-direction:column;gap:0}
+    .si{display:grid;grid-template-columns:26px 1fr;gap:8px;padding:9px 0;border-bottom:1px solid var(--border2);align-items:start}
+    .si:last-child{border:none}
+    .snum{width:24px;height:24px;border-radius:50%;background:var(--ci-blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0;margin-top:1px}
+    .st{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+    .sd{font-size:12px;color:var(--muted);line-height:1.5}
+
+    /* ══ DECISIONS ══════════════════════════════════════════════ */
+    .dc{border:1px solid var(--border);background:#fff;margin-bottom:12px}
+    .dcr{display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:baseline;padding:6px 10px;border-bottom:1px solid var(--border2)}
+    .dcr:last-child{border:none}
+    .dcr:nth-child(even){background:#fafafa}
+    .dref{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted)}
+    .do{border:1px solid var(--border);background:#fff;border-left:4px solid;margin-bottom:6px}
+    .do-body{padding:9px 11px}
+    .dt{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+    .dd{font-size:12px;color:var(--muted);line-height:1.5}
+    .ph{border-left-color:var(--red)}.pm{border-left-color:var(--amber)}.pl{border-left-color:var(--muted)}
+    .ptag{font-family:'Roboto Mono',monospace;font-size:9px;padding:2px 5px;font-weight:700;border-radius:2px;float:right;margin:0 0 3px 6px}
+    .pth{background:#ffebee;color:var(--red)}.ptm{background:var(--amber2);color:var(--amber)}.ptl{background:#f5f5f5;color:var(--muted)}
+
+    /* ══ CHECKLIST ══════════════════════════════════════════════ */
+    .csh{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ci-blue);padding:8px 0 4px;margin-top:2px}
+    .citem{display:flex;gap:7px;padding:5px 8px;font-size:12px;line-height:1.45;border-bottom:1px solid var(--border2);align-items:flex-start}
+    .citem:last-child{border:none}
+    .cbox{width:13px;height:13px;border:1.5px solid #bbb;flex-shrink:0;margin-top:1px;border-radius:2px}
+
+    /* ══ NEXT STEPS ═════════════════════════════════════════════ */
+    .nsitem{display:grid;grid-template-columns:26px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--border2)}
+    @media(min-width:600px){.nsitem{grid-template-columns:26px 70px 1fr 96px}}
+    .nsitem:last-child{border:none}
+    .nsn{font-size:16px;font-weight:900;color:var(--red);text-align:center;line-height:1;padding-top:2px}
+    .nso{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);padding-top:2px}
+    .nst{font-size:13px;font-weight:600;color:var(--text);margin-bottom:1px}
+    .nsd{font-size:12px;color:var(--muted);line-height:1.4}
+    .nsw{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--ci-blue);text-align:right;padding-top:2px}
+
+    /* ══ CORE MEMBER ROWS ═══════════════════════════════════════ */
+    .cmr{display:grid;grid-template-columns:1fr auto;padding:7px 11px;border-bottom:1px solid var(--border2);align-items:center}
+    .cmr:last-child{border:none}
+    .cmr:nth-child(even){background:#fafafa}
+    .cmname{font-size:13px;font-weight:600;color:var(--text)}
+    .cmteam{font-size:11px;color:var(--muted);margin-top:1px}
+    .cmrole{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);text-align:right}
+
+    /* ══ WORKING WELL ITEMS ═════════════════════════════════════ */
+    .ww{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--border2);font-size:13px;line-height:1.5;align-items:flex-start}
+    .ww:last-child{border:none}
+    .ww-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px}
+
+    /* ══ SIDEBAR WIDGET ═════════════════════════════════════════ */
+    .widget{background:#fff;border:1px solid var(--border);margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .whd{background:var(--navy);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:7px 11px}
+    .wbody{padding:10px 11px}
+
+    /* ══ SKEL ═══════════════════════════════════════════════════ */
+    .skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:sk 1.4s infinite;border-radius:2px}
+    @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* ══ BOTTOM NAV (mobile) — exact Cricinfo style ═════════════ */
+    #bottom-nav{
+      display:none;position:fixed;bottom:0;left:0;right:0;
+      background:#fff;border-top:1px solid var(--border);
+      z-index:300;height:52px;
+      box-shadow:0 -2px 8px rgba(0,0,0,.1);
+    }
+    @media(max-width:899px){#bottom-nav{display:flex}}
+    .bnav-item{
+      flex:1;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:2px;cursor:pointer;
+      border:none;background:none;padding:0;
+      font-size:10px;color:var(--muted);font-family:'Roboto',sans-serif;
+      transition:color .15s;
+    }
+    .bnav-item.active{color:var(--ci-blue)}
+    .bnav-item svg{width:20px;height:20px;stroke-width:1.8}
+    footer{background:var(--navy);color:rgba(255,255,255,.5);text-align:center;padding:22px 16px;font-size:12px}
+    footer strong{color:rgba(255,255,255,.85)}
+  
+/* ══ AGENDA ITEMS (actions panel) ══════════════════════════════ */
+.agenda-item{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 11px;border-bottom:1px solid var(--border2);align-items:start}
+.ag-n{width:26px;height:26px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0;margin-top:1px}
+.ag-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.ag-d{font-size:12px;color:var(--muted);line-height:1.5}
+.opt-tag{font-family:'Roboto Mono',monospace;font-size:10px;padding:3px 8px;border-radius:2px;font-weight:600;white-space:nowrap}
+.opt-tag.gold{background:#fffde7;color:#b8860b;border:1px solid #f5d76e}
+.opt-tag.blue{background:#e8eef8;color:var(--ci-blue);border:1px solid #c5d4f0}
+.opt-tag.grey{background:#f5f5f5;color:var(--muted);border:1px solid var(--border)}
+
+/* ══ FIX: Next Steps — wider first column ═══════════════════════ */
+.nsitem{display:grid;grid-template-columns:26px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--border2)}
+@media(min-width:600px){.nsitem{grid-template-columns:26px 90px 1fr 100px}}
+.nsitem:last-child{border:none}
+.nsn{font-size:16px;font-weight:900;color:var(--red);text-align:center;line-height:1;padding-top:2px}
+.nso{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);padding-top:2px;word-break:keep-all;white-space:nowrap}
+.nst{font-size:13px;font-weight:600;color:var(--text);margin-bottom:1px}
+.nsd{font-size:12px;color:var(--muted);line-height:1.4}
+.nsw{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--ci-blue);text-align:right;padding-top:2px;word-break:keep-all}
