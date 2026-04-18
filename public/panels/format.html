@@ -1,16 +1,67 @@
 <div class="page"><div class="pgrid">
 <div class="main">
 
-  <div class="sec">Monthly Event Day — 6 Hours</div><span class="sec-line"></span>
-  <div class="card" style="margin-bottom:10px">
-    <div class="card-body"><div id="schedule-tl"></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:8px 11px;border-top:1px solid var(--border2)">
-      <div class="co amber" style="margin:0;font-size:12px">🏆 #1 vs #2 → Champion / Runner-up<br>📉 #3 vs #4 → 3rd / Nano Transfer</div>
-      <div class="co blue" style="margin:0;font-size:12px">⬆️ Nano champion → Mini<br>2nd &amp; 3rd stay in Nano</div>
+  <!-- Format options -->
+  <div class="sec">Event Format — Choose One</div>
+  <span class="sec-line"></span>
+  <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px">
+
+    <!-- Option A -->
+    <div class="card" style="border-left:4px solid var(--ci-blue)">
+      <div class="card-hd" style="background:#e8eef8;color:var(--ci-blue)">Option A — Full Round Robin + Ranked Final</div>
+      <div class="card-body" style="padding:0">
+        <div id="schedule-a"></div>
+        <div style="padding:8px 11px;border-top:1px solid var(--border2);background:#f5f8ff">
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">How it works</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Every team plays every other team once (15 games total on 2 courts). Top team by wins/points plays the final against #2. #3 vs #4 for 3rd place. #5 and #6 ranked by standings. Clean, fair — everyone plays 5 games before finals.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border2)">
+          <div style="padding:9px 11px;border-right:1px solid var(--border2);text-align:center"><div style="font-size:18px;font-weight:900;color:var(--ci-blue)">8</div><div style="font-size:10px;color:var(--muted)">Games (RR)</div></div>
+          <div style="padding:9px 11px;border-right:1px solid var(--border2);text-align:center"><div style="font-size:18px;font-weight:900;color:var(--ci-blue)">2</div><div style="font-size:10px;color:var(--muted)">Finals games</div></div>
+          <div style="padding:9px 11px;text-align:center"><div style="font-size:18px;font-weight:900;color:var(--ci-blue)">3.5 hrs</div><div style="font-size:10px;color:var(--muted)">Total runtime</div></div>
+        </div>
+      </div>
     </div>
+
+    <!-- Option B -->
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div class="card-hd" style="background:#fff5f5;color:var(--red)">Option B — 2 Pools + Cross-Pool + Bracket Final</div>
+      <div class="card-body" style="padding:0">
+        <div id="schedule-b"></div>
+        <div style="padding:8px 11px;border-top:1px solid var(--border2);background:#fff8f8">
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">How it works</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Split into 2 pools of 3 (Pool X: T1,T2,T3 · Pool Y: T4,T5,T6). Each pool plays round robin (3 games), then cross-pool games by rank (#1X vs #1Y, #2X vs #2Y, #3X vs #3Y). Winners bracket to final. More variety — teams face different opponents. Slightly more complex bracket.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border2)">
+          <div style="padding:9px 11px;border-right:1px solid var(--border2);text-align:center"><div style="font-size:18px;font-weight:900;color:var(--red)">6+3</div><div style="font-size:10px;color:var(--muted)">Pool + Cross games</div></div>
+          <div style="padding:9px 11px;border-right:1px solid var(--border2);text-align:center"><div style="font-size:18px;font-weight:900;color:var(--red)">3</div><div style="font-size:10px;color:var(--muted)">Bracket games</div></div>
+          <div style="padding:9px 11px;text-align:center"><div style="font-size:18px;font-weight:900;color:var(--red)">3.5 hrs</div><div style="font-size:10px;color:var(--muted)">Total runtime</div></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="sec">Game Rules</div><span class="sec-line"></span>
+  <!-- Comparison -->
+  <div class="sec">Side by Side</div>
+  <span class="sec-line"></span>
+  <div class="card" style="margin-bottom:14px">
+    <table class="sct">
+      <thead><tr><th></th><th>Option A — RR + Final</th><th>Option B — Pools + Bracket</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700">Games per team</td><td>5 (RR) + 1 (final)</td><td>2 (pool) + 1 (cross) + 1-2 (bracket)</td></tr>
+        <tr><td style="font-weight:700">Total games</td><td>15 RR + 2 finals = 17</td><td>6 pool + 3 cross + 3 bracket = 12</td></tr>
+        <tr><td style="font-weight:700">Every team plays</td><td>All 5 opponents</td><td>2 pool + 1 cross = 3-4 opponents</td></tr>
+        <tr><td style="font-weight:700">Fairness</td><td style="color:var(--green);font-weight:600">✓ Complete round robin</td><td>Depends on pool seeding</td></tr>
+        <tr><td style="font-weight:700">Drama / excitement</td><td>Final is clear #1 vs #2</td><td style="color:var(--green);font-weight:600">✓ Bracket upsets possible</td></tr>
+        <tr><td style="font-weight:700">Complexity</td><td style="color:var(--green);font-weight:600">✓ Simple to run</td><td>Requires bracket management</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Game Rules -->
+  <div class="sec">Game Rules</div>
+  <span class="sec-line"></span>
   <div class="card">
     <div class="card-body">
       <div class="co red" style="margin-bottom:10px"><strong>⚖️ Referee's call is final.</strong> Only captains may address the referee. No other player may approach regarding any call.</div>
@@ -31,16 +82,31 @@
 
 </div>
 <div class="side">
-  <div class="sec" style="padding-top:0">Wingman System</div><span class="sec-line"></span>
+
+  <div class="sec" style="padding-top:0">Event Parameters</div>
+  <span class="sec-line"></span>
   <div class="widget">
     <div class="wbody" style="padding:0">
-      <div style="padding:8px 11px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;margin-bottom:3px">🤝 4 Mini Wingmen</div><div style="font-size:12px;color:var(--muted);line-height:1.5">One per Mini team. Advise captains, flag tier changes, co-sign trades.</div></div>
-      <div style="padding:8px 11px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;margin-bottom:3px">🌱 1 Nano Coordinator</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Runs full Nano event. Identifies champion. Scouts Mini captain candidates.</div></div>
-      <div style="padding:8px 11px"><div style="font-size:12px;font-weight:700;margin-bottom:3px">⚙️ 1 Floating</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Admin, dispute resolution, backup Wingman. Sunil in Season 1.</div></div>
+      <table class="sct" style="font-size:12px">
+        <tr><td>Courts</td><td class="r" style="font-weight:700">2 (simultaneous)</td></tr>
+        <tr><td>Game time</td><td class="r" style="font-weight:700">25 mins</td></tr>
+        <tr><td>Breaks</td><td class="r" style="font-weight:700;color:var(--red)">None</td></tr>
+        <tr><td>Total runtime</td><td class="r" style="font-weight:700">3.5 hours</td></tr>
+        <tr><td>Teams</td><td class="r" style="font-weight:700">6</td></tr>
+        <tr><td>Players / team</td><td class="r" style="font-weight:700">7</td></tr>
+        <tr><td>Total players</td><td class="r" style="font-weight:700">42</td></tr>
+      </table>
     </div>
   </div>
+
+  <div class="sec" style="padding-top:4px">Wingman System</div>
+  <span class="sec-line"></span>
+  <div class="widget">
+    <div class="wbody" style="padding:0">
+      <div style="padding:8px 11px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;margin-bottom:3px">🤝 6 Wingmen</div><div style="font-size:12px;color:var(--muted);line-height:1.5">One per team. Advise captains, flag tier changes, co-sign any roster moves.</div></div>
+      <div style="padding:8px 11px"><div style="font-size:12px;font-weight:700;margin-bottom:3px">⚙️ League Manager</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Admin, dispute resolution, schedule management.</div></div>
+    </div>
+  </div>
+
 </div>
 </div></div>
-</div>
-
-<!-- ═══════════════════════════════════════════════

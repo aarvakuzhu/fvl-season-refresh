@@ -87,15 +87,79 @@ async function renderCoreMembers() {
   ).join('');
 }
 
-// ── Schedule ───────────────────────────────────────────────────────
+// ── Schedule — Option A and B ──────────────────────────────────────
+// 6 teams, 2 courts, 25-min games, no breaks, 3.5 hrs
 function renderSchedule() {
-  const row = ([t,c,txt,d]) => `<div class="sched-row"><div class="stime">${t}</div><div class="sbar ${c}">${txt}</div><div class="sdur">${d}</div></div>`;
-  const end = (t,txt) => `<div class="sched-row"><div class="stime" style="color:var(--ci-blue);font-weight:700">${t}</div><div class="send">${txt}</div><div></div></div>`;
-  const mini=[['9:00','rr1','RR1 S1 · M1 vs M2 & M3 vs M4','25m'],['9:25','rr1','RR1 S2 · M1 vs M3 & M2 vs M4','25m'],['9:50','rr1','RR1 S3 · M1 vs M4 & M2 vs M3','25m'],['10:15','rr2','RR2 S4 · M1 vs M2 & M3 vs M4','25m'],['10:40','rr2','RR2 S5 · M1 vs M3 & M2 vs M4','25m'],['11:05','rr2','RR2 S6 · M1 vs M4 & M2 vs M3','25m'],['11:30','brk','☕ Break · Seedings announced','5m'],['11:35','po','🏆 Playoffs · #1 vs #2 (Champ) & #3 vs #4 (Relegation)','25m']];
-  const nano=[['12:00','nr1','RR1 S1 · N1 vs N2 (N3 bye)','25m'],['12:25','nr1','RR1 S2 · N1 vs N3 (N2 bye)','25m'],['12:50','nr1','RR1 S3 · N2 vs N3 (N1 bye)','25m'],['1:15','nr2','RR2 S4 · N1 vs N2 (N3 bye)','25m'],['1:40','nr2','RR2 S5 · N1 vs N3 (N2 bye)','25m'],['2:05','nr2','RR2 S6 · N2 vs N3 (N1 bye)','25m'],['2:30','brk','☕ Break · Standings announced','5m'],['2:35','nf','🌱 Nano Final · N1 vs N2 — Winner promoted to Mini','25m']];
-  document.getElementById('schedule-tl').innerHTML=
-    `<div class="sblk"><div class="shd">⚡ Mini — Courts 1 & 2 · 9 AM–12 PM</div>${mini.map(row).join('')}${end('12:00','Mini ends → Nano begins')}</div>`+
-    `<div class="sblk"><div class="shd">🌱 Nano — Court 1 · 12 PM–3 PM</div>${nano.map(row).join('')}${end('3:00','Full event day complete')}</div>`;
+  const row = ([t,c,txt]) => `<div class="sched-row"><div class="stime">${t}</div><div class="sbar ${c}">${txt}</div><div class="sdur">25m</div></div>`;
+  const fin = ([t,c,txt]) => `<div class="sched-row"><div class="stime" style="color:var(--ci-blue);font-weight:700">${t}</div><div class="sbar ${c}">${txt}</div><div class="sdur">25m</div></div>`;
+  const end = (t,txt) => `<div class="sched-row"><div class="stime" style="font-weight:700;color:var(--green)">${t}</div><div class="send" style="color:var(--green)">${txt}</div><div></div></div>`;
+
+  // Option A: Full Round Robin (15 games, 8 slots on 2 courts) + 2 finals
+  // 6 teams → 15 matchups. 2 courts → 8 slots (last slot 1 game + 1 court idle)
+  // Slots: 0:00 0:25 0:50 1:15 1:40 2:05 2:30 2:55 → finals at 3:00 3:25 → done 3:50... too long
+  // With 15 games on 2 courts = ceil(15/2) = 8 slots = 200 mins. With 2 finals = 250 mins = 4:10 — too long
+  // Realistic: 8 RR games on 2 courts (T1-T6 each play 4-5 games) + 2 finals = 10 slots = 250 mins
+  // Better: 6 teams, 2 courts, pick 8 RR matchups covering all teams fairly (each plays ~3 games) in 8 slots = 200 mins + 2 final slots = 250 mins = 4:10 — still over
+  // For 3.5 hrs (210 min) with 25-min games on 2 courts: 210/25 = 8.4 → max 8 slots = 16 game-slots
+  // 16 game-slots: 8 slots × 2 courts. Need 6 RR rounds (each team plays ~3 games each, 8-9 unique matchups, not full RR) + 2 final slots
+  // Actual full RR = 15 games. 15 on 2 courts = ceil(15/2) = 8 slots = 200 min. Plus 2 finals = 250 min. Need to skip some RR games.
+  // Practical option A: 3 RR rounds × 3 pairs = 9 games (each team plays 3) = 5 slots (~125 min) + seeding break (0) + 2 finals (50 min) = 175 min. Under 3.5!
+  // Or: use all 5 slots for RR (10 games, each team plays 3-4) + 3 finals = 8 slots = 200 min = 3h20. Fits!
+
+  const startH = 9, startM = 0;
+  function timeStr(slotIndex) {
+    const totalMin = startH * 60 + startM + slotIndex * 25;
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h > 12 ? h - 12 : h;
+    return `${h12}:${m.toString().padStart(2,'0')}`;
+  }
+
+  // Option A: 6 RR slots (12 games, each team plays 4 times) + 2 final slots = 8 slots = 3h20
+  const rrA = [
+    [0,'rr1','T1 vs T2  |  T3 vs T4'],
+    [1,'rr1','T1 vs T3  |  T5 vs T6'],
+    [2,'rr1','T2 vs T4  |  T1 vs T6'],
+    [3,'rr2','T2 vs T5  |  T3 vs T6'],
+    [4,'rr2','T1 vs T4  |  T2 vs T6'],
+    [5,'rr2','T3 vs T5  |  T4 vs T6'],
+  ];
+  const finA = [
+    [6,'po','🏆 Final · #1 vs #2  |  3rd Place · #3 vs #4'],
+    [7,'po','5th Place · #5 vs #6'],
+  ];
+  const elA = document.getElementById('schedule-a');
+  if (elA) {
+    elA.innerHTML =
+      `<div class="sblk"><div class="shd">Round Robin — 6 rounds on 2 courts</div>${rrA.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
+      `<div class="sblk"><div class="shd">Finals — Rankings by wins/points diff</div>${finA.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 3h20')}</div>`;
+  }
+
+  // Option B: Pool stage (3+3 games) + cross-pool (3 games) + bracket (3 games) = 9 game slots on 2 courts
+  // 6 pool games (3+3) on 2 courts = 3 slots. Cross (3 games) = 2 slots. Bracket (3 games) = 2 slots. Total = 7 slots = 175 min = 2h55
+  // Add 1 more cross/bracket round to fill to 3.5hrs
+  const poolB = [
+    [0,'rr1','Pool X: T1 vs T2  |  Pool Y: T4 vs T5'],
+    [1,'rr1','Pool X: T1 vs T3  |  Pool Y: T4 vs T6'],
+    [2,'rr1','Pool X: T2 vs T3  |  Pool Y: T5 vs T6'],
+  ];
+  const crossB = [
+    [3,'rr2','Cross · #1X vs #1Y  |  #2X vs #2Y'],
+    [4,'rr2','Cross · #3X vs #3Y'],
+  ];
+  const brackB = [
+    [5,'po','SF · W(#1X-#1Y) vs W(#2X-#2Y)  |  3rd · W(#3X-#3Y) vs L(#1-#1)'],
+    [6,'po','🏆 Grand Final  |  5th Place'],
+    [7,'po','Remaining placement games'],
+  ];
+  const elB = document.getElementById('schedule-b');
+  if (elB) {
+    elB.innerHTML =
+      `<div class="sblk"><div class="shd">Pool Stage · Pool X (T1,T2,T3) · Pool Y (T4,T5,T6)</div>${poolB.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
+      `<div class="sblk"><div class="shd">Cross-Pool by Rank</div>${crossB.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
+      `<div class="sblk"><div class="shd">Bracket Finals</div>${brackB.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 3h20')}</div>`;
+  }
 }
 
 // ── Decisions sidebar (overview) ──────────────────────────────────
@@ -139,7 +203,18 @@ async function renderDecisions() {
 
 // ── Next Steps ─────────────────────────────────────────────────────
 function renderNextSteps() {
-  const steps=[['1','All 6','Review document as a core group. Align on anything unclear.','Before S2'],['2','All 6','Vote and close all High priority open decisions.','Before S2'],['3','All 6','Confirm Season 2 roles: 4 Mini Wingmen, Nano Coordinator, Floating.','Before S2'],['4','All 6','Agree auction format — budget and captain valuation method.','Before S2'],['5','All 6','Agree RTM: 1 or 3 per captain · 60-sec window · same tier.','Before S2'],['6','Nano Coord.','Set up Nano registration. Recruit 3 teams. Identify Nano captain candidates.','2 wks before'],['7','All 6','Run Mini captain nominations. Confirm 4 captains.','2 wks before'],['8','All 6','Open 48-hr player preference window (Mini or Nano-only).','1 wk before draft'],['9','All 6','Publish draft pools, order, and format to all players.','Draft day −48 hrs'],['10','Captains','Conduct Mini auction draft. Enforce tier balance.','Draft day'],['11','Captains','Conduct Nano draft from remaining pool.','Draft day'],['12','All 6','Publish rosters. Open 48-hr appeals window.','Post-draft'],['13','All 6','Book venue. Confirm 2 courts for 6-hour block.','Before Month 1']];
+  const steps=[
+    ['1','All 6','Decide format: Option A (RR + final) or Option B (pools + bracket).','Tonight'],
+    ['2','All 6','Identify 6 captain candidates — one per team. Confirm eligibility.','Tonight'],
+    ['3','All 6','Confirm Season 2 draft order (inverse Season 1 final standings).','After April event'],
+    ['4','All 6','Confirm Wingman assignments — one core member per team.','Before draft'],
+    ['5','All 6','Publish rules: snake draft process, timeline, tier info to all players.','Before draft'],
+    ['6','Captains','Run snake draft — 6 rounds × 6 picks. 60-sec pick clock if live.','Draft day'],
+    ['7','All 6','Review rosters for tier balance. Flag any significant imbalances.','Post-draft'],
+    ['8','All 6','Publish all 6 rosters. Open 48-hour player appeals window.','Post-draft'],
+    ['9','All 6','Book venue. Confirm 2 courts for 3.5-hour event block.','Before Month 1'],
+    ['10','All 6','Publish full Season 2 schedule and format to all 42 players.','Before Month 1'],
+  ];
   document.getElementById('nextsteps-list').innerHTML = steps.map(([n,o,t,w]) =>
     `<div class="nsitem">
       <div class="nsn">${n}</div>
@@ -153,8 +228,8 @@ function renderNextSteps() {
 
 // ── Checklists ─────────────────────────────────────────────────────
 function renderChecklists() {
-  const monthly={'Before':['4 Mini teams confirmed — full rosters of 7','3 Nano teams confirmed — full rosters of 7','4 Mini Wingmen assigned','1 Nano Coordinator confirmed','Venue and 2 courts booked','Prior month P/R swap applied','Substitutions approved'],'Day Of':['Nano Coordinator on-site','Mini Wingmen present with teams','Nano champion recorded','Mini bottom team confirmed','P/R swap confirmed with both captains'],'After':['Team lists published within 24 hrs','Tier observations logged','Nano pipeline updated','Conduct issues reported']};
-  const season={'Tiers & Pool':['All players re-tiered by core','Major player pool assembled'],'Roles':['Season 2 assignments confirmed',"No one repeating last season's role"],'Captains':['Nominations submitted privately','All 7 captains confirmed','Wingman–captain pairings announced','Draft format confirmed','RTM rules confirmed'],'Draft':['48-hr preference window done','Pools published','Draft order published 48 hrs ahead','Draft completed — tiers verified','Players notified within 24 hrs','Appeals window opened and closed','Season schedule published']};
+  const monthly={'Before':['6 teams confirmed — full rosters of 7','6 Wingmen assigned (one per team)','Venue and 2 courts booked for 3.5 hrs','Prior month standings updated','Any substitutions approved'],'Day Of':['Wingmen present with their teams','Referee confirmed for finals','Standings / seedings calculated after RR','Finals bracket set and shared'],'After':['Results and standings published within 24 hrs','Tier observations logged by all Wingmen','Conduct issues reported to core group']};
+  const season={'Tiers & Pool':['All 42 players tiered by core consensus','Draft order confirmed (inverse standings)'],'Roles':['Season 2 Wingman assignments confirmed'],'Captains':['Nominations submitted privately','All 6 captains confirmed','Wingman–captain pairings announced','Draft format (snake) confirmed and communicated'],'Draft':['Draft order published to all captains','Draft conducted — tier balance reviewed','Players notified of team within 24 hours','48-hr appeals window opened and closed','Season schedule and format published']};
   const render = data => Object.entries(data).map(([sec,items]) =>
     `<div class="csh">${sec}</div>${items.map(t=>`<div class="citem"><div class="cbox"></div><span>${t}</span></div>`).join('')}`
   ).join('');
