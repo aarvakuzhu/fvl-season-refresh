@@ -202,6 +202,11 @@ app.post('/api/seed', async (req, res) => {
   }
 });
 
+// ── Draft page ───────────────────────────────────────────────────────
+app.get('/draft', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'draft.html'));
+});
+
 // ── Admin page ───────────────────────────────────────────────────────
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
