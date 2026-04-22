@@ -19,14 +19,14 @@
           </tbody></table>
         </div>
         <div>
-          <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--text)">6-Step Process</div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--text)">Process</div>
           <div class="slist">
             <div class="si"><div class="snum">1</div><div class="sd">Core members nominate privately (up to 2 each)</div></div>
             <div class="si"><div class="snum">2</div><div class="sd">Reveal simultaneously — 2+ votes advance</div></div>
             <div class="si"><div class="snum">3</div><div class="sd">Each discussed max 5 min, confirmed by majority</div></div>
             <div class="si"><div class="snum">4</div><div class="sd">Contact within 24 hours to accept/decline</div></div>
             <div class="si"><div class="snum">5</div><div class="sd">If declined → next highest-voted player offered</div></div>
-            <div class="si"><div class="snum">6</div><div class="sd">Announce all 6 captains with Wingman pairings</div></div>
+            <div class="si"><div class="snum">6</div><div class="sd">Announce all 6 captains</div></div>
           </div>
         </div>
       </div>
@@ -40,53 +40,83 @@
   <div class="card" style="margin-bottom:10px">
     <div class="card-hd">How the Snake Draft Works</div>
     <div class="card-body">
-      <div class="co blue" style="margin-bottom:10px"><strong>Draft order:</strong> Worst Season 1 standing picks first. Order reverses each round — no team gets two consecutive picks.</div>
+      <div class="co blue" style="margin-bottom:10px"><strong>Draft order:</strong> Inverse Season 1 standings — worst team picks first. Reverses each round. Bonus R0 picks for weaker captains (skip-round compensation).</div>
       <div style="font-family:'Roboto Mono',monospace;font-size:11px;background:#f5f8ff;border:1px solid var(--border);padding:10px 12px;margin-bottom:10px;line-height:2">
-        Round 1: T6 → T5 → T4 → T3 → T2 → T1<br>
-        Round 2: T1 → T2 → T3 → T4 → T5 → T6<br>
-        Round 3: T6 → T5 → T4 → T3 → T2 → T1<br>
-        <span style="color:var(--muted)">...repeats for 6 rounds → 6 picks each = 36 players + 6 captains = 42 total</span>
+        R0 (bonus): Anil(1) → Pratik(2) → Harsha(3)<br>
+        R1 ↑: Anil(4) → Pratik(5) → Harsha(6) → Shanthan(7) → Koti(8) → Karthik(9)<br>
+        R2 ↓: Karthik(10) → Koti(11) → Shanthan(12) → <span style="color:var(--red)">Harsha SKIP</span> → Pratik(13) → Anil(14)<br>
+        R3 ↑: Anil(15) → <span style="color:var(--red)">Pratik SKIP</span> → Harsha(16) → Shanthan(17) → Koti(18) → Karthik(19)<br>
+        R4 ↓: Karthik(20) → Koti(21) → Shanthan(22) → Harsha(23) → Pratik(24) → <span style="color:var(--red)">Anil SKIP</span><br>
+        R5 ↑: Anil(25) → Pratik(26) → Harsha(27) → Shanthan(28) → Koti(29) → Karthik(30)<br>
+        R6 ↓: Karthik(31) → Koti(32) → Shanthan(33) → Harsha(34) → Pratik(35) → Anil(36)
       </div>
+      <div class="co amber" style="margin-bottom:8px"><strong>⚠️ Wingman Rule:</strong> Each captain must use one of their picks (before end of Round 5) to select their Wingman from the player pool. No separate Wingman assignment — it is a draft pick choice.</div>
       <div class="slist">
-        <div class="si"><div class="snum">1</div><div><div class="st">Captains confirmed ✅</div><div class="sd">Anil · Pratik · Harsha · Shanthan · Koti · Karthik. Each auto-fills team spot #1 — not in the draft pool. Pick order and skip rounds agreed.</div></div></div>
-        <div class="si"><div class="snum">2</div><div><div class="st">Remaining 36 players enter the pool</div><div class="sd">All non-captain players go into the pool. Tier information shared with all captains before the draft.</div></div></div>
-        <div class="si"><div class="snum">3</div><div><div class="st">Snake draft — 6 rounds of 6 picks</div><div class="sd">Draft order based on inverse Season 1 standings. Worst team picks first in odd rounds, reverses in even rounds. Captains pick simultaneously announced — no time limit pressure in async format, or 60-second clock in live format.</div></div></div>
-        <div class="si"><div class="snum">4</div><div><div class="st">Tier balance check after draft</div><div class="sd">Core members review final rosters for balance. If a team is significantly weaker, core members may suggest one voluntary swap between teams — with both captains agreeing.</div></div></div>
-        <div class="si"><div class="snum">5</div><div><div class="st">Rosters published — 48-hour appeals window</div><div class="sd">All 6 rosters published together. Players have 48 hours to raise any concerns. No changes after window closes.</div></div></div>
+        <div class="si"><div class="snum">1</div><div><div class="st">Captains confirmed ✅</div><div class="sd">Anil · Pratik · Harsha · Shanthan · Koti · Karthik. Each auto-fills team spot #1 — not in the draft pool.</div></div></div>
+        <div class="si"><div class="snum">2</div><div><div class="st">36 players enter the pool</div><div class="sd">All non-captain players. Tier and role info shared with all captains before the draft.</div></div></div>
+        <div class="si"><div class="snum">3</div><div><div class="st">Snake draft — R0 bonus + R1–R6</div><div class="sd">60-second pick clock (live format). Each captain must pick their Wingman by end of R5. Draft simulator available at /draft.</div></div></div>
+        <div class="si"><div class="snum">4</div><div><div class="st">Tier balance check after draft</div><div class="sd">Core members review rosters. One voluntary swap allowed if a team is significantly weaker — both captains must agree.</div></div></div>
+        <div class="si"><div class="snum">5</div><div><div class="st">Rosters published — 48-hour appeals window</div><div class="sd">All 6 rosters published together. No changes after window closes.</div></div></div>
       </div>
     </div>
   </div>
 
-  <!-- Decisions -->
-  <div class="sec">Closed Decisions — Agreed &amp; Locked</div>
+  <!-- Active Decisions -->
+  <div class="sec">Active Decisions</div>
   <span class="sec-line"></span>
-  <div class="dc" id="decisions-closed-list" style="margin-bottom:10px">
-    <div class="skel" style="height:24px;margin:2px"></div>
-    <div class="skel" style="height:24px;margin:2px"></div>
-    <div class="skel" style="height:24px;margin:2px"></div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-body" style="padding:0">
+      <div style="display:grid;grid-template-columns:36px 1fr auto;gap:8px;align-items:start;padding:10px 12px;border-bottom:1px solid var(--border2)">
+        <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);padding-top:2px">S2-1</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">Monthly Event Format</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Option A (full RR + ranked final) vs Option B (2 pools + cross-pool + bracket). Both fit 3.5 hrs, 2 courts, 25-min games, no breaks.</div></div>
+        <span style="font-family:'Roboto Mono',monospace;font-size:9px;background:#ffebee;color:var(--red);padding:2px 6px;border-radius:2px;white-space:nowrap;font-weight:700">OPEN</span>
+      </div>
+      <div style="display:grid;grid-template-columns:36px 1fr auto;gap:8px;align-items:start;padding:10px 12px">
+        <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);padding-top:2px">S2-2</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">Player Classifications / Tiers</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Assign role (Spiker / All-rounder / Setter / Developing) and tier to all 37 pool players before the draft.</div></div>
+        <span style="font-family:'Roboto Mono',monospace;font-size:9px;background:#ffebee;color:var(--red);padding:2px 6px;border-radius:2px;white-space:nowrap;font-weight:700">OPEN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Archived Decisions -->
+  <div class="sec" style="color:var(--muted)">📦 Archived Decisions — Not Applicable / Superseded</div>
+  <span class="sec-line" style="background:var(--muted)"></span>
+  <div id="decisions-archived-list" style="opacity:.65">
+    <div class="skel" style="height:22px;margin-bottom:3px"></div>
+    <div class="skel" style="height:22px;margin-bottom:3px"></div>
+    <div class="skel" style="height:22px;margin-bottom:3px"></div>
   </div>
 
 </div>
 <div class="side">
-  <div class="sec" style="padding-top:0">Open Decisions — Need Vote</div>
-  <span class="sec-line"></span>
-  <div id="decisions-open-list">
-    <div class="skel" style="height:54px;margin-bottom:6px"></div>
-    <div class="skel" style="height:54px;margin-bottom:6px"></div>
-    <div class="skel" style="height:54px"></div>
-  </div>
-  <div class="sec" style="padding-top:4px">Draft Parameters</div>
+  <div class="sec" style="padding-top:0">Draft Parameters</div>
   <span class="sec-line"></span>
   <div class="widget">
     <div class="wbody" style="padding:0">
       <table class="sct" style="font-size:12px">
-        <tr><td>Format</td><td class="r" style="font-weight:700">🐍 Snake</td></tr>
+        <tr><td>Format</td><td class="r" style="font-weight:700">🐍 Snake + R0 Bonus</td></tr>
         <tr><td>Teams</td><td class="r" style="font-weight:700">6</td></tr>
-        <tr><td>Picks per team</td><td class="r" style="font-weight:700">6 (+ captain)</td></tr>
-        <tr><td>Total rounds</td><td class="r" style="font-weight:700">6</td></tr>
-        <tr><td>Total players</td><td class="r" style="font-weight:700">42</td></tr>
+        <tr><td>Picks per team</td><td class="r" style="font-weight:700">6 + R0 bonus</td></tr>
+        <tr><td>Total rounds</td><td class="r" style="font-weight:700">R0 + R1–R6</td></tr>
+        <tr><td>Total players</td><td class="r" style="font-weight:700">42 (36 + 6 caps)</td></tr>
         <tr><td>Draft order basis</td><td class="r" style="font-weight:700">Inverse S1 standings</td></tr>
         <tr><td>Pick clock (live)</td><td class="r" style="font-weight:700">60 seconds</td></tr>
+        <tr><td>Wingman deadline</td><td class="r" style="font-weight:700;color:var(--amber)">By end of R5</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="sec" style="padding-top:8px">Skip Round Summary</div>
+  <span class="sec-line"></span>
+  <div class="widget">
+    <div class="wbody" style="padding:0">
+      <table class="sct" style="font-size:12px">
+        <tr><td style="font-weight:700">Anil</td><td class="r">Skip R4</td></tr>
+        <tr><td style="font-weight:700">Pratik</td><td class="r">Skip R3</td></tr>
+        <tr><td style="font-weight:700">Harsha</td><td class="r">Skip R2</td></tr>
+        <tr><td style="font-weight:700">Shanthan</td><td class="r" style="color:var(--muted)">No skip</td></tr>
+        <tr><td style="font-weight:700">Koti</td><td class="r" style="color:var(--muted)">No skip</td></tr>
+        <tr><td style="font-weight:700">Karthik</td><td class="r" style="color:var(--muted)">No skip</td></tr>
       </table>
     </div>
   </div>

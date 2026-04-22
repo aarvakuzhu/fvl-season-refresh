@@ -166,49 +166,49 @@ function renderSchedule() {
 async function renderDecisionsSidebar() {
   const el = document.getElementById('decisions-sidebar');
   if (!el) return;
-  try {
-    const all = await api('/api/decisions');
-    const open = all.filter(d => d.status === 'open');
-    const oc = document.getElementById('open-count'); if(oc) oc.textContent = open.length;
-    const pc = p => p==='High'?'ph':p==='Medium'?'pm':'pl';
-    const tc = p => p==='High'?'pth':p==='Medium'?'ptm':'ptl';
-    el.innerHTML = open.map(d =>
-      `<div class="do ${pc(d.priority)}" style="margin-bottom:6px"><div class="do-body"><span class="ptag ${tc(d.priority)}">${d.priority}</span><div class="dt">${d.topic}</div><div class="dd">${d.description||''}</div></div></div>`
-    ).join('');
-  } catch(e) { console.error('decisions sidebar:', e); }
+  // Active S2 decisions — hardcoded (DB decisions are all archived legacy items)
+  el.innerHTML = `
+    <div class="do ph" style="margin-bottom:6px"><div class="do-body">
+      <span class="ptag pth">OPEN</span>
+      <div class="dt">Monthly Event Format</div>
+      <div class="dd">Option A (full RR + final) vs Option B (2 pools + bracket).</div>
+    </div></div>
+    <div class="do pm"><div class="do-body">
+      <span class="ptag ptm">OPEN</span>
+      <div class="dt">Player Classifications / Tiers</div>
+      <div class="dd">Assign role + tier to all 37 pool players before the draft.</div>
+    </div></div>`;
+  const oc = document.getElementById('open-count');
+  if (oc) oc.textContent = '2';
 }
 
-// ── Decisions ──────────────────────────────────────────────────────
+// ── Decisions (governance tab) ─────────────────────────────────────
 async function renderDecisions() {
-  const all = await api('/api/decisions');
-  const closed = all.filter(d => d.status === 'closed');
-  const open   = all.filter(d => d.status === 'open');
-
-  const oc = document.getElementById('open-count'); if(oc) oc.textContent = open.length;
-
-  document.getElementById('decisions-closed-list').innerHTML = closed.map(d =>
-    `<div class="dcr"><span class="dref">${d.ref}</span><div><span style="font-size:12px;font-weight:700;color:var(--text)">${d.topic} — </span><span style="font-size:12px;color:var(--muted)">${d.resolution||''}</span></div></div>`
-  ).join('');
-
-  const pc = p => p==='High'?'ph':p==='Medium'?'pm':'pl';
-  const tc = p => p==='High'?'pth':p==='Medium'?'ptm':'ptl';
-  const openHtml = open.map(d =>
-    `<div class="do ${pc(d.priority)}"><div class="do-body"><span class="ptag ${tc(d.priority)}">${d.priority}</span><div class="dt">${d.topic}</div><div class="dd">${d.description||''}</div></div></div>`
-  ).join('');
-  ['decisions-open-list','decisions-sidebar'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = openHtml;
-  });
+  const archivedEl = document.getElementById('decisions-archived-list');
+  if (!archivedEl) return;
+  try {
+    const all = await api('/api/decisions');
+    archivedEl.innerHTML = all.map(d => {
+      const label = d.resolution || d.description || 'Superseded';
+      return `<div style="display:grid;grid-template-columns:40px 1fr auto;gap:6px;align-items:baseline;padding:6px 10px;border-bottom:1px solid var(--border2);background:#fff">
+        <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted)">${d.ref}</span>
+        <div><span style="font-size:12px;font-weight:600;color:var(--muted)">${d.topic}</span>${label ? `<span style="font-size:11px;color:var(--muted)"> — ${label}</span>` : ''}</div>
+        <span style="font-family:'Roboto Mono',monospace;font-size:9px;background:#f5f5f5;color:var(--muted);padding:1px 5px;border-radius:2px;white-space:nowrap">archived</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    if (archivedEl) archivedEl.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--muted)">No archived decisions found.</div>';
+  }
 }
 
 // ── Next Steps ─────────────────────────────────────────────────────
 function renderNextSteps() {
   const steps=[
     ['1','All 6','Decide format: Option A (full RR + final) or Option B (2 pools + bracket). Present to captains once decided.','🔴 Open'],
-    ['2','All 6','Confirm Wingman assignments — one core member per team of 6.','Before draft'],
+    ['2','All 6','Assign role + tier to all 37 pool players. Share with captains before draft.','Before draft'],
     ['3','All 6','Finalise Season 2 draft order (based on inverse Season 1 final standings).','Before draft'],
     ['4','All 6','Publish snake draft rules, pick order table, and skip rounds to all 6 captains.','Before draft'],
-    ['5','All 6','Open player pool to captains — share tier info and Season 1 rosters.','Before draft'],
+    ['5','Captains','Each captain must pick their Wingman using one of their picks — must happen by end of R5.','Draft day'],
     ['6','Captains','Run snake draft — R0 bonus + R1–R6, 60-sec pick clock.','Draft day'],
     ['7','All 6','Review rosters for tier balance. Flag any significant imbalances.','Post-draft'],
     ['8','All 6','Publish all 6 rosters. Open 48-hour player appeals window.','Post-draft'],
