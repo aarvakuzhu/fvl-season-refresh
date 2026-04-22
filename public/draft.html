@@ -54,16 +54,10 @@
     select.rs{font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border:1px solid var(--border);background:#fff;border-radius:2px;color:var(--text);cursor:pointer}
     select.rs:focus{outline:2px solid var(--blue)}
     .tier-badge{font-family:'Roboto Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;font-weight:700}
-    /* Role badges — matching spreadsheet colors */
-    .r-spiker    {background:#bbdefb;color:#0d47a1;border:1px solid #90caf9}   /* light blue */
-    .r-allrounder{background:#c8e6c9;color:#1b5e20;border:1px solid #a5d6a7}   /* green */
-    .r-setter    {background:#f8bbd0;color:#880e4f;border:1px solid #f48fb1}   /* pink */
-    .r-developing{background:#ffe0b2;color:#bf360c;border:1px solid #ffcc80}   /* amber */
-    /* Keep old tier classes as fallback */
     .t-S{background:#fffde7;color:var(--gold);border:1px solid #f5d76e}
-    .t-A{background:#bbdefb;color:#0d47a1;border:1px solid #90caf9}
+    .t-A{background:#e3f2fd;color:#1565c0;border:1px solid #90caf9}
     .t-B{background:#c8e6c9;color:#1b5e20;border:1px solid #a5d6a7}
-    .t-C{background:#ffe0b2;color:#bf360c;border:1px solid #ffcc80}
+    .t-C{background:var(--light);color:var(--muted);border:1px solid var(--border)}
 
     /* PICK ORDER BOARD */
     .board{background:#fff;border:1px solid var(--border)}
@@ -223,20 +217,8 @@
       <!-- LEFT: Player Pool -->
       <div>
         <div class="sec">Player Pool <span id="pool-count-lbl" style="font-weight:400;font-size:10px;color:var(--muted)"></span></div>
-        <!-- Role legend -->
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;padding:5px 0;border-bottom:1px solid var(--border2)">
-          <span style="font-size:10px;color:var(--muted);font-weight:700;align-self:center">ROLE:</span>
-          <span class="tier-badge r-allrounder">⚡ All-rounder</span>
-          <span class="tier-badge r-spiker">🔵 Spiker</span>
-          <span class="tier-badge r-setter">🩷 Setter</span>
-          <span class="tier-badge r-developing">🟠 Developing</span>
-        </div>
         <div class="pool-filters" id="tier-filters">
           <button class="fbtn on" data-tier="ALL" onclick="filterTier(this)">All</button>
-          <button class="fbtn" data-tier="allrounder" onclick="filterTier(this)" style="border-color:#a5d6a7;color:#1b5e20">🟢 All-rounder</button>
-          <button class="fbtn" data-tier="spiker"     onclick="filterTier(this)" style="border-color:#90caf9;color:#0d47a1">🔵 Spiker</button>
-          <button class="fbtn" data-tier="setter"     onclick="filterTier(this)" style="border-color:#f48fb1;color:#880e4f">🩷 Setter</button>
-          <button class="fbtn" data-tier="developing" onclick="filterTier(this)" style="border-color:#ffcc80;color:#bf360c">🟠 Developing</button>
         </div>
         <input class="search-box" type="text" id="player-search" placeholder="Search player…" oninput="renderPool()">
         <div class="pool-list" id="pool-list"></div>
@@ -343,43 +325,17 @@ async function init() {
     teams.forEach(t => {
       t.players.forEach(p => {
         if (!captainNames.has(p.name)) {
-          const roleMap = {
-          'Ashok':'allrounder','Krishna':'allrounder','Pavan':'allrounder','Jugal':'allrounder',
-          'Rajeshbabu':'allrounder','Rahul':'allrounder','Sachin':'allrounder','Naren':'allrounder',
-          'Keshav':'allrounder','Sunil':'allrounder',
-          'Krupa':'setter','Gupta Ji':'setter',
-          'Amrendra':'spiker','Ahmed':'spiker','Chandu':'spiker','Chandra':'spiker',
-          'Divyanshu':'spiker','Gopal':'spiker','Ishant':'spiker','Kiran':'spiker',
-          'Mukesh':'spiker','Naveen':'spiker','Raja S':'spiker','Rakesh':'spiker',
-          'Rajan':'spiker','Ritesh':'spiker','Rizwan':'spiker','Ronak':'spiker',
-          'Santosh':'spiker','Saravanan':'spiker','Suri':'spiker','Uday Dragon':'spiker',
-          'Uday K':'spiker','Venkat':'spiker','Vikas':'spiker',
-        };
-        const dispMap = {
-          'Amrendra':'Amar','Pavan':'Pawan','Raja S':'Raja','Rajeshbabu':'Rajesh',
-          'Saravanan':'Sarva','Sunil':'Sunil Ji','Uday Dragon':'Uday D','Uday K':'Uday B',
-          'Venkat':'Venkat EZ Pass',
-        };
-        pool.push({
-          name: p.name,
-          role: roleMap[p.name] || 'developing',
-          dispName: dispMap[p.name] || p.name,
-          s1team: t.name.replace('FVL ',''),
-          drafted: false
-        });
+          pool.push({ name: p.name, s1team: t.name.replace('FVL ',''), drafted: false });
         }
       });
     });
-    pool.sort((a,b) => {
-      const ro = {allrounder:0,spiker:1,setter:2,developing:3};
-      return (ro[a.role]??4) - (ro[b.role]??4) || (a.dispName||a.name).localeCompare(b.dispName||b.name);
-    });
+    pool.sort((a,b) => a.name.localeCompare(b.name));
     // Apply Season 2 roster changes
     const OUT = new Set(['Kunal']);
     const NEW = [
-      {name:'Surendra Kings', role:'spiker',     dispName:'Surendra Konga', s1team:'New', drafted:false},
-      {name:'Raja Vasu',      role:'spiker',     dispName:'Raja EZ Pass',   s1team:'New', drafted:false},
-      {name:'Gupta Ji',       role:'setter',     dispName:'Gupta Ji',        s1team:'New', drafted:false},
+      {name:'Surendra Kings',s1team:'New',drafted:false},
+      {name:'Raja Vasu',s1team:'New',drafted:false},
+      {name:'Gupta Ji',s1team:'New',drafted:false},
     ];
     const filtered_pool = pool.filter(p => !OUT.has(p.name));
     NEW.forEach(p => { if (!captainNames.has(p.name)) filtered_pool.push(p); });
@@ -392,46 +348,43 @@ async function init() {
       `${pool.length} players loaded · ${STATE.captains.length} captains · Ready to start`;
   } catch(e) {
     // Fallback: use known Season 1 roster data
-    // Role classification from spreadsheet image:
-    // allrounder (green), spiker (light blue), setter (pink), developing (amber)
-    // Names corrected to match spreadsheet where they differ
     STATE.players = [
-      {name:'Ahmed',         role:'spiker',     dispName:'Ahmed',           s1team:'Dragons', drafted:false},
-      {name:'Amrendra',role:'spiker',dispName:'Amar',s1team:'Spartans',drafted:false},
-      {name:'Ashok',role:'allrounder',dispName:'Ashok',s1team:'Falcons',drafted:false},
-      {name:'Chandu',role:'spiker',dispName:'Chandu',s1team:'Panthers',drafted:false},
-      {name:'Chandra',role:'spiker',dispName:'Chandra',s1team:'Panthers',drafted:false},
-      {name:'Divyanshu',role:'spiker',dispName:'Divyanshu',s1team:'Panthers',drafted:false},
-      {name:'Gopal',role:'spiker',dispName:'Gopal',s1team:'Panthers',drafted:false},
-      {name:'Ishant',role:'spiker',dispName:'Ishant',s1team:'Titans',drafted:false},
-      {name:'Jugal',role:'allrounder',dispName:'Jugal',s1team:'Spartans',drafted:false},
-      {name:'Keshav',role:'allrounder',dispName:'Keshav',s1team:'Dragons',drafted:false},
-      {name:'Kiran',role:'spiker',dispName:'Kiran',s1team:'Spartans',drafted:false},
-      {name:'Krishna',role:'allrounder',dispName:'Krishna',s1team:'Panthers',drafted:false},
-      {name:'Krupa',role:'setter',dispName:'Krupa',s1team:'Panthers',drafted:false},
-      {name:'Mukesh',role:'spiker',dispName:'Mukesh',s1team:'Panthers',drafted:false},
-      {name:'Naren',role:'allrounder',dispName:'Naren',s1team:'Dragons',drafted:false},
-      {name:'Naveen',role:'spiker',dispName:'Naveen',s1team:'Falcons',drafted:false},
-      {name:'Pavan',role:'allrounder',dispName:'Pawan',s1team:'Dragons',drafted:false},
-      {name:'Raja S',role:'spiker',dispName:'Raja',s1team:'Falcons',drafted:false},
-      {name:'Rajeshbabu',role:'allrounder',dispName:'Rajesh',s1team:'Falcons',drafted:false},
-      {name:'Rakesh',role:'spiker',dispName:'Rakesh',s1team:'Spartans',drafted:false},
-      {name:'Rajan',role:'spiker',dispName:'Rajan',s1team:'Spartans',drafted:false},
-      {name:'Rahul',role:'allrounder',dispName:'Rahul',s1team:'Titans',drafted:false},
-      {name:'Ritesh',role:'spiker',dispName:'Ritesh',s1team:'Falcons',drafted:false},
-      {name:'Rizwan',role:'spiker',dispName:'Rizwan',s1team:'Falcons',drafted:false},
-      {name:'Ronak',role:'spiker',dispName:'Ronak',s1team:'Titans',drafted:false},
-      {name:'Sachin',role:'allrounder',dispName:'Sachin',s1team:'Panthers',drafted:false},
-      {name:'Santosh',role:'spiker',dispName:'Santosh',s1team:'Spartans',drafted:false},
-      {name:'Saravanan',role:'spiker',dispName:'Sarva',s1team:'Dragons',drafted:false},
-      {name:'Sunil',role:'allrounder',dispName:'Sunil Ji',s1team:'Titans',drafted:false},
-      {name:'Suri',role:'spiker',dispName:'Suri',s1team:'Dragons',drafted:false},
-      {name:'Surendra Kings',role:'spiker',dispName:'Surendra Konga',s1team:'New',drafted:false},
-      {name:'Raja Vasu',role:'spiker',dispName:'Raja EZ Pass',s1team:'New',drafted:false},
-      {name:'Gupta Ji',role:'setter',dispName:'Gupta Ji',s1team:'New',drafted:false},
-      {name:'Uday K',role:'spiker',dispName:'Uday B',s1team:'Spartans',drafted:false},
-      {name:'Venkat',role:'spiker',dispName:'Venkat EZ Pass',s1team:'Titans',drafted:false},
-      {name:'Vikas',role:'spiker',dispName:'Vikas',s1team:'Titans',drafted:false},
+      {name:'Ahmed',s1team:'Dragons',drafted:false},
+      {name:'Amrendra',s1team:'Spartans',drafted:false},
+      {name:'Ashok',s1team:'Falcons',drafted:false},
+      {name:'Chandu',s1team:'Panthers',drafted:false},
+      {name:'Chandra',s1team:'Panthers',drafted:false},
+      {name:'Divyanshu',s1team:'Panthers',drafted:false},
+      {name:'Gopal',s1team:'Panthers',drafted:false},
+      {name:'Ishant',s1team:'Titans',drafted:false},
+      {name:'Jugal',s1team:'Spartans',drafted:false},
+      {name:'Keshav',s1team:'Dragons',drafted:false},
+      {name:'Kiran',s1team:'Spartans',drafted:false},
+      {name:'Krishna',s1team:'Panthers',drafted:false},
+      {name:'Krupa',s1team:'Panthers',drafted:false},
+      {name:'Mukesh',s1team:'Panthers',drafted:false},
+      {name:'Naren',s1team:'Dragons',drafted:false},
+      {name:'Naveen',s1team:'Falcons',drafted:false},
+      {name:'Pavan',s1team:'Dragons',drafted:false},
+      {name:'Raja S',s1team:'Falcons',drafted:false},
+      {name:'Rajeshbabu',s1team:'Falcons',drafted:false},
+      {name:'Rakesh',s1team:'Spartans',drafted:false},
+      {name:'Rajan',s1team:'Spartans',drafted:false},
+      {name:'Rahul',s1team:'Titans',drafted:false},
+      {name:'Ritesh',s1team:'Falcons',drafted:false},
+      {name:'Rizwan',s1team:'Falcons',drafted:false},
+      {name:'Ronak',s1team:'Titans',drafted:false},
+      {name:'Sachin',s1team:'Panthers',drafted:false},
+      {name:'Santosh',s1team:'Spartans',drafted:false},
+      {name:'Saravanan',s1team:'Dragons',drafted:false},
+      {name:'Sunil',s1team:'Titans',drafted:false},
+      {name:'Suri',s1team:'Dragons',drafted:false},
+      {name:'Surendra Kings',s1team:'New',drafted:false},
+      {name:'Raja Vasu',s1team:'New',drafted:false},
+      {name:'Gupta Ji',s1team:'New',drafted:false},
+      {name:'Uday K',s1team:'Spartans',drafted:false},
+      {name:'Venkat',s1team:'Titans',drafted:false},
+      {name:'Vikas',s1team:'Titans',drafted:false},
     ];
     document.getElementById('setup-status').textContent =
       `${STATE.players.length} players loaded (offline fallback) · Ready to start`;
@@ -551,9 +504,6 @@ function pickPlayer(playerName) {
   STATE.picks.push({
     round: pick.round, pickNum: pick.pickNum,
     captain: pick.captain, player: player.name,
-    dispName: player.dispName || player.name,
-    role: player.role || 'developing',
-    roleLabel: {allrounder:'All-rounder',spiker:'Spiker',setter:'Setter',developing:'Developing'}[player.role] || '—',
     s1team: player.s1team,
     timestamp: new Date(),
   });
@@ -662,7 +612,7 @@ function renderBoard() {
       let cls = isDone ? 'cell-done' : isActive ? 'cell-active' : 'cell-pending';
       html += `<td class="${cls}"><div class="cell-inner">
         <span class="cell-pick-n">#${pickInRound.pickNum}</span>
-        ${isDone && pick ? `<span class="cell-player">${pick.dispName||pick.player}</span><span class="cell-tier r-${pick.role||'developing'}">${pick.roleLabel||''}</span>` : isActive ? '<span style="font-size:10px;color:var(--amber);font-weight:700">← PICK NOW</span>' : '<span class="cell-player" style="color:#ccc">—</span>'}
+        ${isDone && pick ? `<span class="cell-player">${pick.player}</span>` : isActive ? '<span style="font-size:10px;color:var(--amber);font-weight:700">← PICK NOW</span>' : '<span class="cell-player" style="color:#ccc">—</span>'}
       </div></td>`;
     });
 
@@ -689,7 +639,7 @@ function renderPool() {
   const currentPick = STATE.pickSequence[STATE.currentPickIdx];
 
   const filtered = STATE.players.filter(p => {
-    if (tierF !== 'ALL' && p.role !== tierF) return false;
+    if (tierF !== 'ALL' && p.name !== tierF) return false;
     if (search && !p.name.toLowerCase().includes(search)) return false;
     return true;
   });
@@ -736,7 +686,7 @@ function renderTeams() {
     for (let i = 0; i < slots; i++) {
       const p = t.players[i];
       rows += p
-        ? `<div class="team-player"><span>${p.dispName||p.name}</span><span class="tier-badge r-${p.role||'developing'}" style="font-size:9px">${{allrounder:'⚡AR',spiker:'🔵SP',setter:'🩷ST',developing:'🟠Dev'}[p.role]||'—'}</span></div>`
+        ? `<div class="team-player"><span>${p.name}</span></div>`
         : `<div class="team-player empty-slot"><span>Pick ${i+2}</span></div>`;
     }
     return `<div class="team-card" style="border-top:3px solid ${t.color}">
@@ -762,7 +712,7 @@ function renderLog() {
     <div style="display:grid;grid-template-columns:28px 1fr;gap:6px;padding:6px 10px;border-bottom:1px solid var(--border2);align-items:start">
       <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);padding-top:1px">#${p.pickNum}</span>
       <div>
-        <div style="font-size:12px;font-weight:700;color:var(--text)">${p.dispName||p.player} <span class="tier-badge r-${p.role||'developing'}">${p.roleLabel||'—'}</span></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text)">${p.player}</div>
         <div style="font-size:11px;color:var(--muted)">→ ${p.captain} · R${p.round} · ${p.s1team}</div>
       </div>
     </div>`).join('');
