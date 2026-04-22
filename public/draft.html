@@ -335,7 +335,19 @@ async function init() {
       const tierOrder = {S:0,A:1,B:2,C:3};
       return (tierOrder[a.tier]??4) - (tierOrder[b.tier]??4) || a.name.localeCompare(b.name);
     });
-    STATE.players = pool;
+    // Apply Season 2 roster changes
+    const OUT = new Set(['Kunal']);
+    const NEW = [
+      {name:'Surendra Kings', tier:'B', s1team:'New', drafted:false},
+      {name:'Raja Vasu',      tier:'B', s1team:'New', drafted:false},
+    ];
+    const filtered_pool = pool.filter(p => !OUT.has(p.name));
+    NEW.forEach(p => { if (!captainNames.has(p.name)) filtered_pool.push(p); });
+    filtered_pool.sort((a,b) => {
+      const tierOrder = {S:0,A:1,B:2,C:3};
+      return (tierOrder[a.tier]??4) - (tierOrder[b.tier]??4) || a.name.localeCompare(b.name);
+    });
+    STATE.players = filtered_pool;
     document.getElementById('setup-status').textContent =
       `${pool.length} players loaded · ${STATE.captains.length} captains · Ready to start`;
   } catch(e) {
@@ -354,7 +366,6 @@ async function init() {
       {name:'Kiran',tier:'B',s1team:'Spartans',drafted:false},
       {name:'Krishna',tier:'A',s1team:'Panthers',drafted:false},
       {name:'Krupa',tier:'B',s1team:'Panthers',drafted:false},
-      {name:'Kunal',tier:'B',s1team:'Titans',drafted:false},
       {name:'Mukesh',tier:'B',s1team:'Panthers',drafted:false},
       {name:'Naren',tier:'A',s1team:'Dragons',drafted:false},
       {name:'Naveen',tier:'B',s1team:'Falcons',drafted:false},
@@ -372,7 +383,8 @@ async function init() {
       {name:'Saravanan',tier:'B',s1team:'Dragons',drafted:false},
       {name:'Sunil',tier:'B',s1team:'Titans',drafted:false},
       {name:'Suri',tier:'B',s1team:'Dragons',drafted:false},
-      {name:'Uday Dragon',tier:'B',s1team:'Dragons',drafted:false},
+      {name:'Surendra Kings',tier:'B',s1team:'New',drafted:false},
+      {name:'Raja Vasu',tier:'B',s1team:'New',drafted:false},
       {name:'Uday K',tier:'B',s1team:'Spartans',drafted:false},
       {name:'Venkat',tier:'B',s1team:'Titans',drafted:false},
       {name:'Vikas',tier:'B',s1team:'Titans',drafted:false},
