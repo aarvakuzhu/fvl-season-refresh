@@ -258,12 +258,12 @@
 // ══════════════════════════════════════════════════════════════════
 const STATE = {
   captains: [
-    { name:'Karthik S', entryRound:1, pickOrder:1, tier:'A', color:'#1a3566' },
-    { name:'Koti',      entryRound:1, pickOrder:2, tier:'A', color:'#311b92' },
-    { name:'Shanthan',  entryRound:1, pickOrder:3, tier:'A', color:'#7f0000' },
-    { name:'Harsha',    entryRound:2, pickOrder:4, tier:'B', color:'#1b5e20' },
-    { name:'Pratik',    entryRound:3, pickOrder:5, tier:'A', color:'#0d1b2a' },
-    { name:'Anil',      entryRound:4, pickOrder:6, tier:'B', color:'#4a148c' },
+    { name:'Anil',      entryRound:4, pickOrder:1, tier:'B', color:'#4a148c' },
+    { name:'Pratik',    entryRound:3, pickOrder:2, tier:'A', color:'#0d1b2a' },
+    { name:'Harsha',    entryRound:2, pickOrder:3, tier:'B', color:'#1b5e20' },
+    { name:'Shanthan',  entryRound:1, pickOrder:4, tier:'A', color:'#7f0000' },
+    { name:'Koti',      entryRound:1, pickOrder:5, tier:'A', color:'#311b92' },
+    { name:'Karthik S', entryRound:1, pickOrder:6, tier:'A', color:'#1a3566' },
   ],
   players: [],        // {name, tier, team (S1), drafted:false}
   teams: [],          // [{captain, color, players:[]}]
@@ -284,20 +284,27 @@ const STATE = {
 // ══════════════════════════════════════════════════════════════════
 function buildPickSequence() {
   const caps = STATE.captains;
-  const totalRounds = STATE.playersPerTeam; // picks per team
+  const totalRounds = STATE.playersPerTeam;
   const seq = [];
   let globalPick = 1;
 
+  // R0 — bonus round: captains with entryRound > 1 pick early (sorted by pickOrder)
+  const bonusCaps = caps
+    .filter(c => c.entryRound > 1)
+    .sort((a, b) => (a.pickOrder || 99) - (b.pickOrder || 99));
+  bonusCaps.forEach(cap => {
+    seq.push({ round: 0, captain: cap.name, pickNum: globalPick++ });
+  });
+
+  // R1–R6 — snake
+  // Skip rule: skip captain c in round r only if c.entryRound === r AND r > 1
   for (let r = 1; r <= totalRounds; r++) {
-    // Determine active captains for this round (not skipped), sorted by pickOrder
     const active = caps
-      .filter(c => c.entryRound !== r)
+      .filter(c => !(c.entryRound === r && c.entryRound > 1))
       .sort((a, b) => (a.pickOrder || 99) - (b.pickOrder || 99));
-    // Snake: odd rounds → forward (pickOrder asc), even → reverse
     const ordered = r % 2 === 1 ? [...active] : [...active].reverse();
     ordered.forEach(cap => {
-      seq.push({ round: r, captain: cap.name, pickNum: globalPick });
-      globalPick++;
+      seq.push({ round: r, captain: cap.name, pickNum: globalPick++ });
     });
   }
   return seq;
@@ -564,7 +571,7 @@ function renderBoard() {
   const caps = STATE.captains;
   const totalRounds = STATE.playersPerTeam;
 
-  // Group seq by round
+  // Group seq by round (including round 0)
   const byRound = {};
   seq.forEach(s => {
     if (!byRound[s.round]) byRound[s.round] = [];
@@ -572,16 +579,38 @@ function renderBoard() {
   });
 
   const tbl = document.getElementById('board-table');
-
-  // Header row — one column per captain
-  let html = '<thead><tr><th class="rh">Round</th>';
-  // Show captains in pickOrder across the board header
   const sortedCaps = [...caps].sort((a,b) => (a.pickOrder||99)-(b.pickOrder||99));
+
+  // Header
+  let html = '<thead><tr><th class="rh">Round</th>';
   sortedCaps.forEach(c => {
     html += `<th style="background:${c.color}20;color:${c.color};border-bottom:3px solid ${c.color}">#${c.pickOrder} ${c.name}</th>`;
   });
   html += '</tr></thead><tbody>';
 
+  // R0 bonus row
+  const r0picks = byRound[0] || [];
+  html += `<tr><td class="rnd-cell" style="background:#6d4c00;color:#f5c842">★ R0 Bonus</td>`;
+  sortedCaps.forEach(c => {
+    const pickInRound = r0picks.find(p => p.captain === c.name);
+    if (!pickInRound) {
+      html += `<td class="cell-skip"><div class="cell-inner"><span class="cell-skip-lbl">—</span></div></td>`;
+      return;
+    }
+    const idx = seq.indexOf(pickInRound);
+    const isDone = idx < STATE.currentPickIdx;
+    const isActive = idx === STATE.currentPickIdx;
+    const pick = STATE.picks.find(p => p.pickNum === pickInRound.pickNum);
+    let cls = isDone ? 'cell-done' : isActive ? 'cell-active' : 'cell-pending';
+    cls += ' cell-bonus';
+    html += `<td class="${cls}"><div class="cell-inner">
+      <span class="cell-pick-n">#${pickInRound.pickNum}</span>
+      ${isDone && pick ? `<span class="cell-player">${pick.player}</span>` : isActive ? '<span style="font-size:10px;color:var(--amber);font-weight:700">← PICK NOW</span>' : '<span class="cell-player" style="color:#6d4c00">bonus</span>'}
+    </div></td>`;
+  });
+  html += '</tr>';
+
+  // R1–R6
   for (let r = 1; r <= totalRounds; r++) {
     const roundPicks = byRound[r] || [];
     const isReverse = r % 2 === 0;
@@ -589,18 +618,16 @@ function renderBoard() {
 
     sortedCaps.forEach(c => {
       const pickInRound = roundPicks.find(p => p.captain === c.name);
-      const isSkipped = c.entryRound === r;
-      const capEntry = STATE.captains.find(x => x.name === c.name);
+      // Skip only if entryRound matches this round AND entryRound > 1
+      const isSkipped = c.entryRound === r && c.entryRound > 1;
 
       if (isSkipped) {
-        html += `<td class="cell-skip"><div class="cell-inner"><span class="cell-skip-lbl">skip R${r}</span></div></td>`;
+        html += `<td class="cell-skip"><div class="cell-inner"><span class="cell-skip-lbl">SKIP</span></div></td>`;
         return;
       }
 
-      // Is this pick #0 (captain's own slot)?
       if (!pickInRound) {
-        // Captain auto-fills slot — not in sequence
-        html += `<td class="cell-captain"><div class="cell-inner"><span class="cell-cap-lbl">Captain</span><span class="cell-tier t-${capEntry.tier}" style="font-size:9px">${capEntry.tier}</span></div></td>`;
+        html += `<td class="cell-captain"><div class="cell-inner"><span class="cell-cap-lbl">Captain</span></div></td>`;
         return;
       }
 
@@ -743,7 +770,7 @@ function updateStatusBar() {
   document.getElementById('sb-dir').textContent = p.round % 2 === 1 ? '→ Forward' : '← Reverse';
 
   // Skipped captains this round
-  const skipped = STATE.captains.filter(c => c.entryRound === p.round).map(c => c.name);
+  const skipped = STATE.captains.filter(c => c.entryRound === p.round && c.entryRound > 1).map(c => c.name);
   document.getElementById('sb-msg').textContent =
     skipped.length ? `${skipped.join(', ')} skipped this round` : '';
 }
