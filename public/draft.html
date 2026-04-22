@@ -262,12 +262,12 @@
 // ══════════════════════════════════════════════════════════════════
 const STATE = {
   captains: [
-    { name:'Karthik S', entryRound:1, tier:'A', color:'#1a3566' },
-    { name:'Koti',      entryRound:1, tier:'A', color:'#311b92' },
-    { name:'Shanthan',  entryRound:1, tier:'A', color:'#7f0000' },
-    { name:'Harsha',    entryRound:2, tier:'B', color:'#1b5e20' },
-    { name:'Pratik',    entryRound:3, tier:'A', color:'#0d1b2a' },
-    { name:'Anil',      entryRound:4, tier:'B', color:'#4a148c' },
+    { name:'Karthik S', entryRound:1, pickOrder:1, tier:'A', color:'#1a3566' },
+    { name:'Koti',      entryRound:1, pickOrder:2, tier:'A', color:'#311b92' },
+    { name:'Shanthan',  entryRound:1, pickOrder:3, tier:'A', color:'#7f0000' },
+    { name:'Harsha',    entryRound:2, pickOrder:4, tier:'B', color:'#1b5e20' },
+    { name:'Pratik',    entryRound:3, pickOrder:5, tier:'A', color:'#0d1b2a' },
+    { name:'Anil',      entryRound:4, pickOrder:6, tier:'B', color:'#4a148c' },
   ],
   players: [],        // {name, tier, team (S1), drafted:false}
   teams: [],          // [{captain, color, players:[]}]
@@ -293,9 +293,11 @@ function buildPickSequence() {
   let globalPick = 1;
 
   for (let r = 1; r <= totalRounds; r++) {
-    // Determine active captains for this round (not skipped)
-    const active = caps.filter(c => c.entryRound !== r);
-    // Snake: odd rounds → forward (index 0,1,2…), even → reverse
+    // Determine active captains for this round (not skipped), sorted by pickOrder
+    const active = caps
+      .filter(c => c.entryRound !== r)
+      .sort((a, b) => (a.pickOrder || 99) - (b.pickOrder || 99));
+    // Snake: odd rounds → forward (pickOrder asc), even → reverse
     const ordered = r % 2 === 1 ? [...active] : [...active].reverse();
     ordered.forEach(cap => {
       seq.push({ round: r, captain: cap.name, pickNum: globalPick });
@@ -400,23 +402,40 @@ async function init() {
 function renderCaptainList() {
   const el = document.getElementById('captain-list');
   const maxRound = STATE.captains.length;
-  el.innerHTML = STATE.captains.map((c, i) => `
-    <div class="cap-item">
-      <div>
-        <div class="cap-nm">${c.name}</div>
-        <div class="cap-meta">
-          <span class="cap-skill-lbl">Entry round:</span>
-          <select class="rs" onchange="updateCaptain(${i},'entryRound',parseInt(this.value))">
-            ${[1,2,3,4,5,6].map(r => `<option value="${r}" ${c.entryRound===r?'selected':''}>${r===1?'Round 1 (no bonus)':'Round '+r}</option>`).join('')}
-          </select>
-          <span class="tier-badge t-${c.tier}">${c.tier}</span>
-          <select class="rs" onchange="updateCaptain(${i},'tier',this.value)" title="Tier">
-            ${['S','A','B','C'].map(t=>`<option value="${t}" ${c.tier===t?'selected':''}>${t}</option>`).join('')}
-          </select>
-        </div>
+  // Sort by current pickOrder for display
+  const sorted = [...STATE.captains].sort((a,b) => (a.pickOrder||99)-(b.pickOrder||99));
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:36px 1fr auto auto auto auto;align-items:center;gap:0;padding:5px 10px;background:var(--light);border-bottom:1px solid var(--border2)">
+      <div style="font-size:10px;font-weight:700;color:var(--muted)">POS</div>
+      <div style="font-size:10px;font-weight:700;color:var(--muted)">CAPTAIN</div>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-align:center;min-width:80px">PICK POS</div>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-align:center;min-width:90px">SKIP ROUND</div>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-align:center;min-width:60px">TIER</div>
+      <div></div>
+    </div>
+  ` + sorted.map((c) => {
+    const i = STATE.captains.indexOf(c);
+    const maxPicks = STATE.captains.length;
+    return `<div class="cap-item" style="display:grid;grid-template-columns:36px 1fr auto auto auto auto;align-items:center;gap:6px">
+      <div style="font-family:'Roboto Mono',monospace;font-size:16px;font-weight:900;color:var(--blue);text-align:center">${c.pickOrder}</div>
+      <div class="cap-nm" style="margin:0">${c.name}</div>
+      <div style="display:flex;align-items:center;gap:3px;min-width:80px;justify-content:center">
+        <button onclick="movePick(${i},-1)" style="background:var(--light);border:1px solid var(--border);border-radius:2px;padding:2px 7px;cursor:pointer;font-size:12px;font-weight:700" title="Move earlier">↑</button>
+        <button onclick="movePick(${i},1)"  style="background:var(--light);border:1px solid var(--border);border-radius:2px;padding:2px 7px;cursor:pointer;font-size:12px;font-weight:700" title="Move later">↓</button>
       </div>
-      <button onclick="removeCaptain(${i})" style="font-size:14px;background:none;border:none;cursor:pointer;color:var(--muted);padding:2px 6px" title="Remove">✕</button>
-    </div>`).join('');
+      <div style="min-width:90px;text-align:center">
+        <select class="rs" onchange="updateCaptain(${i},'entryRound',parseInt(this.value))">
+          ${[1,2,3,4,5,6].map(r => `<option value="${r}" ${c.entryRound===r?'selected':''}>${r===1?'R1 (no skip)':'Skip R'+r}</option>`).join('')}
+        </select>
+      </div>
+      <div style="min-width:60px;text-align:center">
+        <select class="rs" onchange="updateCaptain(${i},'tier',this.value)">
+          ${['S','A','B','C'].map(t=>`<option value="${t}" ${c.tier===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <button onclick="removeCaptain(${i})" style="font-size:13px;background:none;border:none;cursor:pointer;color:var(--muted);padding:2px 4px" title="Remove">✕</button>
+    </div>`;
+  }).join('');
 }
 
 function updateCaptain(i, key, val) {
@@ -424,10 +443,24 @@ function updateCaptain(i, key, val) {
   renderCaptainList();
 }
 
+// Swap pickOrder: move captain at index i up (-1) or down (+1) in pick order
+function movePick(i, dir) {
+  const cap = STATE.captains[i];
+  const currentPos = cap.pickOrder;
+  const targetPos = currentPos + dir;
+  if (targetPos < 1 || targetPos > STATE.captains.length) return;
+  // Find the captain that currently holds targetPos and swap
+  const other = STATE.captains.find(c => c.pickOrder === targetPos);
+  if (other) other.pickOrder = currentPos;
+  cap.pickOrder = targetPos;
+  renderCaptainList();
+}
+
 function addCaptain() {
   const name = prompt('Captain name:');
   if (!name?.trim()) return;
-  STATE.captains.push({ name: name.trim(), entryRound: 1, tier: 'A', color: '#'+Math.floor(Math.random()*0x666666+0x111111).toString(16) });
+  const nextPos = STATE.captains.length + 1;
+  STATE.captains.push({ name: name.trim(), entryRound: 1, pickOrder: nextPos, tier: 'A', color: '#'+Math.floor(Math.random()*0x666666+0x111111).toString(16) });
   renderCaptainList();
   document.getElementById('total-picks-lbl').textContent =
     (parseInt(document.getElementById('players-per-team').value)||6) * STATE.captains.length;
@@ -547,8 +580,10 @@ function renderBoard() {
 
   // Header row — one column per captain
   let html = '<thead><tr><th class="rh">Round</th>';
-  caps.forEach(c => {
-    html += `<th style="background:${c.color}20;color:${c.color};border-bottom:3px solid ${c.color}">${c.name}</th>`;
+  // Show captains in pickOrder across the board header
+  const sortedCaps = [...caps].sort((a,b) => (a.pickOrder||99)-(b.pickOrder||99));
+  sortedCaps.forEach(c => {
+    html += `<th style="background:${c.color}20;color:${c.color};border-bottom:3px solid ${c.color}">#${c.pickOrder} ${c.name}</th>`;
   });
   html += '</tr></thead><tbody>';
 
@@ -557,7 +592,7 @@ function renderBoard() {
     const isReverse = r % 2 === 0;
     html += `<tr><td class="rnd-cell ${isReverse?'rev':''}">${isReverse?'←':'→'} R${r}</td>`;
 
-    caps.forEach(c => {
+    sortedCaps.forEach(c => {
       const pickInRound = roundPicks.find(p => p.captain === c.name);
       const isSkipped = c.entryRound === r;
       const capEntry = STATE.captains.find(x => x.name === c.name);
@@ -643,7 +678,12 @@ function renderPool() {
 // ══════════════════════════════════════════════════════════════════
 function renderTeams() {
   const currentPick = STATE.pickSequence[STATE.currentPickIdx];
-  document.getElementById('team-rosters').innerHTML = STATE.teams.map(t => {
+  const teamsSorted = [...STATE.teams].sort((a,b) => {
+    const ca = STATE.captains.find(c=>c.name===a.captain);
+    const cb = STATE.captains.find(c=>c.name===b.captain);
+    return (ca?.pickOrder||99)-(cb?.pickOrder||99);
+  });
+  document.getElementById('team-rosters').innerHTML = teamsSorted.map(t => {
     const cap = STATE.captains.find(c => c.name === t.captain);
     const isCurrent = currentPick && currentPick.captain === t.captain;
     const slots = STATE.playersPerTeam;
