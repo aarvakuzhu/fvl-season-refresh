@@ -204,16 +204,16 @@ async function renderDecisions() {
 // ── Next Steps ─────────────────────────────────────────────────────
 function renderNextSteps() {
   const steps=[
-    ['1','All 6','Decide format: Option A (RR + final) or Option B (pools + bracket).','Tonight'],
-    ['2','All 6','Identify 6 captain candidates — one per team. Confirm eligibility.','Tonight'],
-    ['3','All 6','Confirm Season 2 draft order (inverse Season 1 final standings).','After April event'],
-    ['4','All 6','Confirm Wingman assignments — one core member per team.','Before draft'],
-    ['5','All 6','Publish rules: snake draft process, timeline, tier info to all players.','Before draft'],
-    ['6','Captains','Run snake draft — 6 rounds × 6 picks. 60-sec pick clock if live.','Draft day'],
+    ['1','All 6','Decide format: Option A (full RR + final) or Option B (2 pools + bracket). Present to captains once decided.','🔴 Open'],
+    ['2','All 6','Confirm Wingman assignments — one core member per team of 6.','Before draft'],
+    ['3','All 6','Finalise Season 2 draft order (based on inverse Season 1 final standings).','Before draft'],
+    ['4','All 6','Publish snake draft rules, pick order table, and skip rounds to all 6 captains.','Before draft'],
+    ['5','All 6','Open player pool to captains — share tier info and Season 1 rosters.','Before draft'],
+    ['6','Captains','Run snake draft — R0 bonus + R1–R6, 60-sec pick clock.','Draft day'],
     ['7','All 6','Review rosters for tier balance. Flag any significant imbalances.','Post-draft'],
     ['8','All 6','Publish all 6 rosters. Open 48-hour player appeals window.','Post-draft'],
     ['9','All 6','Book venue. Confirm 2 courts for 3.5-hour event block.','Before Month 1'],
-    ['10','All 6','Publish full Season 2 schedule and format to all 42 players.','Before Month 1'],
+    ['10','All 6','Publish full Season 2 schedule and confirmed format to all 42 players.','Before Month 1'],
   ];
   document.getElementById('nextsteps-list').innerHTML = steps.map(([n,o,t,w]) =>
     `<div class="nsitem">
