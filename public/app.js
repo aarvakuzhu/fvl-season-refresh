@@ -106,14 +106,14 @@ function renderSchedule() {
   // Practical option A: 3 RR rounds × 3 pairs = 9 games (each team plays 3) = 5 slots (~125 min) + seeding break (0) + 2 finals (50 min) = 175 min. Under 3.5!
   // Or: use all 5 slots for RR (10 games, each team plays 3-4) + 3 finals = 8 slots = 200 min = 3h20. Fits!
 
-  const startH = 9, startM = 0;
+  const startH = 14, startM = 0;
   function timeStr(slotIndex) {
     const totalMin = startH * 60 + startM + slotIndex * 25;
     const h = Math.floor(totalMin / 60);
     const m = totalMin % 60;
     const ampm = h >= 12 ? 'PM' : 'AM';
-    const h12 = h > 12 ? h - 12 : h;
-    return `${h12}:${m.toString().padStart(2,'0')}`;
+    const h12 = h > 12 ? h - 12 : h === 0 ? 12 : h;
+    return `${h12}:${m.toString().padStart(2,'0')} ${ampm}`;
   }
 
   // Option A: 6 RR slots (12 games, each team plays 4 times) + 2 final slots = 8 slots = 3h20
@@ -133,7 +133,7 @@ function renderSchedule() {
   if (elA) {
     elA.innerHTML =
       `<div class="sblk"><div class="shd">Round Robin — 6 rounds on 2 courts</div>${rrA.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
-      `<div class="sblk"><div class="shd">Finals — Rankings by wins/points diff</div>${finA.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 3h20')}</div>`;
+      `<div class="sblk"><div class="shd">Finals — Rankings by wins/points diff</div>${finA.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 5:20 PM')}</div>`;
   }
 
   // Option B: Pool stage (3+3 games) + cross-pool (3 games) + bracket (3 games) = 9 game slots on 2 courts
@@ -158,7 +158,7 @@ function renderSchedule() {
     elB.innerHTML =
       `<div class="sblk"><div class="shd">Pool Stage · Pool X (T1,T2,T3) · Pool Y (T4,T5,T6)</div>${poolB.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
       `<div class="sblk"><div class="shd">Cross-Pool by Rank</div>${crossB.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
-      `<div class="sblk"><div class="shd">Bracket Finals</div>${brackB.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 3h20')}</div>`;
+      `<div class="sblk"><div class="shd">Bracket Finals</div>${brackB.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 5:20 PM')}</div>`;
   }
 }
 
