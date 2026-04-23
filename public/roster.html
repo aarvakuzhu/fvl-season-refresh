@@ -462,8 +462,6 @@ async function savePlayer(uid) {
   } catch(e) { si.textContent='✗ Error'; si.className='si err'; console.error(e); }
 }
 
-}
-
 let _tt;
 function toast(msg,dur=2500){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
 
