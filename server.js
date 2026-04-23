@@ -263,36 +263,78 @@ app.post('/api/migrate-season', async (req, res) => {
 
 // ── Player Registry API ──────────────────────────────────────────────
 
-// GET /api/players — all players with their season participations
+// ── helpers ──────────────────────────────────────────────────────────
+// Build enriched player list from Team collection + Player enrichment.
+// Team data is the source of truth for who played which season.
+// Player collection stores skills/tier/displayName/notes enrichment.
+async function buildPlayerList(seasonFilter) {
+  const CORE     = new Set(['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil']);
+  const CAPTAINS = new Set(['Anil','Pratik','Harsha','Shanthan','Koti','Karthik S']);
+  const OUT      = new Set(['Kunal']);
+  const NEW_S3   = ['Surendra Kings','Raja Vasu'];
+
+  // Load all teams (optionally filtered by season)
+  const teamQuery = seasonFilter ? { season: seasonFilter } : {};
+  const teams = await Team.find(teamQuery).sort({ season: 1 });
+
+  // Collect unique player names and their season appearances
+  const playerMap = {}; // name → { name, seasons:[] }
+  for (const t of teams) {
+    for (const p of (t.players || [])) {
+      if (OUT.has(p.name)) continue;
+      if (!playerMap[p.name]) playerMap[p.name] = { name: p.name, seasons: [] };
+      playerMap[p.name].seasons.push({
+        season: t.season,
+        team: t.name.replace('FVL ',''),
+        role: CAPTAINS.has(p.name) ? 'Captain' : CORE.has(p.name) ? 'Wingman' : 'Player',
+      });
+    }
+  }
+  // Add new S3 players not in any team yet
+  for (const name of NEW_S3) {
+    if (!playerMap[name]) playerMap[name] = { name, seasons: [{ season: 3, team: 'New', role: 'Player' }] };
+  }
+
+  // Load enrichment from Player collection (keyed by name)
+  const enrichments = await Player.find({ name: { $in: Object.keys(playerMap) } });
+  const enrichMap = {};
+  enrichments.forEach(e => enrichMap[e.name] = e);
+
+  // Merge
+  return Object.values(playerMap).map(p => {
+    const e = enrichMap[p.name] || {};
+    return {
+      _id:         e._id || null,       // Player doc _id (null if not yet enriched)
+      name:        p.name,
+      displayName: e.displayName || null,
+      label:       e.displayName || p.name, // what to show in UI
+      skills:      e.skills || [],
+      tier:        e.tier || 'B',
+      notes:       e.notes || null,
+      active:      e.active !== false,
+      seasons:     p.seasons.sort((a,b) => a.season - b.season),
+    };
+  }).sort((a,b) => a.name.localeCompare(b.name));
+}
+
+// GET /api/players — all players merged from Team + Player enrichment
 app.get('/api/players', async (req, res) => {
   try {
-    const players = await Player.find().sort({ name: 1 });
-    const seasons = await PlayerSeason.find();
-    // Attach seasons array to each player
-    const seasonMap = {};
-    seasons.forEach(s => {
-      const id = s.playerId.toString();
-      if (!seasonMap[id]) seasonMap[id] = [];
-      seasonMap[id].push({ season: s.season, team: s.team, role: s.role, active: s.active, _id: s._id });
-    });
-    const result = players.map(p => ({
-      ...p.toObject(),
-      seasons: (seasonMap[p._id.toString()] || []).sort((a,b) => a.season - b.season),
-    }));
-    res.json(result);
+    const season = req.query.season ? Number(req.query.season) : null;
+    res.json(await buildPlayerList(season));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// PATCH /api/players/:id — update player profile (name, displayName, skills, tier, notes)
+// PATCH /api/players/:id — update Player enrichment by _id
 app.patch('/api/players/:id', async (req, res) => {
   try {
     const { name, displayName, skills, tier, notes, active } = req.body;
     const update = {};
     if (name        !== undefined) update.name = name;
-    if (displayName !== undefined) update.displayName = displayName;
+    if (displayName !== undefined) update.displayName = displayName || null;
     if (skills      !== undefined) update.skills = skills;
     if (tier        !== undefined) update.tier = tier;
-    if (notes       !== undefined) update.notes = notes;
+    if (notes       !== undefined) update.notes = notes || null;
     if (active      !== undefined) update.active = active;
     const doc = await Player.findByIdAndUpdate(req.params.id, { $set: update }, { new: true });
     if (!doc) return res.status(404).json({ error: 'Not found' });
@@ -300,79 +342,37 @@ app.patch('/api/players/:id', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// PATCH /api/playerseason/:id — update a single season record (role, team, active)
-app.patch('/api/playerseason/:id', async (req, res) => {
+// POST /api/players/enrich — upsert a Player enrichment record by name (creates if not exists)
+app.post('/api/players/enrich', async (req, res) => {
   try {
-    const doc = await PlayerSeason.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
-    if (!doc) return res.status(404).json({ error: 'Not found' });
+    const { name, displayName, skills, tier, notes } = req.body;
+    if (!name) return res.status(400).json({ error: 'name required' });
+    const doc = await Player.findOneAndUpdate(
+      { name },
+      { $set: { displayName: displayName||null, skills: skills||[], tier: tier||'B', notes: notes||null } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
     res.json(doc);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /api/players/sync — build Player + PlayerSeason records from existing Team data
-// Safe to re-run: upserts only, never deletes
-app.post('/api/players/sync', async (req, res) => {
-  try {
-    const CORE     = new Set(['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil']);
-    const CAPTAINS = new Set(['Anil','Pratik','Harsha','Shanthan','Koti','Karthik S']);
-    const OUT      = new Set(['Kunal']);
-    const NEW_S3   = [{name:'Surendra Kings'},{name:'Raja Vasu'}];
-
-    let created=0, linked=0;
-    const teams = await Team.find().sort({ season: 1 });
-
-    for (const t of teams) {
-      for (const p of (t.players || [])) {
-        if (OUT.has(p.name)) continue;
-        // Upsert Player record
-        const role = CAPTAINS.has(p.name) ? 'Captain' : CORE.has(p.name) ? 'Wingman' : 'Player';
-        const player = await Player.findOneAndUpdate(
-          { name: p.name },
-          { $setOnInsert: { name: p.name, tier: p.tier || 'B', skills: p.skills || [], active: true } },
-          { upsert: true, new: true }
-        );
-        if (player.isNew || !player._id) created++;
-        // Upsert PlayerSeason record
-        await PlayerSeason.findOneAndUpdate(
-          { playerId: player._id, season: t.season },
-          { playerId: player._id, name: p.name, season: t.season, team: t.name.replace('FVL ',''), role, active: true },
-          { upsert: true, new: true }
-        );
-        linked++;
-      }
-    }
-    // Add new S3 players with no S2 history
-    for (const np of NEW_S3) {
-      const player = await Player.findOneAndUpdate(
-        { name: np.name },
-        { $setOnInsert: { name: np.name, tier: 'B', skills: [], active: true } },
-        { upsert: true, new: true }
-      );
-      await PlayerSeason.findOneAndUpdate(
-        { playerId: player._id, season: 3 },
-        { playerId: player._id, name: np.name, season: 3, team: 'New', role: 'Player', active: true },
-        { upsert: true, new: true }
-      );
-      linked++;
-    }
-    res.json({ success: true, created, linked });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Keep /api/roster pointing to same data for draft page compatibility
+// GET /api/roster — same data, for draft page compatibility (season-filtered)
 app.get('/api/roster', async (req, res) => {
   try {
     const season = Number(req.query.season) || 3;
-    const seasonDocs = await PlayerSeason.find({ season });
-    const playerIds = seasonDocs.map(s => s.playerId);
-    const players = await Player.find({ _id: { $in: playerIds } });
-    const playerMap = {};
-    players.forEach(p => playerMap[p._id.toString()] = p);
-    const result = seasonDocs.map(s => {
-      const p = playerMap[s.playerId.toString()] || {};
-      return { _id: p._id, name: s.name, displayName: p.displayName, skills: p.skills || [], tier: p.tier, s2team: s.team, role: s.role, notes: p.notes };
-    });
-    res.json(result);
+    const list = await buildPlayerList(season);
+    // Return in shape the draft page expects
+    res.json(list.map(p => ({
+      _id:         p._id,
+      name:        p.name,
+      displayName: p.displayName,
+      label:       p.label,
+      skills:      p.skills,
+      tier:        p.tier,
+      s2team:      (p.seasons.find(s=>s.season===2)||p.seasons[0]||{}).team || '',
+      role:        (p.seasons.find(s=>s.season===season)||p.seasons[p.seasons.length-1]||{}).role || 'Player',
+      notes:       p.notes,
+    })));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

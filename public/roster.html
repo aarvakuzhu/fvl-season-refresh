@@ -143,7 +143,6 @@
     .empty{text-align:center;padding:60px;color:var(--muted);grid-column:1/-1;font-size:14px}
     .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 18px;border-radius:3px;font-size:13px;font-weight:500;z-index:999;transition:opacity .3s;pointer-events:none}
     .toast.hide{opacity:0}
-    .sync-bar{background:var(--green2);border:1px solid #a5d6a7;padding:10px 14px;border-radius:3px;font-size:12px;margin-bottom:12px;display:none;align-items:center;gap:10px}
   </style>
 </head>
 <body>
@@ -152,8 +151,7 @@
   <span class="hbadge">FVL</span>
   <span class="htitle"><em>Player</em> Registry</span>
   <div class="hright">
-    <button class="hbtn hbtn-green" onclick="syncPlayers()">⬆ Sync from Teams</button>
-    <a href="/draft" class="hbtn hbtn-ghost">🐍 Draft</a>
+<a href="/draft" class="hbtn hbtn-ghost">🐍 Draft</a>
     <a href="/"      class="hbtn hbtn-ghost">← Home</a>
   </div>
 </div>
@@ -185,8 +183,7 @@
 </div>
 
 <div class="page">
-  <div id="sync-bar" class="sync-bar"></div>
-  <div id="roster-grid">
+<div id="roster-grid">
     <div class="skel" style="height:160px"></div>
     <div class="skel" style="height:160px"></div>
     <div class="skel" style="height:160px"></div>
@@ -216,8 +213,7 @@ async function load() {
     applyFilters();
   } catch(e) {
     document.getElementById('roster-grid').innerHTML =
-      `<div class="empty">Could not load players.<br><small>${e.message}</small><br>
-      <button class="hbtn-green" style="margin-top:10px;padding:7px 14px;border:none;border-radius:3px;cursor:pointer;font-family:DM Sans,sans-serif;font-weight:700;font-size:13px;background:#1b7a1b;color:#fff" onclick="syncPlayers()">⬆ Sync from Teams first</button></div>`;
+      `<div class="empty">Could not load players.<br><small>${e.message}</small></div>`;
     document.getElementById('count-lbl').textContent = '0 players';
   }
 }
@@ -276,7 +272,7 @@ function applyFilters() {
   list = [...list].sort((a,b) => {
     const ra = seasonF==='all' ? Math.min(...(a.seasons||[{role:'Player'}]).map(s=>roleOrder[s.role]??2)) : roleOrder[(a.seasons||[]).find(s=>s.season===seasonF)?.role]??2;
     const rb = seasonF==='all' ? Math.min(...(b.seasons||[{role:'Player'}]).map(s=>roleOrder[s.role]??2)) : roleOrder[(b.seasons||[]).find(s=>s.season===seasonF)?.role]??2;
-    return ra-rb || a.name.localeCompare(b.name);
+    return ra-rb || a.label.localeCompare(b.label);
   });
 
   document.getElementById('roster-grid').innerHTML = list.length
@@ -317,8 +313,8 @@ function cardHTML(p) {
     <div class="pc-body">
       <div class="pc-top">
         <div class="pc-names">
-          <div class="pc-name">${p.name}</div>
-          ${p.displayName&&p.displayName!==p.name?`<div class="pc-dispname">"${p.displayName}"</div>`:''}
+          <div class="pc-name">${p.label}</div>
+          ${p.displayName?`<div class="pc-dispname">${p.name}</div>`:''}
         </div>
         <button class="pc-edit-btn" onclick="toggleEdit('${p._id}',this)">✏️ Edit</button>
       </div>
@@ -332,11 +328,11 @@ function cardHTML(p) {
     </div>
     <div class="pc-edit">
       <div class="ef">
-        <label class="el">Canonical Name <span style="opacity:.5;font-weight:400">(used as identifier)</span></label>
+        <label class="el">Name <span style="opacity:.5;font-weight:400">(canonical)</span></label>
         <input class="ei" id="cn-${p._id}" value="${p.name}">
       </div>
       <div class="ef">
-        <label class="el">Display Name (nickname)</label>
+        <label class="el">Display Name <span style="opacity:.5;font-weight:400">(shown in UI — overrides name)</span></label>
         <input class="ei" id="dn-${p._id}" value="${p.displayName||''}" placeholder="${p.name}">
       </div>
       <div class="ef">
@@ -409,13 +405,18 @@ async function savePlayer(id) {
   const tier        = card.querySelector('.tier-tog.on')?.classList[1] || 'B';
 
   try {
-    // Save player profile
-    const r = await fetch(`/api/players/${id}`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name: name||undefined, displayName:displayName||undefined, notes:notes||undefined, skills, tier }),
+    // Save player enrichment — PATCH if _id exists, POST /enrich if new
+    const isNew = !id || id === 'null';
+    const url    = isNew ? '/api/players/enrich' : `/api/players/${id}`;
+    const method = isNew ? 'POST' : 'PATCH';
+    const r = await fetch(url, {
+      method, headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name: name||undefined, displayName: displayName||undefined, notes: notes||undefined, skills, tier }),
     });
     if (!r.ok) throw new Error(await r.text());
     const updated = await r.json();
+    // Update local _id if this was a new enrichment
+    if (isNew && updated._id) { ALL[idx]._id = updated._id.toString(); id = updated._id.toString(); }
 
     // Save each season role/team
     const seasonRows = card.querySelectorAll('.season-edit-row');
@@ -446,17 +447,6 @@ async function savePlayer(id) {
   } catch(e) { si.textContent='✗ Error'; si.className='si err'; console.error(e); }
 }
 
-// ── SYNC ──────────────────────────────────────────────────────────
-async function syncPlayers() {
-  const bar = document.getElementById('sync-bar');
-  bar.style.display='flex'; bar.textContent='⏳ Syncing players from Season 2 & 3 team data…';
-  try {
-    const r = await fetch('/api/players/sync', {method:'POST'});
-    const d = await r.json();
-    bar.textContent = `✓ Sync complete — ${d.linked} season records linked across all players.`;
-    setTimeout(()=>bar.style.display='none', 4000);
-    load();
-  } catch(e) { bar.textContent='✗ Sync failed: '+e.message; }
 }
 
 let _tt;

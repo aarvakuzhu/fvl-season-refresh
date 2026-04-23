@@ -330,7 +330,12 @@ async function init() {
   renderSavesList();
   // Load skills from roster in parallel
   fetch('/api/roster?season=3').then(r=>r.json()).then(players=>{
-    players.forEach(p => { if(p.skills?.length) PLAYER_SKILLS[p.name]=p.skills; });
+    players.forEach(p => {
+      if(p.skills?.length) PLAYER_SKILLS[p.name]=p.skills;
+      // Update label on matching pool players
+      const poolP = S.players.find(x=>x.name===p.name);
+      if(poolP && p.displayName) poolP.label = p.displayName;
+    });
     if (S.started) renderPool(); // refresh if already on draft board
   }).catch(()=>{});
 
@@ -347,11 +352,11 @@ async function init() {
     const pool = [];
     teams.forEach(t => (t.players||[]).forEach(p => {
       if (!exclude.has(p.name))
-        pool.push({name:p.name, s2team:t.name.replace('FVL ',''), drafted:false});
+        pool.push({name:p.name, label:p.displayName||p.name, s2team:t.name.replace('FVL ',''), drafted:false});
     }));
     // New Season 3 players not in Season 2 rosters
     [{name:'Surendra Kings',s2team:'New'},{name:'Raja Vasu',s2team:'New'}]
-      .forEach(p => { if(!exclude.has(p.name) && !pool.find(x=>x.name===p.name)) pool.push({...p,drafted:false}); });
+      .forEach(p => { if(!exclude.has(p.name) && !pool.find(x=>x.name===p.name)) pool.push({...p, label:p.name, drafted:false}); });
     pool.sort((a,b)=>a.name.localeCompare(b.name));
     S.players = pool;
     document.getElementById('setup-status').textContent = `${pool.length} players · ${S.caps.length} captains · Ready`;
@@ -364,7 +369,7 @@ async function init() {
       'Uday Dragon','Uday K','Venkat','Vikas'];
     S.players = fallback
       .filter(name => !exclude.has(name))
-      .map(name=>({name, s2team:'—', drafted:false}));
+      .map(name=>({name, label:name, s2team:'—', drafted:false}));
     document.getElementById('setup-status').textContent = `${S.players.length} players (offline) · Ready`;
   }
 }
@@ -523,7 +528,7 @@ function pickPlayer(name) {
   if (!player) return;
   player.drafted=true;
   S.teams.find(t=>t.captain===pick.captain).players.push({...player});
-  S.picks.push({round:pick.rk,pickNum:pick.pickNum,captain:pick.captain,player:player.name,s2team:player.s2team,ts:new Date()});
+  S.picks.push({round:pick.rk,pickNum:pick.pickNum,captain:pick.captain,player:player.name,label:player.label||player.name,s2team:player.s2team,ts:new Date()});
   S.cur++;
   renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
   toast(`${pick.captain} → ${player.name}`);
@@ -607,7 +612,7 @@ function renderPool() {
     const skills=getSkills(p.name);
     return `<div class="pc ${p.drafted?'drafted':''}" onclick="${can?`pickPlayer('${safe}')`:''}" title="${p.s2team}">
       <div>
-        <div class="pn">${p.name} ${p.drafted?'<span class="utag">picked</span>':''}</div>
+        <div class="pn">${p.label||p.name} ${p.drafted?'<span class="utag">picked</span>':''}</div>
         <div class="pm" style="margin-bottom:${skills.length?'3px':'0'}">${p.s2team}</div>
         ${skills.length?`<div>${skillTags(skills)}</div>`:''}
       </div>
@@ -626,7 +631,7 @@ function renderTeams() {
     let rows=`<div class="tp cap"><span>${t.captain} ⭐</span></div>`;
     for(let i=0;i<S.ppt;i++){
       const p=t.players[i];
-      rows+=p?`<div class="tp" style="flex-wrap:wrap;gap:3px"><span>${p.name}</span><span style="margin-left:auto">${skillTags(getSkills(p.name))}</span></div>`:`<div class="tp empty"><span>Pick ${i+2}</span></div>`;
+      rows+=p?`<div class="tp" style="flex-wrap:wrap;gap:3px"><span>${p.label||p.name}</span><span style="margin-left:auto">${skillTags(getSkills(p.name))}</span></div>`:`<div class="tp empty"><span>Pick ${i+2}</span></div>`;
     }
     return `<div class="tc" style="border-top:3px solid ${t.col}">
       <div class="th ${isCur?'cur':''}" style="background:${t.col}"><span>${t.captain}</span><span class="pi">${t.players.length}/${S.ppt}</span></div>
