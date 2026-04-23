@@ -5,6 +5,7 @@ const PlayerSchema = new mongoose.Schema({
   name:       { type: String, required: true },
   role:       { type: String, enum: ['Captain', 'Wingman', 'Player'], default: 'Player' },
   tier:       { type: String, enum: ['S', 'A', 'B', 'C'], default: 'B' },
+  skills:     [{ type: String }],                     // e.g. ['Spiker','Defense']
   active:     { type: Boolean, default: true },
 });
 
@@ -98,7 +99,24 @@ const ConfigSchema = new mongoose.Schema({
   value: { type: String, required: true },
 }, { timestamps: true });
 
-// ── Draft Saves ───────────────────────────────────────────────────────
+// ── Roster (Season 3 player profiles) ────────────────────────────────
+const RosterPlayerSchema = new mongoose.Schema({
+  name:        { type: String, required: true },
+  displayName: { type: String },                      // nickname / preferred name
+  season:      { type: Number, required: true, default: 3 },
+  s2team:      { type: String },                      // Season 2 team
+  role:        { type: String, enum: ['Captain','Wingman','Player'], default: 'Player' },
+  tier:        { type: String, enum: ['S','A','B','C'], default: 'B' },
+  skills:      [{ type: String }],                    // ['Spiker','Setter','Defense','Allrounder','Developing']
+  active:      { type: Boolean, default: true },
+  notes:       { type: String },
+}, { timestamps: true });
+
+RosterPlayerSchema.index({ name: 1, season: 1 }, { unique: true });
+
+module.exports.RosterPlayer = mongoose.model('RosterPlayer', RosterPlayerSchema);
+
+
 const DraftSaveSchema = new mongoose.Schema({
   user:       { type: String, required: true },       // captain or wingman name
   season:     { type: Number, required: true, default: 3 },

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FVL — Season 3 Roster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:#0d1b2a; --navy2:#1a2f4a; --blue:#1a5fb4; --blue2:#e8eef8;
+      --red:#c62828; --green:#1b7a1b; --green2:#e8f5e9;
+      --amber:#d35400; --gold:#b8860b;
+      --bg:#f0f2f5; --white:#fff; --border:#dde3ed; --border2:#eaeef5;
+      --text:#1a1a2e; --muted:#64748b; --light:#f8fafc;
+      --sk-spiker:#dbeafe; --sk-spiker-t:#1d4ed8;
+      --sk-setter:#fce7f3; --sk-setter-t:#9d174d;
+      --sk-defense:#d1fae5; --sk-defense-t:#065f46;
+      --sk-allrounder:#fef3c7; --sk-allrounder-t:#92400e;
+      --sk-developing:#ffedd5; --sk-developing-t:#c2410c;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:14px;scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+    /* ── HEADER ── */
+    #hdr{background:var(--navy);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+    .hbadge{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;padding:2px 8px;border-radius:2px;letter-spacing:1px}
+    .htitle{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:.5px}
+    .htitle em{color:#f5c842;font-style:normal}
+    .hright{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .hbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:2px;text-decoration:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+    .hbtn-ghost{background:transparent;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.25)}.hbtn-ghost:hover{color:#fff;border-color:#fff}
+    .hbtn-amber{background:#f5c842;color:var(--navy);font-weight:700}.hbtn-amber:hover{background:#ffe066}
+
+    /* ── TOOLBAR ── */
+    #toolbar{background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:52px;z-index:99}
+    .search-input{padding:7px 12px;border:1px solid var(--border);border-radius:3px;font-size:13px;font-family:'DM Sans',sans-serif;width:220px;outline:none;transition:border .15s}
+    .search-input:focus{border-color:var(--blue)}
+    .filter-group{display:flex;gap:4px;flex-wrap:wrap}
+    .fchip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
+    .fchip.all{background:var(--navy);color:#fff;border-color:var(--navy)}
+    .fchip:not(.all):not(.on){background:#fff;border-color:var(--border);color:var(--muted)}
+    .fchip.on.fc-Spiker    {background:var(--sk-spiker);border-color:var(--sk-spiker-t);color:var(--sk-spiker-t)}
+    .fchip.on.fc-Setter    {background:var(--sk-setter);border-color:var(--sk-setter-t);color:var(--sk-setter-t)}
+    .fchip.on.fc-Defense   {background:var(--sk-defense);border-color:var(--sk-defense-t);color:var(--sk-defense-t)}
+    .fchip.on.fc-Allrounder{background:var(--sk-allrounder);border-color:var(--sk-allrounder-t);color:var(--sk-allrounder-t)}
+    .fchip.on.fc-Developing{background:var(--sk-developing);border-color:var(--sk-developing-t);color:var(--sk-developing-t)}
+    .role-filter{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);cursor:pointer;background:#fff;color:var(--muted);transition:all .15s;font-family:'DM Mono',monospace}
+    .role-filter.on{background:var(--navy2);border-color:var(--navy2);color:#fff}
+    .count-lbl{font-size:12px;color:var(--muted);margin-left:auto;font-family:'DM Mono',monospace}
+    .seed-btn{font-size:11px;font-weight:600;padding:5px 12px;border:none;border-radius:3px;cursor:pointer;background:var(--navy2);color:#fff;font-family:'DM Sans',sans-serif}
+    .seed-btn:hover{opacity:.85}
+
+    /* ── GRID ── */
+    .page{max-width:1400px;margin:0 auto;padding:16px 20px}
+    #roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+
+    /* ── PLAYER CARD ── */
+    .pcard{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:box-shadow .15s;position:relative}
+    .pcard:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+    .pcard.editing{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,95,180,.15)}
+    .pc-stripe{height:4px}
+    .pc-body{padding:12px 14px}
+    .pc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+    .pc-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);line-height:1}
+    .pc-dispname{font-size:11px;color:var(--muted);margin-top:1px;font-family:'DM Mono',monospace}
+    .pc-edit-btn{background:none;border:1px solid var(--border);border-radius:3px;padding:3px 8px;cursor:pointer;font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+    .pc-edit-btn:hover{border-color:var(--blue);color:var(--blue)}
+    .pc-edit-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+    .pc-meta{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+    .badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 6px;border-radius:2px}
+    .badge-team{background:#e8eef8;color:var(--blue)}
+    .badge-captain{background:#fef3c7;color:#92400e}
+    .badge-wingman{background:#d1fae5;color:#065f46}
+    .badge-player{background:var(--light);color:var(--muted);border:1px solid var(--border)}
+    .badge-tier-S{background:#fffde7;color:var(--gold);border:1px solid #f5d76e}
+    .badge-tier-A{background:#e3f2fd;color:#1565c0;border:1px solid #90caf9}
+    .badge-tier-B{background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe}
+    .badge-tier-C{background:var(--light);color:var(--muted);border:1px solid var(--border)}
+    .pc-skills{display:flex;flex-wrap:wrap;gap:4px;min-height:22px}
+    .sk{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px}
+    .sk-Spiker    {background:var(--sk-spiker);color:var(--sk-spiker-t)}
+    .sk-Setter    {background:var(--sk-setter);color:var(--sk-setter-t)}
+    .sk-Defense   {background:var(--sk-defense);color:var(--sk-defense-t)}
+    .sk-Allrounder{background:var(--sk-allrounder);color:var(--sk-allrounder-t)}
+    .sk-Developing{background:var(--sk-developing);color:var(--sk-developing-t)}
+    .no-skills{font-size:11px;color:#ccc;font-style:italic}
+
+    /* ── EDIT PANEL ── */
+    .pc-edit{border-top:1px solid var(--border2);padding:12px 14px;background:#f8fafc;display:none}
+    .pcard.editing .pc-edit{display:block}
+    .edit-field{margin-bottom:10px}
+    .edit-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;display:block}
+    .edit-input{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:3px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border .15s;background:#fff}
+    .edit-input:focus{border-color:var(--blue)}
+    .skill-toggles{display:flex;flex-wrap:wrap;gap:5px}
+    .sk-toggle{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:4px 9px;border-radius:3px;border:2px solid transparent;cursor:pointer;transition:all .15s;opacity:.45}
+    .sk-toggle.active{opacity:1}
+    .sk-toggle.Spiker    {background:var(--sk-spiker);color:var(--sk-spiker-t);border-color:var(--sk-spiker-t)}
+    .sk-toggle.Setter    {background:var(--sk-setter);color:var(--sk-setter-t);border-color:var(--sk-setter-t)}
+    .sk-toggle.Defense   {background:var(--sk-defense);color:var(--sk-defense-t);border-color:var(--sk-defense-t)}
+    .sk-toggle.Allrounder{background:var(--sk-allrounder);color:var(--sk-allrounder-t);border-color:var(--sk-allrounder-t)}
+    .sk-toggle.Developing{background:var(--sk-developing);color:var(--sk-developing-t);border-color:var(--sk-developing-t)}
+    .tier-toggles{display:flex;gap:5px}
+    .tier-toggle{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:3px;cursor:pointer;transition:all .15s;opacity:.4;border:2px solid transparent}
+    .tier-toggle.active{opacity:1}
+    .tier-toggle.S{background:#fffde7;color:var(--gold);border-color:var(--gold)}
+    .tier-toggle.A{background:#e3f2fd;color:#1565c0;border-color:#1565c0}
+    .tier-toggle.B{background:#f3e8ff;color:#6b21a8;border-color:#6b21a8}
+    .tier-toggle.C{background:var(--light);color:var(--muted);border-color:var(--muted)}
+    .edit-actions{display:flex;gap:6px;margin-top:12px}
+    .btn-save{padding:6px 14px;border:none;border-radius:3px;background:var(--blue);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s}
+    .btn-save:hover{opacity:.85}
+    .btn-cancel{padding:6px 14px;border:1px solid var(--border);border-radius:3px;background:#fff;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .save-indicator{font-size:11px;font-family:'DM Mono',monospace;margin-left:4px}
+    .save-indicator.ok{color:var(--green)}
+    .save-indicator.err{color:var(--red)}
+
+    /* ── NOTES ── */
+    .pc-notes{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;line-height:1.4}
+
+    /* ── SKELETON / EMPTY ── */
+    .skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200%;animation:sk 1.3s infinite;border-radius:3px}
+    @keyframes sk{0%{background-position:200%}100%{background-position:-200%}}
+    .empty-state{text-align:center;padding:60px;color:var(--muted);grid-column:1/-1}
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 18px;border-radius:3px;font-size:13px;font-weight:500;z-index:999;transition:opacity .3s;pointer-events:none}
+    .toast.hide{opacity:0}
+
+    /* ── STRIPE COLORS by team ── */
+    .stripe-Falcons  {background:linear-gradient(90deg,#1a3566,#2b5ba8)}
+    .stripe-Spartans {background:linear-gradient(90deg,#311b92,#4527a0)}
+    .stripe-Titans   {background:linear-gradient(90deg,#0f1e3d,#1a3566)}
+    .stripe-Dragons  {background:linear-gradient(90deg,#7f0000,#c62828)}
+    .stripe-Panthers {background:linear-gradient(90deg,#1b5e20,#2e7d32)}
+    .stripe-New      {background:linear-gradient(90deg,#555,#888)}
+    .stripe-Unknown  {background:var(--border)}
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <span class="hbadge">FVL</span>
+  <span class="htitle">Season <em>3</em> — Roster</span>
+  <div class="hright">
+    <button class="seed-btn" onclick="seedRoster()" title="Import players from Season 2 teams">⬆ Import from S2</button>
+    <a href="/draft" class="hbtn hbtn-ghost">🐍 Draft</a>
+    <a href="/"      class="hbtn hbtn-ghost">← Home</a>
+  </div>
+</div>
+
+<div id="toolbar">
+  <input class="search-input" type="text" id="search" placeholder="Search name, team, skill…" oninput="applyFilters()">
+  <div class="filter-group" id="skill-chips">
+    <button class="fchip all on" onclick="clearSkillFilter(this)">All</button>
+    <button class="fchip fc-Spiker"     onclick="toggleSkillChip(this,'Spiker')">🔵 Spiker</button>
+    <button class="fchip fc-Setter"     onclick="toggleSkillChip(this,'Setter')">🩷 Setter</button>
+    <button class="fchip fc-Defense"    onclick="toggleSkillChip(this,'Defense')">🟢 Defense</button>
+    <button class="fchip fc-Allrounder" onclick="toggleSkillChip(this,'Allrounder')">⚡ All-rounder</button>
+    <button class="fchip fc-Developing" onclick="toggleSkillChip(this,'Developing')">🟠 Developing</button>
+  </div>
+  <div class="filter-group" id="role-chips">
+    <button class="role-filter" data-role="Captain"  onclick="toggleRole(this)">Captain</button>
+    <button class="role-filter" data-role="Wingman"  onclick="toggleRole(this)">Wingman</button>
+    <button class="role-filter" data-role="Player"   onclick="toggleRole(this)">Player</button>
+  </div>
+  <span class="count-lbl" id="count-lbl">— players</span>
+</div>
+
+<div class="page">
+  <div id="roster-grid">
+    ${[...Array(8)].map(()=>`<div class="pcard"><div class="skel" style="height:120px;margin:0"></div></div>`).join('')}
+  </div>
+</div>
+
+<div class="toast hide" id="toast"></div>
+
+<script>
+const SKILL_DEFS = ['Spiker','Setter','Defense','Allrounder','Developing'];
+const SKILL_LABELS = {Spiker:'🔵 Spiker',Setter:'🩷 Setter',Defense:'🟢 Defense',Allrounder:'⚡ All-rounder',Developing:'🟠 Developing'};
+const TIER_LABELS  = {S:'S — Elite',A:'A — Competitive',B:'B — Developing',C:'C — Recreational'};
+const ROLE_LABELS  = {Captain:'⭐ Captain',Wingman:'🤝 Wingman',Player:'Player'};
+
+let ALL_PLAYERS = [];
+let skillFilter = new Set();
+let roleFilter  = new Set();
+
+// ── LOAD ──────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const r = await fetch('/api/roster?season=3');
+    ALL_PLAYERS = await r.json();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('roster-grid').innerHTML =
+      `<div class="empty-state">Could not load roster.<br><button class="seed-btn" style="margin-top:12px" onclick="seedRoster()">⬆ Import from S2 teams</button></div>`;
+  }
+}
+
+// ── FILTER ────────────────────────────────────────────────────────
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = ALL_PLAYERS.filter(p => {
+    if (skillFilter.size && ![...skillFilter].every(sk=>(p.skills||[]).includes(sk))) return false;
+    if (roleFilter.size  && !roleFilter.has(p.role)) return false;
+    if (q) {
+      const haystack = [p.name, p.displayName, p.s2team, ...(p.skills||[])].join(' ').toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+  document.getElementById('count-lbl').textContent = `${filtered.length} / ${ALL_PLAYERS.length} players`;
+  renderGrid(filtered);
+}
+
+function toggleSkillChip(btn, skill) {
+  document.querySelector('.fchip.all').classList.remove('on');
+  if (skillFilter.has(skill)) { skillFilter.delete(skill); btn.classList.remove('on'); }
+  else { skillFilter.add(skill); btn.classList.add('on'); }
+  if (!skillFilter.size) document.querySelector('.fchip.all').classList.add('on');
+  applyFilters();
+}
+function clearSkillFilter(btn) {
+  skillFilter.clear();
+  document.querySelectorAll('.fchip').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  applyFilters();
+}
+function toggleRole(btn) {
+  const role = btn.dataset.role;
+  if (roleFilter.has(role)) { roleFilter.delete(role); btn.classList.remove('on'); }
+  else { roleFilter.add(role); btn.classList.add('on'); }
+  applyFilters();
+}
+
+// ── RENDER GRID ───────────────────────────────────────────────────
+function renderGrid(players) {
+  const grid = document.getElementById('roster-grid');
+  if (!players.length) {
+    grid.innerHTML = '<div class="empty-state">No players match the current filters.</div>';
+    return;
+  }
+  // Sort: Captains → Wingmen → Players, then alphabetical within each
+  const order = {Captain:0, Wingman:1, Player:2};
+  players = [...players].sort((a,b) => (order[a.role]??3)-(order[b.role]??3) || a.name.localeCompare(b.name));
+  grid.innerHTML = players.map(p => cardHTML(p)).join('');
+}
+
+function cardHTML(p) {
+  const skills = p.skills || [];
+  const skillTags = skills.length
+    ? skills.map(sk=>`<span class="sk sk-${sk}">${SKILL_LABELS[sk]||sk}</span>`).join('')
+    : '<span class="no-skills">No skills assigned</span>';
+  const roleBadge = `<span class="badge badge-${(p.role||'player').toLowerCase()}">${ROLE_LABELS[p.role]||p.role||'Player'}</span>`;
+  const tierBadge = `<span class="badge badge-tier-${p.tier||'B'}">${p.tier||'B'}</span>`;
+  const teamBadge = p.s2team ? `<span class="badge badge-team">${p.s2team}</span>` : '';
+  const stripeClass = `stripe-${p.s2team||'Unknown'}`;
+
+  return `<div class="pcard" id="card-${p._id}" data-id="${p._id}">
+    <div class="pc-stripe ${stripeClass}"></div>
+    <div class="pc-body">
+      <div class="pc-top">
+        <div>
+          <div class="pc-name">${p.name}</div>
+          ${p.displayName&&p.displayName!==p.name?`<div class="pc-dispname">"${p.displayName}"</div>`:''}
+        </div>
+        <button class="pc-edit-btn" onclick="toggleEdit('${p._id}',this)">✏️ Edit</button>
+      </div>
+      <div class="pc-meta">${roleBadge}${tierBadge}${teamBadge}</div>
+      <div class="pc-skills">${skillTags}</div>
+      ${p.notes?`<div class="pc-notes">${p.notes}</div>`:''}
+    </div>
+    <div class="pc-edit">
+      <div class="edit-field">
+        <label class="edit-label">Display Name</label>
+        <input class="edit-input" id="ei-dispname-${p._id}" value="${p.displayName||''}" placeholder="${p.name}">
+      </div>
+      <div class="edit-field">
+        <label class="edit-label">Skills <span style="font-weight:400;color:#aaa">(tap to toggle)</span></label>
+        <div class="skill-toggles">
+          ${SKILL_DEFS.map(sk=>`<button class="sk-toggle ${sk} ${skills.includes(sk)?'active':''}" onclick="toggleSkillOnCard('${p._id}','${sk}',this)">${SKILL_LABELS[sk]}</button>`).join('')}
+        </div>
+      </div>
+      <div class="edit-field">
+        <label class="edit-label">Tier</label>
+        <div class="tier-toggles">
+          ${['S','A','B','C'].map(t=>`<button class="tier-toggle ${t} ${(p.tier||'B')===t?'active':''}" onclick="selectTier('${p._id}','${t}',this)">${t}</button>`).join('')}
+        </div>
+      </div>
+      <div class="edit-field">
+        <label class="edit-label">Notes</label>
+        <input class="edit-input" id="ei-notes-${p._id}" value="${p.notes||''}" placeholder="Any notes…">
+      </div>
+      <div class="edit-actions">
+        <button class="btn-save" onclick="savePlayer('${p._id}')">💾 Save</button>
+        <button class="btn-cancel" onclick="toggleEdit('${p._id}',null,true)">Cancel</button>
+        <span class="save-indicator" id="si-${p._id}"></span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── EDIT HELPERS ──────────────────────────────────────────────────
+function toggleEdit(id, btn, cancel=false) {
+  const card = document.getElementById(`card-${id}`);
+  const isEditing = card.classList.contains('editing');
+  if (cancel || isEditing) {
+    card.classList.remove('editing');
+    card.querySelector('.pc-edit-btn').classList.remove('active');
+    card.querySelector('.pc-edit-btn').textContent = '✏️ Edit';
+  } else {
+    card.classList.add('editing');
+    if (btn) { btn.classList.add('active'); btn.textContent = '✕ Close'; }
+    card.querySelector('.pc-edit').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+function toggleSkillOnCard(id, skill, btn) {
+  btn.classList.toggle('active');
+}
+
+function selectTier(id, tier, btn) {
+  btn.closest('.tier-toggles').querySelectorAll('.tier-toggle').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── SAVE ──────────────────────────────────────────────────────────
+async function savePlayer(id) {
+  const card = document.getElementById(`card-${id}`);
+  const si   = document.getElementById(`si-${id}`);
+
+  // Collect edited values
+  const dispName = document.getElementById(`ei-dispname-${id}`).value.trim();
+  const notes    = document.getElementById(`ei-notes-${id}`).value.trim();
+  const skills   = [...card.querySelectorAll(`.sk-toggle.active`)].map(b=>b.classList[1]);
+  const tier     = card.querySelector('.tier-toggle.active')?.classList[1] || 'B';
+
+  si.textContent = 'Saving…'; si.className = 'save-indicator';
+
+  try {
+    const r = await fetch(`/api/roster/${id}`, {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ displayName: dispName||undefined, notes: notes||undefined, skills, tier }),
+    });
+    if (!r.ok) throw new Error(await r.text());
+    const updated = await r.json();
+
+    // Update local data
+    const idx = ALL_PLAYERS.findIndex(p=>p._id===id);
+    if (idx>=0) ALL_PLAYERS[idx] = updated;
+
+    si.textContent = '✓ Saved'; si.className = 'save-indicator ok';
+
+    // Refresh card without closing edit panel
+    const newCard = document.createElement('div');
+    newCard.innerHTML = cardHTML(updated);
+    const fresh = newCard.firstChild;
+    fresh.classList.add('editing');
+    fresh.querySelector('.pc-edit').style.display = 'block';
+    fresh.querySelector('.pc-edit-btn').classList.add('active');
+    fresh.querySelector('.pc-edit-btn').textContent = '✕ Close';
+    card.replaceWith(fresh);
+
+    toast(`✓ ${updated.name} saved`);
+    setTimeout(()=>{ const si2=document.getElementById(`si-${id}`); if(si2) si2.textContent=''; }, 2500);
+  } catch(e) {
+    si.textContent = '✗ Error'; si.className = 'save-indicator err';
+    console.error(e);
+  }
+}
+
+// ── SEED ──────────────────────────────────────────────────────────
+async function seedRoster() {
+  if (!confirm('Import all Season 2 players into the Season 3 roster? Existing entries will not be overwritten.')) return;
+  try {
+    const r = await fetch('/api/roster/seed', {method:'POST'});
+    const d = await r.json();
+    toast(`✓ Imported ${d.created} players (${d.skipped} skipped)`);
+    load();
+  } catch(e) { toast('Import failed: '+e.message); }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+let _tt;
+function toast(msg,dur=2500){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
+
+// ── BOOT ──────────────────────────────────────────────────────────
+load();
+</script>
+</body>
+</html>

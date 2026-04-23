@@ -282,11 +282,8 @@ const SKILL_LABELS = {
   Allrounder:'⚡ All-rounder', Developing:'🟠 Developing'
 };
 
-// Master skills map — to be filled once player list is confirmed
-// Format: 'Player Name': ['Skill1','Skill2',...]
-const PLAYER_SKILLS = {
-  // Example: 'Ashok': ['Spiker','Defense','Allrounder'],
-};
+// Master skills map — loaded from /api/roster at runtime
+const PLAYER_SKILLS = {};
 
 function getSkills(name) { return PLAYER_SKILLS[name] || []; }
 
@@ -331,6 +328,12 @@ function seqOpt1() {
 // ── INIT ───────────────────────────────────────────────────────────
 async function init() {
   renderSavesList();
+  // Load skills from roster in parallel
+  fetch('/api/roster?season=3').then(r=>r.json()).then(players=>{
+    players.forEach(p => { if(p.skills?.length) PLAYER_SKILLS[p.name]=p.skills; });
+    if (S.started) renderPool(); // refresh if already on draft board
+  }).catch(()=>{});
+
   const capNames = new Set(S.caps.map(c=>c.name));
   const OUT = new Set(['Kunal']);
   const exclude = new Set([...capNames, ...OUT]);

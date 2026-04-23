@@ -3,7 +3,7 @@ const express   = require('express');
 const cors      = require('cors');
 const path      = require('path');
 const mongoose  = require('mongoose');
-const { Team, Standing, Season, CoreMember, Decision, Comment, Config, DraftSave } = require('./models');
+const { Team, Standing, Season, CoreMember, Decision, Comment, Config, DraftSave, RosterPlayer } = require('./models');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -261,6 +261,73 @@ app.post('/api/migrate-season', async (req, res) => {
   }
 });
 
+// ── Roster API ───────────────────────────────────────────────────────
+app.get('/api/roster', async (req, res) => {
+  try {
+    const season = Number(req.query.season) || 3;
+    const players = await RosterPlayer.find({ season }).sort({ name: 1 });
+    res.json(players);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/roster', async (req, res) => {
+  try {
+    const { name, season = 3, displayName, s2team, role, tier, skills, notes } = req.body;
+    if (!name) return res.status(400).json({ error: 'name required' });
+    const doc = await RosterPlayer.findOneAndUpdate(
+      { name, season },
+      { name, season, displayName, s2team, role, tier, skills: skills || [], notes },
+      { upsert: true, new: true }
+    );
+    res.json(doc);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.patch('/api/roster/:id', async (req, res) => {
+  try {
+    const doc = await RosterPlayer.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    if (!doc) return res.status(404).json({ error: 'Not found' });
+    res.json(doc);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Bulk seed roster from Season 2 teams data
+app.post('/api/roster/seed', async (req, res) => {
+  try {
+    const teams = await Team.find({ season: 2 });
+    const CORE = new Set(['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil']);
+    const CAPTAINS = new Set(['Anil','Pratik','Harsha','Shanthan','Koti','Karthik S']);
+    const OUT = new Set(['Kunal']);
+    let created = 0, skipped = 0;
+    for (const t of teams) {
+      for (const p of (t.players || [])) {
+        if (OUT.has(p.name)) { skipped++; continue; }
+        const role = CAPTAINS.has(p.name) ? 'Captain' : CORE.has(p.name) ? 'Wingman' : 'Player';
+        await RosterPlayer.findOneAndUpdate(
+          { name: p.name, season: 3 },
+          { name: p.name, season: 3, s2team: t.name.replace('FVL ',''), role, tier: p.tier || 'B', skills: p.skills || [] },
+          { upsert: true, new: true }
+        );
+        created++;
+      }
+    }
+    // Add new players not in S2
+    for (const p of [{name:'Surendra Kings',s2team:'New'},{name:'Raja Vasu',s2team:'New'}]) {
+      await RosterPlayer.findOneAndUpdate(
+        { name: p.name, season: 3 },
+        { name: p.name, season: 3, s2team: p.s2team, role: 'Player', tier: 'B', skills: [] },
+        { upsert: true, new: true }
+      );
+      created++;
+    }
+    res.json({ success: true, created, skipped });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Draft Save — persist per user per season ─────────────────────────
 app.post('/api/draft-save', async (req, res) => {
   try {
@@ -290,6 +357,11 @@ app.get('/api/draft-saves', async (req, res) => {
     const docs = await DraftSave.find({ season }).sort({ updatedAt: -1 });
     res.json(docs);
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Roster page ──────────────────────────────────────────────────────
+app.get('/roster', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'roster.html'));
 });
 
 // ── Draft page ───────────────────────────────────────────────────────
