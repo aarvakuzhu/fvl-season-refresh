@@ -49,14 +49,13 @@ async function api(url) { const r = await fetch(url); if (!r.ok) throw new Error
 // ── Standings ──────────────────────────────────────────────────────
 async function renderStandings() {
   const s = await api('/api/standings?season=2');
-  const pc = ['gold','','','','rel'];
+  const pc = ['gold','','','','',''];
   document.getElementById('standings-list').innerHTML = s.map((d, i) => {
     const cm = (d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)+" '"+m.month.split(' ')[1].slice(2)).join(', ');
-    const cls = d.relegated ? 'rel' : (pc[i] || '');
-    return `<div class="srow ${cls}">
-      <div class="spos">${i+1}</div>
-      <div><div class="sname">${d.teamName} ${tr(d.championships)}</div><div class="ssub">${cm?'Won: '+cm:d.relegated?'↓ Relegation candidate':''}</div></div>
-      ${d.relegated ? '<span class="rtag">↓ Nano</span>' : '<div></div>'}
+    return `<div class="srow ${pc[i]||''}">
+      <div class="spos ${i===0?'pos-1':''}">${i+1}</div>
+      <div><div class="sname">${d.teamName} ${tr(d.championships)}</div><div class="ssub">${cm?'Won: '+cm:''}</div></div>
+      <div></div>
       <div class="spts">${d.totalPoints} pts</div>
     </div>`;
   }).join('');
