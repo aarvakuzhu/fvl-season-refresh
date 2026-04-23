@@ -12,7 +12,7 @@
       --green:#1b7a1b;--green2:#e8f5e9;--amber:#d35400;--amber2:#fff3e0;
       --navy:#0d1b2a;--bg:#f2f2f2;--white:#fff;--border:#ddd;--border2:#ededed;
       --text:#1a1a1a;--muted:#666;--light:#f8f8f8;--gold:#b8860b;
-      --o1:#1a5fb4;--o2:#7b1fa2;
+      --blue:#1a5fb4;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{font-size:14px}
@@ -25,20 +25,9 @@
     .hbtn{font-size:12px;font-weight:600;padding:5px 11px;border-radius:2px;text-decoration:none;border:none;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s}
     .hbtn-ghost{background:transparent;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.3)}.hbtn-ghost:hover{color:#fff;border-color:#fff}
     .hbtn-red{background:var(--red);color:#fff}.hbtn-red:hover{opacity:.85}
-    .hbtn-yellow{background:#f5c842;color:var(--navy);font-weight:700}.hbtn-yellow:hover{background:#ffe066}
-    .hbtn-yellow.dim{opacity:.4;cursor:not-allowed}
-
     #opt-bar{background:#1a2744;padding:6px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .opt-toggle{display:flex;border:1px solid rgba(255,255,255,.2);border-radius:3px;overflow:hidden}
-    .opt-btn{padding:5px 16px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s;color:rgba(255,255,255,.5);background:transparent}
-    .opt-btn.a1{background:var(--o1);color:#fff}.opt-btn.a2{background:var(--o2);color:#fff}
-    .opt-rule{font-size:11px;color:rgba(255,255,255,.5);font-style:italic;flex:1;min-width:0}
-    .saved-pill{font-family:'Roboto Mono',monospace;font-size:10px;padding:2px 8px;border-radius:2px;font-weight:700}
-    .saved-pill.s1{background:rgba(26,95,180,.35);color:#8bbfff;border:1px solid rgba(26,95,180,.5)}
-    .saved-pill.s2{background:rgba(123,31,162,.35);color:#ce93d8;border:1px solid rgba(123,31,162,.5)}
-
-    #status-bar{color:#fff;padding:7px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;transition:background .3s}
-    #status-bar.c1{background:var(--o1)}#status-bar.c2{background:var(--o2)}
+#status-bar{color:#fff;padding:7px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;transition:background .3s}
+    #status-bar{background:var(--blue)}
     .s-round{font-family:'Roboto Mono',monospace;font-size:11px;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:2px}
     .s-pick{font-weight:700}.s-dir{font-family:'Roboto Mono',monospace;font-size:11px;opacity:.8}
     .s-msg{margin-left:auto;font-size:12px;opacity:.85;font-style:italic}
@@ -103,20 +92,6 @@
     .tp.empty{color:#ccc;font-style:italic}
     .pi{font-family:'Roboto Mono',monospace;font-size:10px;opacity:.75}
 
-    #compare-panel{display:none}
-    .cmp-hd{background:var(--navy);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .cmp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-    @media(max-width:900px){.cmp-grid{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:500px){.cmp-grid{grid-template-columns:1fr 1fr}}
-    .ctm{border:1px solid var(--border);overflow:hidden;background:#fff}
-    .ctp{padding:4px 9px;font-size:11px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center}
-    .ctp:nth-child(even){background:var(--light)}
-    .ctp.da{background:#e8f5e9;border-left:3px solid var(--green)}
-    .ctp.dr{background:#ffebee;border-left:3px solid var(--red)}
-    .ctp.ds{border-left:3px solid transparent}
-    .ol{font-family:'Roboto Mono',monospace;font-size:9px;padding:1px 5px;border-radius:2px;font-weight:700}
-    .ol.o1{background:#e3f2fd;color:var(--o1)}.ol.o2{background:#f3e5f5;color:var(--o2)}
-
     .btn{font-size:12px;font-weight:700;padding:7px 14px;border:none;border-radius:2px;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s}
     .btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{opacity:.85}
     .btn-green{background:var(--green);color:#fff}.btn-green:hover{opacity:.85}
@@ -142,24 +117,13 @@
   <div class="hright">
     <button class="hbtn hbtn-ghost" id="undo-btn" onclick="undoPick()" disabled>↩ Undo</button>
     <button class="hbtn hbtn-red"   onclick="resetDraft()">↺ Reset</button>
-    <button class="hbtn hbtn-yellow dim" id="compare-btn" onclick="showCompare()" title="Save both options first">⚖ Compare</button>
     <a href="/" class="hbtn hbtn-ghost">← Back</a>
   </div>
 </div>
 
-<!-- OPTION TOGGLE BAR -->
-<div id="opt-bar">
-  <div class="opt-toggle">
-    <button class="opt-btn a1" id="ob1" onclick="switchOption(1)">Option 1</button>
-    <button class="opt-btn"    id="ob2" onclick="switchOption(2)">Option 2</button>
-  </div>
-  <span class="opt-rule" id="opt-rule">Pair picks — bottom 2 / middle 2 / top 2 each pick 1st &amp; 2nd together, then snake top-down from pick 3</span>
-  <span id="lbl1" style="display:none" class="saved-pill s1">✓ Opt 1 saved</span>
-  <span id="lbl2" style="display:none" class="saved-pill s2">✓ Opt 2 saved</span>
-</div>
 
 <!-- STATUS BAR -->
-<div id="status-bar" class="c1">
+<div id="status-bar">
   <span class="s-round" id="sb-r">Not started</span>
   <span class="s-pick"  id="sb-p"></span>
   <span class="s-dir"   id="sb-d"></span>
@@ -176,7 +140,7 @@
       <div id="cap-list"></div>
     </div>
     <div class="card">
-      <div class="chd">Settings — <span id="opt-lbl" style="color:var(--o1);font-weight:700">Option 1</span></div>
+      <div class="chd">Draft Settings</div>
       <div class="cbody">
         <div class="cfg">
           <div class="cfgl">Roster size</div>
@@ -186,8 +150,8 @@
             <span style="font-size:12px;color:var(--muted)">picks = <strong id="tpl">36</strong> players</span>
           </div>
         </div>
-        <div class="cfg" id="r1p">
-          <div class="cfgl" style="color:var(--o1)">Option 1 — Pair Picks + Snake</div>
+        <div class="cfg">
+          <div class="cfgl">Pair Picks + Snake</div>
           <div style="font-size:12px;color:var(--muted);line-height:1.7">
             3 pairs by pick position:<br>
             <strong>Bottom 2</strong> (Anil + Pratik): picks 1–2 and 3–4<br>
@@ -197,18 +161,12 @@
             <code>Wingman must be picked by end of pick 4.</code>
           </div>
         </div>
-        <div class="cfg" id="r2p" style="display:none">
-          <div class="cfgl" style="color:var(--o2)">Option 2 — Bonus Round + Skip</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7">
-            Weaker captains get <strong>R0 bonus pick</strong> compensation, then <strong>skipped</strong> in their entry round.<br>
-            <code>Wingman must be picked by end of R5.</code>
-          </div>
-        </div>
+
       </div>
     </div>
   </div>
   <div style="text-align:center;padding:8px 0 14px">
-    <button class="btn btn-blue" style="font-size:14px;padding:10px 28px" id="start-btn" onclick="startDraft()">🐍 Start — Option 1</button>
+    <button class="btn btn-blue" style="font-size:14px;padding:10px 28px" onclick="startDraft()">🐍 Start Draft</button>
     <div style="font-size:11px;color:var(--muted);margin-top:6px" id="setup-status">Loading players…</div>
   </div>
 </div>
@@ -246,56 +204,27 @@
     <div>
       <div class="sec">Draft Log</div>
       <div class="card"><div id="dlog" style="max-height:480px;overflow-y:auto;padding:4px 0"></div></div>
-      <div class="sec" style="margin-top:8px">All Saved Drafts</div>
-      <div id="saves-list" class="card" style="padding:0"></div>
+
     </div>
   </div>
 </div>
 
-<!-- COMPARE -->
-<div id="compare-panel">
-  <div class="cmp-hd">
-    <div>
-      <div style="font-size:16px;font-weight:700">⚖ Option 1 vs Option 2 — Team Comparison</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px">Green border = only in Option 1 · Red border = only in Option 2</div>
-    </div>
-    <button class="hbtn hbtn-ghost" onclick="hideCompare()" style="margin-left:auto">✕ Close</button>
-  </div>
-  <div id="cmp-content"></div>
-</div>
 
 </div><!-- /page -->
 <div class="toast hide" id="toast"></div>
 
 <script>
 // ── Session storage ────────────────────────────────────────────────
-// Per-user, per-option keys: fvl_s3_opt{1|2}_user_{name}
-function ssKey(opt, user) { return `fvl_s3_opt${opt}_user_${user.replace(/\s+/g,'_')}`; }
+// Per-user session storage keyed by user name
+function ssKey(user) { return `fvl_s3_draft_${user.replace(/\s+/g,'_')}`; }
 const ss = {
-  save(opt, user, d) { try { sessionStorage.setItem(ssKey(opt,user), JSON.stringify({...d, user, savedAt:new Date().toISOString()})); } catch(e){} },
-  load(opt, user)    { try { const r=sessionStorage.getItem(ssKey(opt,user)); return r?JSON.parse(r):null; } catch(e){return null;} },
-  allForOpt(opt)     { // return array of {user, data} for all saved users for this option
-    const out=[];
-    try {
-      for(let i=0;i<sessionStorage.length;i++){
-        const k=sessionStorage.key(i);
-        if(k&&k.startsWith(`fvl_s3_opt${opt}_user_`)){
-          try{ out.push(JSON.parse(sessionStorage.getItem(k))); }catch(e){}
-        }
-      }
-    } catch(e){}
-    return out;
-  },
-  anyForBothOpts() { // true if at least one save exists for both opt1 and opt2
-    let o1=false,o2=false;
-    try{ for(let i=0;i<sessionStorage.length;i++){const k=sessionStorage.key(i)||''; if(k.startsWith('fvl_s3_opt1_')) o1=true; if(k.startsWith('fvl_s3_opt2_')) o2=true;} }catch(e){}
-    return o1&&o2;
-  }
+  save(user, d) { try { sessionStorage.setItem(ssKey(user), JSON.stringify({...d, user, savedAt:new Date().toISOString()})); } catch(e){} },
+  load(user)    { try { const r=sessionStorage.getItem(ssKey(user)); return r?JSON.parse(r):null; } catch(e){return null;} },
+  all()         { const out=[]; try { for(let i=0;i<sessionStorage.length;i++){ const k=sessionStorage.key(i); if(k?.startsWith('fvl_s3_draft_')){ try{out.push(JSON.parse(sessionStorage.getItem(k)));}catch(e){} } } } catch(e){} return out; },
 };
 
 // ── STATE ──────────────────────────────────────────────────────────
 const S = {
-  opt: 1,
   caps: [
     {name:'Anil',      po:1, er:4, tier:'B', col:'#4a148c'},
     {name:'Pratik',    po:2, er:3, tier:'A', col:'#0d1b2a'},
@@ -308,25 +237,6 @@ const S = {
   seq: [], cur: 0, ppt: 6,
   started: false, filterTier: 'ALL', currentUser: 'Anil',
 };
-
-// ── OPTION SWITCH ──────────────────────────────────────────────────
-function switchOption(opt) {
-  if (S.started && !confirm(`Switch to Option ${opt}? Save first if needed.`)) return;
-  S.opt = opt;
-  document.getElementById('ob1').className = 'opt-btn'+(opt===1?' a1':'');
-  document.getElementById('ob2').className = 'opt-btn'+(opt===2?' a2':'');
-  document.getElementById('r1p').style.display = opt===1?'':'none';
-  document.getElementById('r2p').style.display = opt===2?'':'none';
-  document.getElementById('opt-lbl').textContent = `Option ${opt}`;
-  document.getElementById('opt-lbl').style.color = opt===1?'var(--o1)':'var(--o2)';
-  document.getElementById('start-btn').textContent = `🐍 Start — Option ${opt}`;
-  document.getElementById('opt-rule').textContent = opt===1
-    ? 'Pair picks — bottom 2 / middle 2 / top 2 each pick 1st & 2nd together, then snake top-down from pick 13'
-    : 'R0 bonus picks for weaker captains, then skipped in their entry round — snake throughout';
-  document.getElementById('status-bar').className = `c${opt}`;
-  renderCapList();
-  if (S.started) resetDraft(true);
-}
 
 // ── SEQUENCES ─────────────────────────────────────────────────────
 function seqOpt1() {
@@ -346,18 +256,6 @@ function seqOpt1() {
     const topDown = r%2===0;
     const ordered = topDown ? [...caps].reverse() : [...caps];
     ordered.forEach(c => seq.push({rk:`S${r+3}`, lbl:`Snake R${r+3} ${topDown?'↓':'↑'}`, captain:c.name, pickNum:n++}));
-  }
-  return seq;
-}
-
-function seqOpt2() {
-  const seq = []; let n=1;
-  S.caps.filter(c=>c.er>1).sort((a,b)=>a.po-b.po)
-    .forEach(c => seq.push({rk:0, lbl:'R0 Bonus', captain:c.name, pickNum:n++}));
-  for (let r=1; r<=S.ppt; r++) {
-    const active = S.caps.filter(c=>!(c.er===r&&c.er>1)).sort((a,b)=>a.po-b.po);
-    const ordered = r%2===1 ? [...active] : [...active].reverse();
-    ordered.forEach(c => seq.push({rk:r, lbl:`R${r} ${r%2===1?'↑':'↓'}`, captain:c.name, pickNum:n++}));
   }
   return seq;
 }
@@ -394,11 +292,10 @@ async function init() {
 // ── CAPTAIN LIST UI ────────────────────────────────────────────────
 function renderCapList() {
   const el = document.getElementById('cap-list');
-  const isO2 = S.opt===2;
-  const cols = isO2 ? '32px 1fr 72px 80px 44px 24px' : '32px 1fr 72px 44px 24px';
+  const cols = '32px 1fr 72px 44px 24px';
   const sorted = [...S.caps].sort((a,b)=>a.po-b.po);
   el.innerHTML = `<div style="display:grid;grid-template-columns:${cols};gap:0;padding:5px 10px;background:var(--light);border-bottom:1px solid var(--border2);font-size:10px;font-weight:700;color:var(--muted)">
-    <span>#</span><span>Captain</span><span style="text-align:center">Order</span>${isO2?'<span style="text-align:center">Skip</span>':''}<span style="text-align:center">Tier</span><span></span>
+    <span>#</span><span>Captain</span><span style="text-align:center">Order</span><span style="text-align:center">Tier</span><span></span>
   </div>` + sorted.map(c => {
     const i = S.caps.indexOf(c);
     return `<div style="display:grid;grid-template-columns:${cols};align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--border2)" class="cap-item">
@@ -423,7 +320,7 @@ function rmv(i){ S.caps.splice(i,1); renderCapList(); }
 // ── START / RESET ──────────────────────────────────────────────────
 function startDraft() {
   S.ppt = parseInt(document.getElementById('ppt').value)||6;
-  S.seq = S.opt===1 ? seqOpt1() : seqOpt2();
+  S.seq = seqOpt1();
   S.cur=0; S.picks=[];
   S.teams = S.caps.map(c=>({captain:c.name,col:c.col,players:[]}));
   S.players.forEach(p=>p.drafted=false);
@@ -444,8 +341,7 @@ function startDraft() {
 
   document.getElementById('setup-panel').style.display='none';
   document.getElementById('draft-panel').style.display='block';
-  document.getElementById('compare-panel').style.display='none';
-  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB(); updateSavedBadges();
+  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB(); renderSavesList();
 }
 
 function resetDraft(silent=false) {
@@ -454,7 +350,6 @@ function resetDraft(silent=false) {
   S.players.forEach(p=>p.drafted=false);
   document.getElementById('setup-panel').style.display='block';
   document.getElementById('draft-panel').style.display='none';
-  document.getElementById('compare-panel').style.display='none';
   document.getElementById('undo-btn').disabled=true;
   renderCapList(); updateSB();
 }
@@ -463,55 +358,22 @@ function resetDraft(silent=false) {
 function saveDraft() {
   if (!S.picks.length){ toast('No picks to save.'); return; }
   const user = S.currentUser || 'Unknown';
-  ss.save(S.opt, user, {
+  ss.save(user, {
     teams: S.teams.map(t=>({captain:t.captain,col:t.col,players:t.players.map(p=>p.name)})),
     picks: S.picks, pickCount: S.picks.length,
     complete: S.cur>=S.seq.length,
-    opt: S.opt,
   });
-  updateSavedBadges();
-  toast(`✓ ${user} saved Option ${S.opt} (${S.picks.length} picks)`, 2500);
-}
-
-function updateSavedBadges() {
-  const user = S.currentUser || '';
-  const s1 = user ? ss.load(1, user) : null;
-  const s2 = user ? ss.load(2, user) : null;
-
-  // Update opt-bar pills — show if anyone has saved each option
-  const any1 = ss.allForOpt(1), any2 = ss.allForOpt(2);
-  document.getElementById('lbl1').style.display = any1.length?'inline-flex':'none';
-  document.getElementById('lbl2').style.display = any2.length?'inline-flex':'none';
-  if (any1.length) document.getElementById('lbl1').textContent = `✓ Opt1 (${any1.length})`;
-  if (any2.length) document.getElementById('lbl2').textContent = `✓ Opt2 (${any2.length})`;
-
-  // Compare button — enabled if any saves exist for both options
-  const cb = document.getElementById('compare-btn');
-  if (ss.anyForBothOpts()){ cb.classList.remove('dim'); cb.title='Compare Option 1 vs Option 2'; }
-  else { cb.classList.add('dim'); cb.title='Save at least one Option 1 and one Option 2 draft to compare'; }
-
-  // Per-user status
-  const statusEl = document.getElementById('user-saved-status');
-  if (statusEl) {
-    const parts = [];
-    if (s1) parts.push(`Opt1 ✓ (${s1.pickCount} picks)`);
-    if (s2) parts.push(`Opt2 ✓ (${s2.pickCount} picks)`);
-    statusEl.textContent = parts.length ? parts.join(' · ') : '';
-    statusEl.style.color = parts.length ? 'var(--green)' : 'var(--muted)';
-  }
-
-  // All saves summary panel
   renderSavesList();
+  toast(`✓ ${user} — ${S.picks.length} picks saved`, 2500);
 }
 
 function renderSavesList() {
   const el = document.getElementById('saves-list');
   if (!el) return;
-  const all = [...ss.allForOpt(1), ...ss.allForOpt(2)].sort((a,b)=>a.opt-b.opt||(a.user||'').localeCompare(b.user||''));
+  const all = ss.all();
   if (!all.length) { el.innerHTML='<div style="padding:10px;font-size:12px;color:var(--muted)">No saves yet.</div>'; return; }
-  el.innerHTML = all.map(d => `
-    <div style="display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:7px 11px;border-bottom:1px solid var(--border2)">
-      <span style="font-family:'Roboto Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;font-weight:700;background:${d.opt===1?'#e3f2fd':'#f3e5f5'};color:${d.opt===1?'var(--o1)':'var(--o2)'}">Opt ${d.opt}</span>
+  el.innerHTML = all.sort((a,b)=>(a.user||'').localeCompare(b.user||'')).map(d=>`
+    <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:7px 11px;border-bottom:1px solid var(--border2)">
       <div>
         <div style="font-size:12px;font-weight:700">${d.user||'Unknown'}</div>
         <div style="font-size:11px;color:var(--muted)">${d.pickCount||0} picks${d.complete?' · complete':' · partial'}</div>
@@ -570,7 +432,7 @@ function renderBoard() {
 
     sortedCaps.forEach(c => {
       const pr=rps.find(p=>p.captain===c.name);
-      const isSkip=S.opt===2 && c.er===parseInt(rk) && c.er>1;
+      const isSkip=false; // Option 1 has no skip rounds
       if (isSkip){ h+=`<td class="cs"><div class="ci"><span class="csl">SKIP</span></div></td>`; return; }
       if (!pr){ h+=`<td class="cc"><div class="ci"><span style="font-size:10px;font-weight:700;color:var(--blue)">Cap</span></div></td>`; return; }
       const idx=S.seq.indexOf(pr);
@@ -655,108 +517,7 @@ function updateSB() {
   document.getElementById('sb-r').textContent=p.lbl||`R${p.rk}`;
   document.getElementById('sb-p').textContent=`Pick #${p.pickNum} — ${p.captain}`;
   document.getElementById('sb-d').textContent=String(p.rk).startsWith('P')?'⇄ Pair':p.rk===0?'★ Bonus':p.lbl?.includes('↑')?'↑ Up':'↓ Down';
-  if (S.opt===2){
-    const sk=S.caps.filter(c=>c.er===p.rk&&c.er>1).map(c=>c.name);
-    document.getElementById('sb-m').textContent=sk.length?`${sk.join(', ')} skipped`:'';
-  } else document.getElementById('sb-m').textContent='';
-}
-
-// ── COMPARE ────────────────────────────────────────────────────────
-function showCompare() {
-  // Use the current user's saves if available, else first available save per option
-  const user = S.currentUser || '';
-  let s1 = (user ? ss.load(1, user) : null) || ss.allForOpt(1)[0] || null;
-  let s2 = (user ? ss.load(2, user) : null) || ss.allForOpt(2)[0] || null;
-  if(!s1||!s2){toast(`Need saves for both options. ${!s1?'Option 1 missing.':''} ${!s2?'Option 2 missing.':''}`,3000);return;}
-  document.getElementById('setup-panel').style.display='none';
-  document.getElementById('draft-panel').style.display='none';
-  document.getElementById('compare-panel').style.display='block';
-
-  const m1={}, m2={};
-  s1.teams.forEach(t=>m1[t.captain]=new Set(t.players));
-  s2.teams.forEach(t=>m2[t.captain]=new Set(t.players));
-
-  let totalSame=0, totalDiff=0;
-  S.caps.forEach(c=>{
-    const a=m1[c.name]||new Set(), b=m2[c.name]||new Set();
-    a.forEach(p=>{if(b.has(p))totalSame++;else totalDiff++;});
-    b.forEach(p=>{if(!a.has(p))totalDiff++;});
-  });
-
-  const sortedCaps=[...S.caps].sort((a,b)=>a.po-b.po);
-
-  let h=`
-    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-      <div style="background:#fff;border:1px solid var(--border);padding:10px 16px;border-top:3px solid var(--o1)">
-        <div style="font-size:11px;font-weight:700;color:var(--o1);margin-bottom:2px">OPTION 1 — Pair Picks</div>
-        <div style="font-size:12px;color:var(--muted)">${s1.pickCount} picks · by ${s1.user||'?'} · Pair picks + snake from pick 13</div>
-      </div>
-      <div style="background:#fff;border:1px solid var(--border);padding:10px 16px;border-top:3px solid var(--o2)">
-        <div style="font-size:11px;font-weight:700;color:var(--o2);margin-bottom:2px">OPTION 2 — Bonus Round</div>
-        <div style="font-size:12px;color:var(--muted)">${s2.pickCount} picks · by ${s2.user||'?'} · R0 bonus + skip rounds</div>
-      </div>
-      <div style="background:#fff;border:1px solid var(--border);padding:10px 16px;border-top:3px solid var(--muted)">
-        <div style="font-size:22px;font-weight:900;color:var(--text)">${Math.round(totalSame/(totalSame+totalDiff)*100)}%</div>
-        <div style="font-size:11px;color:var(--muted)">Same players across both</div>
-      </div>
-      <div style="background:#fff;border:1px solid var(--border);padding:10px 16px;border-top:3px solid var(--red)">
-        <div style="font-size:22px;font-weight:900;color:var(--red)">${totalDiff}</div>
-        <div style="font-size:11px;color:var(--muted)">Positions differ</div>
-      </div>
-    </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;gap:14px;flex-wrap:wrap">
-      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);margin-right:4px;vertical-align:middle"></span>Only in Option 1</span>
-      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);margin-right:4px;vertical-align:middle"></span>Only in Option 2</span>
-      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0e0e0;margin-right:4px;vertical-align:middle"></span>Same in both</span>
-    </div>
-    <div class="cmp-grid">`;
-
-  sortedCaps.forEach(c=>{
-    const a=m1[c.name]||new Set(), b=m2[c.name]||new Set();
-    const all=[...new Set([...a,...b])].sort();
-    let rows=`<div style="padding:5px 9px;background:${c.col};color:#fff;font-size:11px;font-weight:700;display:flex;justify-content:space-between">
-      <span>${c.name}</span><span style="font-family:'Roboto Mono',monospace;font-size:9px;opacity:.7">${a.size}/${b.size}</span>
-    </div>`;
-    all.forEach(name=>{
-      const inA=a.has(name), inB=b.has(name);
-      const cls=inA&&inB?'ds':inA?'da':'dr';
-      const badge=inA&&inB?'':`<span class="ol ${inA?'o1':'o2'}">${inA?'Opt1':'Opt2'}</span>`;
-      rows+=`<div class="ctp ${cls}"><span>${name}</span>${badge}</div>`;
-    });
-    h+=`<div class="ctm" style="border-top:3px solid ${c.col}">${rows}</div>`;
-  });
-  h+='</div>';
-
-  // Pick-by-pick table
-  const max=Math.max(s1.picks?.length||0,s2.picks?.length||0);
-  h+=`<div style="margin-top:18px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:8px 0 4px;border-bottom:2px solid var(--border);margin-bottom:8px">Pick-by-Pick Comparison</div>
-    <div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;font-size:12px">
-    <thead><tr style="background:var(--navy);color:#fff">
-      <th style="padding:6px 10px;text-align:left">#</th>
-      <th style="padding:6px 10px;text-align:left;color:#8bbfff">Option 1</th>
-      <th style="padding:6px 10px;text-align:left;color:#ce93d8">Option 2</th>
-      <th style="padding:6px 10px;text-align:center">Match</th>
-    </tr></thead><tbody>`;
-
-  for(let i=0;i<max;i++){
-    const p1=s1.picks?.[i], p2=s2.picks?.[i];
-    const same=p1&&p2&&p1.captain===p2.captain&&p1.player===p2.player;
-    h+=`<tr style="${i%2?'background:#fafafa':''}">
-      <td style="padding:5px 10px;font-family:'Roboto Mono',monospace;color:var(--muted)">${i+1}</td>
-      <td style="padding:5px 10px;${p1&&!same?'color:var(--o1);font-weight:600':''}">${p1?`${p1.captain} → ${p1.player}`:'—'}</td>
-      <td style="padding:5px 10px;${p2&&!same?'color:var(--o2);font-weight:600':''}">${p2?`${p2.captain} → ${p2.player}`:'—'}</td>
-      <td style="padding:5px 10px;text-align:center">${same?'✓':'<span style="color:var(--red)">✗</span>'}</td>
-    </tr>`;
-  }
-  h+='</tbody></table></div>';
-
-  document.getElementById('cmp-content').innerHTML=h;
-}
-
-function hideCompare(){
-  document.getElementById('compare-panel').style.display='none';
-  if(S.started) document.getElementById('draft-panel').style.display='block';
-  else document.getElementById('setup-panel').style.display='block';
+  document.getElementById('sb-m').textContent='';
 }
 
 // ── TOAST ──────────────────────────────────────────────────────────
