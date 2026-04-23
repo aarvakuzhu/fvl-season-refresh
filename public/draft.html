@@ -116,8 +116,8 @@
   <span class="htitle">Season 3 — <em>Draft Simulator</em></span>
   <div class="hright">
     <button class="hbtn hbtn-ghost" id="undo-btn" onclick="undoPick()" disabled>↩ Undo</button>
-    <button class="hbtn hbtn-red"   onclick="resetDraft()">↺ Reset</button>
-    <a href="/" class="hbtn hbtn-ghost">← Back</a>
+    <button class="hbtn hbtn-red"   onclick="handleReset()">↺ Reset</button>
+    <a href="/" class="hbtn hbtn-ghost" onclick="return handleBack(event)">← Back</a>
   </div>
 </div>
 
@@ -173,7 +173,7 @@
   <!-- ── TOP BAR: Save + User selector ── -->
   <div style="background:#fff;border:1px solid var(--border);border-bottom:2px solid var(--border);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)">
     <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Saving as:</span>
-    <select id="user-select" onchange="S.currentUser=this.value;updateUserStatus();if(S.started){ss.load(S.currentUser).then(sv=>{if(sv&&sv.picks?.length&&confirm('Load saved draft for '+S.currentUser+'?'))restoreDraft(sv);});}" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:160px"></select>
+    <select id="user-select" onchange="handleUserSwitch(this)" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:160px"></select>
     <button class="btn btn-green" onclick="saveDraft()" style="padding:6px 14px">💾 Save Draft</button>
     <div id="user-saved-status" style="font-size:11px;color:var(--green);font-family:'Roboto Mono',monospace"></div>
     <div id="all-saves-summary" style="margin-left:auto;font-size:11px;color:var(--muted)"></div>
@@ -251,7 +251,7 @@ const S = {
   ],
   players: [], teams: [], picks: [],
   seq: [], cur: 0, ppt: 6,
-  started: false, filterTier: 'ALL', currentUser: 'Anil',
+  started: false, filterTier: 'ALL', currentUser: 'Anil', lastSavedPickCount: -1,
 };
 
 // ── SEQUENCES ─────────────────────────────────────────────────────
@@ -345,6 +345,7 @@ function startDraft() {
       restoreDraft(saved);
       toast(`↩ Restored ${saved.pickCount} picks for ${S.currentUser}`, 3000);
     } else {
+      S.lastSavedPickCount = 0;
       renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
     }
   });
@@ -369,6 +370,7 @@ function restoreDraft(saved) {
     }
   });
 
+  S.lastSavedPickCount = S.picks.length;
   document.getElementById('undo-btn').disabled = S.picks.length === 0;
   renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
 }
@@ -384,6 +386,37 @@ function resetDraft(silent=false) {
 }
 
 // ── SAVE ───────────────────────────────────────────────────────────
+// ── UNSAVED CHANGE DETECTION ──────────────────────────────────────
+function hasUnsaved() {
+  return S.started && S.picks.length > 0 && S.picks.length !== S.lastSavedPickCount;
+}
+
+// Returns true if safe to proceed (saved or discarded), false if cancelled
+async function promptSaveOrDiscard(reason) {
+  if (!hasUnsaved()) return true;
+  return new Promise(resolve => {
+    // Custom modal
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:4px;padding:24px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px">Unsaved changes</div>
+        <div style="font-size:13px;color:#555;margin-bottom:20px;line-height:1.5">
+          You have <strong>${S.picks.length - S.lastSavedPickCount} unsaved pick${S.picks.length - S.lastSavedPickCount !== 1 ? 's' : ''}</strong>${reason ? ' — ' + reason : ''}.<br>Save before leaving?
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button id="_md-cancel" style="padding:7px 14px;border:1px solid #ddd;background:#fff;border-radius:3px;cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
+          <button id="_md-discard" style="padding:7px 14px;border:none;background:#dc3545;color:#fff;border-radius:3px;cursor:pointer;font-size:13px;font-weight:600">Discard</button>
+          <button id="_md-save" style="padding:7px 14px;border:none;background:var(--green);color:#fff;border-radius:3px;cursor:pointer;font-size:13px;font-weight:600">💾 Save</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#_md-cancel').onclick  = () => { overlay.remove(); resolve(false); };
+    overlay.querySelector('#_md-discard').onclick = () => { overlay.remove(); resolve(true); };
+    overlay.querySelector('#_md-save').onclick    = async () => { overlay.remove(); await saveDraft(); resolve(true); };
+  });
+}
+
 async function saveDraft() {
   if (!S.picks.length){ toast('No picks to save.'); return; }
   const user = S.currentUser || 'Unknown';
@@ -393,6 +426,7 @@ async function saveDraft() {
     picks: S.picks, pickCount: S.picks.length,
     complete: S.cur>=S.seq.length,
   });
+  S.lastSavedPickCount = S.picks.length;
   renderSavesList(); updateUserStatus();
   toast(`✓ ${user} — ${S.picks.length} picks saved`, 2500);
 }
@@ -567,6 +601,56 @@ function updateSB() {
 // ── TOAST ──────────────────────────────────────────────────────────
 let _tt;
 function toast(msg,dur=2000){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
+
+// ── NAV GUARDS ────────────────────────────────────────────────────
+async function handleUserSwitch(sel) {
+  const newUser = sel.value;
+  if (newUser === S.currentUser) return;
+  const proceed = await promptSaveOrDiscard('switching to ' + newUser);
+  if (!proceed) {
+    // Revert dropdown
+    sel.value = S.currentUser;
+    return;
+  }
+  S.currentUser = newUser;
+  updateUserStatus();
+  if (S.started) {
+    const sv = await ss.load(S.currentUser);
+    if (sv && sv.picks?.length) {
+      restoreDraft(sv);
+      toast(`↩ Restored ${sv.pickCount} picks for ${S.currentUser}`, 3000);
+    } else {
+      // Clear board for new user — fresh start
+      S.picks=[]; S.cur=0; S.lastSavedPickCount=0;
+      S.teams=S.caps.map(c=>({captain:c.name,col:c.col,players:[]}));
+      S.players.forEach(p=>p.drafted=false);
+      renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
+      toast(`New draft started for ${S.currentUser}`);
+    }
+  }
+}
+
+async function handleBack(e) {
+  if (!hasUnsaved()) return true;
+  e.preventDefault();
+  const proceed = await promptSaveOrDiscard('navigating away');
+  if (proceed) window.location.href = '/';
+  return false;
+}
+
+async function handleReset() {
+  const proceed = await promptSaveOrDiscard('resetting draft');
+  if (!proceed) return;
+  resetDraft(true);
+}
+
+// Browser tab close / refresh guard
+window.addEventListener('beforeunload', e => {
+  if (hasUnsaved()) {
+    e.preventDefault();
+    e.returnValue = 'You have unsaved draft picks.';
+  }
+});
 
 // ── BOOT ───────────────────────────────────────────────────────────
 init();
