@@ -173,7 +173,7 @@
   <!-- ── TOP BAR: Save + User selector ── -->
   <div style="background:#fff;border:1px solid var(--border);border-bottom:2px solid var(--border);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)">
     <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Saving as:</span>
-    <select id="user-select" onchange="S.currentUser=this.value;renderSavesList();updateUserStatus()" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:160px"></select>
+    <select id="user-select" onchange="S.currentUser=this.value;updateUserStatus();if(S.started){const sv=ss.load(S.currentUser);if(sv&&sv.picks?.length&&confirm('Load saved draft for '+S.currentUser+'?'))restoreDraft(sv);}" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:160px"></select>
     <button class="btn btn-green" onclick="saveDraft()" style="padding:6px 14px">💾 Save Draft</button>
     <div id="user-saved-status" style="font-size:11px;color:var(--green);font-family:'Roboto Mono',monospace"></div>
     <div id="all-saves-summary" style="margin-left:auto;font-size:11px;color:var(--muted)"></div>
@@ -303,13 +303,13 @@ function startDraft() {
   S.players.forEach(p=>p.drafted=false);
   S.started=true;
 
-  // Populate user dropdown: captains + wingmen label
+  // Populate user dropdown: captains + wingmen
   const sel = document.getElementById('user-select');
   if (sel) {
     const WINGMEN = ['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil'];
     const users = [
-      ...S.caps.map(c => ({name:c.name,  label:`${c.name} (Captain)`})),
-      ...WINGMEN.map(w => ({name:w,       label:`${w} (Wingman)`})),
+      ...S.caps.map(c => ({name:c.name, label:`${c.name} (Captain)`})),
+      ...WINGMEN.map(w => ({name:w,     label:`${w} (Wingman)`})),
     ];
     sel.innerHTML = users.map(u=>`<option value="${u.name}">${u.label}</option>`).join('');
     sel.value = S.currentUser || S.caps[0]?.name || '';
@@ -318,7 +318,38 @@ function startDraft() {
 
   document.getElementById('setup-panel').style.display='none';
   document.getElementById('draft-panel').style.display='block';
-  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB(); renderSavesList(); updateUserStatus();
+
+  // Auto-restore saved draft for this user if one exists
+  const saved = ss.load(S.currentUser);
+  if (saved && saved.picks?.length) {
+    restoreDraft(saved);
+    toast(`↩ Restored ${saved.pickCount} picks for ${S.currentUser}`, 3000);
+  } else {
+    renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
+  }
+  renderSavesList(); updateUserStatus();
+}
+
+function restoreDraft(saved) {
+  // Replay picks from saved state back into S
+  S.picks = [];
+  S.teams = S.caps.map(c=>({captain:c.name,col:c.col,players:[]}));
+  S.players.forEach(p=>p.drafted=false);
+  S.cur = 0;
+
+  (saved.picks || []).forEach(pick => {
+    const player = S.players.find(p=>p.name===pick.player);
+    if (player) {
+      player.drafted = true;
+      const team = S.teams.find(t=>t.captain===pick.captain);
+      if (team) team.players.push({...player});
+      S.picks.push(pick);
+      S.cur++;
+    }
+  });
+
+  document.getElementById('undo-btn').disabled = S.picks.length === 0;
+  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
 }
 
 function resetDraft(silent=false) {
