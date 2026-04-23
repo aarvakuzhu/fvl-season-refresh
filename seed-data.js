@@ -1,7 +1,7 @@
 module.exports = (() => {
 const teams = [
   {
-    name: 'FVL Falcons', slug: 'falcons', tier: 'Mini', season: 1,
+    name: 'FVL Falcons', slug: 'falcons', tier: 'Mini', season: 2,
     color: '#2b5ba8', gradient: 'linear-gradient(135deg,#1a3566,#2b5ba8)',
     players: [
       { name: 'Ashok',       role: 'Wingman', tier: 'A' },
@@ -15,7 +15,7 @@ const teams = [
     ],
   },
   {
-    name: 'FVL Spartans', slug: 'spartans', tier: 'Mini', season: 1,
+    name: 'FVL Spartans', slug: 'spartans', tier: 'Mini', season: 2,
     color: '#4527a0', gradient: 'linear-gradient(135deg,#311b92,#4527a0)',
     players: [
       { name: 'Amrendra',    role: 'Wingman', tier: 'A' },
@@ -29,7 +29,7 @@ const teams = [
     ],
   },
   {
-    name: 'FVL Titans', slug: 'titans', tier: 'Mini', season: 1,
+    name: 'FVL Titans', slug: 'titans', tier: 'Mini', season: 2,
     color: '#1a3566', gradient: 'linear-gradient(135deg,#0f1e3d,#1a3566)',
     players: [
       { name: 'Rahul',       role: 'Wingman', tier: 'A' },
@@ -43,7 +43,7 @@ const teams = [
     ],
   },
   {
-    name: 'FVL Dragons', slug: 'dragons', tier: 'Mini', season: 1,
+    name: 'FVL Dragons', slug: 'dragons', tier: 'Mini', season: 2,
     color: '#c62828', gradient: 'linear-gradient(135deg,#7f0000,#c62828)',
     exception: '9-player approved exception',
     players: [
@@ -59,7 +59,7 @@ const teams = [
     ],
   },
   {
-    name: 'FVL Panthers', slug: 'panthers', tier: 'Mini', season: 1,
+    name: 'FVL Panthers', slug: 'panthers', tier: 'Mini', season: 2,
     color: '#2e7d32', gradient: 'linear-gradient(135deg,#1b5e20,#2e7d32)',
     players: [
       { name: 'Sachin',      role: 'Wingman', tier: 'A' },
@@ -76,7 +76,7 @@ const teams = [
 
 const standings = [
   {
-    season: 1, teamName: 'FVL Falcons',
+    season: 2, teamName: 'FVL Falcons',
     totalPoints: 21, championships: 2, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 3, points: 3, champion: true  },
@@ -88,7 +88,7 @@ const standings = [
     ],
   },
   {
-    season: 1, teamName: 'FVL Spartans',
+    season: 2, teamName: 'FVL Spartans',
     totalPoints: 18, championships: 2, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 2, points: 2, champion: false },
@@ -99,7 +99,7 @@ const standings = [
     ],
   },
   {
-    season: 1, teamName: 'FVL Titans',
+    season: 2, teamName: 'FVL Titans',
     totalPoints: 16, championships: 0, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 3, points: 3 },
@@ -110,7 +110,7 @@ const standings = [
     ],
   },
   {
-    season: 1, teamName: 'FVL Dragons',
+    season: 2, teamName: 'FVL Dragons',
     totalPoints: 10, championships: 1, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 1, points: 1 },
@@ -121,7 +121,7 @@ const standings = [
     ],
   },
   {
-    season: 1, teamName: 'FVL Panthers',
+    season: 2, teamName: 'FVL Panthers',
     totalPoints: 10, championships: 0, relegated: true,
     monthlyResults: [
       { month: 'November 2025', wins: 1, points: 1 },
@@ -134,12 +134,12 @@ const standings = [
 ];
 
 const coreMembers = [
-  { name: 'Ashok',     role: 'Mini Wingman',         assignedTeam: 'FVL Falcons',  season: 1 },
-  { name: 'Amrendra',  role: 'Mini Wingman',         assignedTeam: 'FVL Spartans', season: 1 },
-  { name: 'Rahul',     role: 'Mini Wingman',         assignedTeam: 'FVL Titans',   season: 1 },
-  { name: 'Naren',     role: 'Mini Wingman',         assignedTeam: 'FVL Dragons',  season: 1 },
-  { name: 'Sachin',    role: 'Mini Wingman',         assignedTeam: 'FVL Panthers', season: 1 },
-  { name: 'Sunil',     role: 'Floating',             assignedTeam: 'League-wide',  season: 1 },
+  { name: 'Ashok',     role: 'Mini Wingman',         assignedTeam: 'FVL Falcons',  season: 2 },
+  { name: 'Amrendra',  role: 'Mini Wingman',         assignedTeam: 'FVL Spartans', season: 2 },
+  { name: 'Rahul',     role: 'Mini Wingman',         assignedTeam: 'FVL Titans',   season: 2 },
+  { name: 'Naren',     role: 'Mini Wingman',         assignedTeam: 'FVL Dragons',  season: 2 },
+  { name: 'Sachin',    role: 'Mini Wingman',         assignedTeam: 'FVL Panthers', season: 2 },
+  { name: 'Sunil',     role: 'Floating',             assignedTeam: 'League-wide',  season: 2 },
 ];
 
 const decisions = [
@@ -176,10 +176,10 @@ const decisions = [
 ];
 
 const season = {
-  number: 1, label: 'Season 1', status: 'active',
+  number: 2, label: 'Season 2', status: 'active',
   startDate: new Date('2025-11-01'), endDate: new Date('2026-04-30'),
   miniTeams: 5, nanoTeams: 0, recommendedPlayersPerTeam: 7, draftFormat: 'auction',
-  notes: 'Founding season. All 5 teams in Mini. Nano activates Season 2.',
+  notes: 'FVL Season 2 — 5 teams. Historical data.',
 };
 
   const config = [

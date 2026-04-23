@@ -30,7 +30,7 @@ app.get('/api/health', (req, res) => {
 // ── Teams ─────────────────────────────────────────────────────────────
 app.get('/api/teams', async (req, res) => {
   try {
-    const { season = 1, tier } = req.query;
+    const { season = 2, tier } = req.query;
     const filter = { season: Number(season) };
     if (tier) filter.tier = tier;
     const teams = await Team.find(filter).sort({ name: 1 });
@@ -60,7 +60,7 @@ app.patch('/api/teams/:slug', async (req, res) => {
 // ── Standings ─────────────────────────────────────────────────────────
 app.get('/api/standings', async (req, res) => {
   try {
-    const { season = 1 } = req.query;
+    const { season = 2 } = req.query;
     const standings = await Standing.find({ season: Number(season) })
       .sort({ totalPoints: -1, championships: -1 });
     res.json(standings);
@@ -70,7 +70,7 @@ app.get('/api/standings', async (req, res) => {
 app.patch('/api/standings/:teamName', async (req, res) => {
   try {
     const s = await Standing.findOneAndUpdate(
-      { teamName: req.params.teamName, season: req.body.season || 1 },
+      { teamName: req.params.teamName, season: req.body.season || 2 },
       { $set: req.body },
       { new: true, upsert: true }
     );
@@ -89,7 +89,7 @@ app.get('/api/season/:number', async (req, res) => {
 // ── Core Members ──────────────────────────────────────────────────────
 app.get('/api/core-members', async (req, res) => {
   try {
-    const { season = 1 } = req.query;
+    const { season = 2 } = req.query;
     const members = await CoreMember.find({ season: Number(season) }).sort({ name: 1 });
     res.json(members);
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -199,6 +199,28 @@ app.post('/api/seed', async (req, res) => {
   } catch (e) {
     say('❌ Error: ' + e.message);
     res.status(500).json({ success: false, error: e.message, log });
+  }
+});
+
+// ── Season migration endpoint (one-time: season 1 → 2) ──────────────
+app.post('/api/migrate-season', async (req, res) => {
+  try {
+    const results = await Promise.all([
+      Team.updateMany(       { season: 1 }, { $set: { season: 2 } }),
+      Standing.updateMany(   { season: 1 }, { $set: { season: 2 } }),
+      CoreMember.updateMany( { season: 1 }, { $set: { season: 2 } }),
+      Season.updateMany(     { number: 1 }, { $set: { number: 2, label: 'Season 2' } }),
+    ]);
+    res.json({
+      success: true,
+      teams:       results[0].modifiedCount,
+      standings:   results[1].modifiedCount,
+      coreMembers: results[2].modifiedCount,
+      season:      results[3].modifiedCount,
+      message: 'All season:1 records updated to season:2'
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
   }
 });
 
