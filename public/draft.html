@@ -373,9 +373,9 @@ async function init() {
     const pool = [];
     teams.forEach(t => t.players.forEach(p => {
       if (!capNames.has(p.name) && !OUT.has(p.name))
-        pool.push({name:p.name, s1team:t.name.replace('FVL ',''), drafted:false});
+        pool.push({name:p.name, s2team:t.name.replace('FVL ',''), drafted:false});
     }));
-    [{name:'Surendra Kings',s1team:'New'},{name:'Raja Vasu',s1team:'New'},{name:'Ritesh',s1team:'Falcons'}]
+    [{name:'Surendra Kings',s2team:'New'},{name:'Raja Vasu',s2team:'New'},{name:'Ritesh',s2team:'Falcons'}]
       .forEach(p => { if(!capNames.has(p.name)) pool.push({...p,drafted:false}); });
     pool.sort((a,b)=>a.name.localeCompare(b.name));
     S.players = pool;
@@ -386,7 +386,7 @@ async function init() {
       'Pavan','Raja S','Raja Vasu','Rajeshbabu','Rakesh','Rajan','Rahul','Rizwan',
       'Ronak','Sachin','Santosh','Saravanan','Sunil','Surendra Kings','Suri',
       'Uday Dragon','Uday K','Venkat','Vikas']
-      .map(name=>({name,s1team:'—',drafted:false}));
+      .map(name=>({name,s2team:'—',drafted:false}));
     document.getElementById('setup-status').textContent = `${S.players.length} players (offline) · Ready`;
   }
 }
@@ -528,7 +528,7 @@ function pickPlayer(name) {
   if (!player) return;
   player.drafted=true;
   S.teams.find(t=>t.captain===pick.captain).players.push({...player});
-  S.picks.push({round:pick.rk,pickNum:pick.pickNum,captain:pick.captain,player:player.name,s1team:player.s1team,ts:new Date()});
+  S.picks.push({round:pick.rk,pickNum:pick.pickNum,captain:pick.captain,player:player.name,s2team:player.s2team,ts:new Date()});
   S.cur++;
   renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
   toast(`${pick.captain} → ${player.name}`);
@@ -602,8 +602,8 @@ function renderPool() {
   document.getElementById('plist').innerHTML=all.map(p=>{
     const safe=p.name.replace(/'/g,"\\'");
     const can=!p.drafted&&canAny;
-    return `<div class="pc ${p.drafted?'drafted':''}" onclick="${can?`pickPlayer('${safe}')`:''}" title="${p.s1team}">
-      <div><div class="pn">${p.name} ${p.drafted?'<span class="utag">picked</span>':''}</div><div class="pm">${p.s1team}</div></div>
+    return `<div class="pc ${p.drafted?'drafted':''}" onclick="${can?`pickPlayer('${safe}')`:''}" title="${p.s2team}">
+      <div><div class="pn">${p.name} ${p.drafted?'<span class="utag">picked</span>':''}</div><div class="pm">${p.s2team}</div></div>
       ${!p.drafted?`<button class="pkb" onclick="event.stopPropagation();pickPlayer('${safe}');" ${!can?'disabled':''}>Pick</button>`:''}
     </div>`;
   }).join('');
@@ -636,7 +636,7 @@ function renderLog() {
     <div style="display:grid;grid-template-columns:28px 1fr;gap:6px;padding:6px 10px;border-bottom:1px solid var(--border2)">
       <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);padding-top:1px">#${p.pickNum}</span>
       <div><div style="font-size:12px;font-weight:700">${p.player}</div>
-      <div style="font-size:11px;color:var(--muted)">→ ${p.captain} · ${p.round} · ${p.s1team}</div></div>
+      <div style="font-size:11px;color:var(--muted)">→ ${p.captain} · ${p.round} · was: ${p.s2team}</div></div>
     </div>`).join('');
   el.scrollTop=0;
 }
