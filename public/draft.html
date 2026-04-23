@@ -366,7 +366,7 @@ function seqOpt2() {
 async function init() {
   renderCapList(); updateSavedBadges();
   try {
-    const r = await fetch('/api/teams?season=1');
+    const r = await fetch('/api/teams?season=2');
     const teams = await r.json();
     const capNames = new Set(S.caps.map(c=>c.name));
     const OUT = new Set(['Kunal']);

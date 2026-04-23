@@ -48,7 +48,7 @@ async function api(url) { const r = await fetch(url); if (!r.ok) throw new Error
 
 // ── Standings ──────────────────────────────────────────────────────
 async function renderStandings() {
-  const s = await api('/api/standings?season=1');
+  const s = await api('/api/standings?season=2');
   const pc = ['gold','','','','rel'];
   document.getElementById('standings-list').innerHTML = s.map((d, i) => {
     const cm = (d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)+" '"+m.month.split(' ')[1].slice(2)).join(', ');
@@ -64,7 +64,7 @@ async function renderStandings() {
 
 // ── Teams ──────────────────────────────────────────────────────────
 async function renderTeams() {
-  const [teams, standings] = await Promise.all([api('/api/teams?season=1'), api('/api/standings?season=1')]);
+  const [teams, standings] = await Promise.all([api('/api/teams?season=2'), api('/api/standings?season=2')]);
   const sm = {}; standings.forEach(s => sm[s.teamName] = s);
   teams.sort((a,b) => (sm[b.name]?.totalPoints||0)-(sm[a.name]?.totalPoints||0) || (sm[b.name]?.championships||0)-(sm[a.name]?.championships||0));
   document.getElementById('teams-grid').innerHTML = teams.map(t => {
@@ -81,7 +81,7 @@ async function renderTeams() {
 
 // ── Core Members ───────────────────────────────────────────────────
 async function renderCoreMembers() {
-  const m = await api('/api/core-members?season=1');
+  const m = await api('/api/core-members?season=2');
   document.getElementById('core-members-grid').innerHTML = m.map(x =>
     `<div class="cmr"><div><div class="cmname">${x.name}</div><div class="cmteam">${x.assignedTeam||''}</div></div><div class="cmrole">${x.role}</div></div>`
   ).join('');
