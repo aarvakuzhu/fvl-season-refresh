@@ -96,13 +96,16 @@ const ConfigSchema = new mongoose.Schema({
 // Skills, tier, display name describe the person — not season-specific
 // ═══════════════════════════════════════════════════════════════════════
 const PlayerModelSchema = new mongoose.Schema({
-  name:        { type: String, required: true, unique: true }, // canonical name
-  displayName: { type: String },       // nickname e.g. "Amar" for Amrendra
-  skills:      [{ type: String }],     // ['Spiker','Setter','Defense','Allrounder','Developing']
+  name:        { type: String, required: true },       // canonical name (not unique — use _id as key)
+  displayName: { type: String },                       // nickname e.g. "Amar" for Amrendra
+  skills:      [{ type: String }],                     // ['Spiker','Setter','Defense','Allrounder','Developing']
   tier:        { type: String, enum: ['S','A','B','C'], default: 'B' },
   notes:       { type: String },
   active:      { type: Boolean, default: true },
 }, { timestamps: true });
+
+// No unique index on name — _id is the canonical identifier
+// Two players can share a first name; disambiguate by displayName or notes
 
 // ── PlayerSeason — per-season participation record ─────────────────────
 // Role and team change season to season — tracked here.

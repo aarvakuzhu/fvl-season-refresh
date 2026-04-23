@@ -587,17 +587,30 @@ function renderBoard() {
 
 function renderPool() {
   const q=(document.getElementById('psearch')?.value||'').toLowerCase();
-  const f=S.filterTier, cp=S.seq[S.cur];
-  const filtered=S.players.filter(p=>{ if(f!=='ALL'&&p.tier!==f) return false; if(q&&!p.name.toLowerCase().includes(q)) return false; return true; });
+  const cp=S.seq[S.cur];
+  const filtered=S.players.filter(p=>{
+    const skills=getSkills(p.name);
+    if(S.skillFilter.size>0 && ![...S.skillFilter].every(sk=>skills.includes(sk))) return false;
+    if(q){
+      const skillMatch=skills.some(sk=>(SKILL_LABELS[sk]||sk).toLowerCase().includes(q)||sk.toLowerCase().includes(q));
+      if(!p.name.toLowerCase().includes(q)&&!skillMatch) return false;
+    }
+    return true;
+  });
   const all=[...filtered.filter(p=>!p.drafted),...filtered.filter(p=>p.drafted)];
   document.getElementById('pcl').textContent=`${S.players.filter(p=>!p.drafted).length} / ${S.players.length}`;
-  if (!all.length){ document.getElementById('plist').innerHTML='<div class="empty-state">No players</div>'; return; }
+  if(!all.length){document.getElementById('plist').innerHTML='<div class="empty-state">No players match</div>';return;}
   const canAny=!!cp&&S.cur<S.seq.length;
   document.getElementById('plist').innerHTML=all.map(p=>{
     const safe=p.name.replace(/'/g,"\\'");
     const can=!p.drafted&&canAny;
+    const skills=getSkills(p.name);
     return `<div class="pc ${p.drafted?'drafted':''}" onclick="${can?`pickPlayer('${safe}')`:''}" title="${p.s2team}">
-      <div><div class="pn">${p.name} ${p.drafted?'<span class="utag">picked</span>':''}</div><div class="pm">${p.s2team}</div></div>
+      <div>
+        <div class="pn">${p.name} ${p.drafted?'<span class="utag">picked</span>':''}</div>
+        <div class="pm" style="margin-bottom:${skills.length?'3px':'0'}">${p.s2team}</div>
+        ${skills.length?`<div>${skillTags(skills)}</div>`:''}
+      </div>
       ${!p.drafted?`<button class="pkb" onclick="event.stopPropagation();pickPlayer('${safe}');" ${!can?'disabled':''}>Pick</button>`:''}
     </div>`;
   }).join('');

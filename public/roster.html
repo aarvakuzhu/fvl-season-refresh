@@ -332,6 +332,10 @@ function cardHTML(p) {
     </div>
     <div class="pc-edit">
       <div class="ef">
+        <label class="el">Canonical Name <span style="opacity:.5;font-weight:400">(used as identifier)</span></label>
+        <input class="ei" id="cn-${p._id}" value="${p.name}">
+      </div>
+      <div class="ef">
         <label class="el">Display Name (nickname)</label>
         <input class="ei" id="dn-${p._id}" value="${p.displayName||''}" placeholder="${p.name}">
       </div>
@@ -398,6 +402,7 @@ async function savePlayer(id) {
   const si   = document.getElementById(`si-${id}`);
   si.textContent = 'Saving…'; si.className = 'si';
 
+  const name        = document.getElementById(`cn-${id}`).value.trim();
   const displayName = document.getElementById(`dn-${id}`).value.trim();
   const notes       = document.getElementById(`notes-${id}`).value.trim();
   const skills      = [...card.querySelectorAll('.sk-tog.on')].map(b=>b.classList[1]);
@@ -407,7 +412,7 @@ async function savePlayer(id) {
     // Save player profile
     const r = await fetch(`/api/players/${id}`, {
       method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ displayName:displayName||undefined, notes:notes||undefined, skills, tier }),
+      body: JSON.stringify({ name: name||undefined, displayName:displayName||undefined, notes:notes||undefined, skills, tier }),
     });
     if (!r.ok) throw new Error(await r.text());
     const updated = await r.json();
@@ -428,21 +433,15 @@ async function savePlayer(id) {
 
     // Update local data
     const idx = ALL.findIndex(p=>p._id===id);
-    if (idx>=0) { ALL[idx] = {...ALL[idx], ...updated}; }
+    if (idx>=0) { ALL[idx] = {...ALL[idx], ...updated, name: updated.name || ALL[idx].name}; }
 
     si.textContent = '✓ Saved'; si.className = 'si ok';
-    toast(`✓ ${updated.name} saved`);
-    setTimeout(()=>{ const s2=document.getElementById(`si-${id}`); if(s2)s2.textContent=''; },2500);
-
-    // Refresh card in place
+    // Refresh card — close edit mode, show updated data
     const newHTML = document.createElement('div');
     newHTML.innerHTML = cardHTML(ALL[idx]);
     const fresh = newHTML.firstChild;
-    fresh.classList.add('editing');
-    fresh.querySelector('.pc-edit').style.display='block';
-    fresh.querySelector('.pc-edit-btn').classList.add('active');
-    fresh.querySelector('.pc-edit-btn').textContent='✕ Close';
     card.replaceWith(fresh);
+    toast(`✓ ${updated.name} saved`);
 
   } catch(e) { si.textContent='✗ Error'; si.className='si err'; console.error(e); }
 }
