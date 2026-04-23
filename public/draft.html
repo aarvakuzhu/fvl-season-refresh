@@ -32,10 +32,9 @@
     .s-pick{font-weight:700}.s-dir{font-family:'Roboto Mono',monospace;font-size:11px;opacity:.8}
     .s-msg{margin-left:auto;font-size:12px;opacity:.85;font-style:italic}
 
-    .page{max-width:1280px;margin:0 auto;padding:12px}
-    .grid{display:grid;grid-template-columns:260px 1fr 280px;gap:10px;align-items:start}
-    @media(max-width:1100px){.grid{grid-template-columns:230px 1fr}}
-    @media(max-width:700px){.grid{grid-template-columns:1fr}}
+    .page{max-width:1440px;margin:0 auto;padding:12px}
+    .grid{display:grid;grid-template-columns:1fr 300px;gap:12px;align-items:start}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
 
     .card{background:#fff;border:1px solid var(--border);margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
     .chd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--border2);background:var(--light);display:flex;align-items:center;justify-content:space-between}
@@ -73,24 +72,20 @@
     .fbtn{font-size:11px;font-weight:600;padding:4px 9px;border:1px solid var(--border);background:#fff;border-radius:2px;color:var(--muted);cursor:pointer;transition:all .15s}
     .fbtn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
     .search-box{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:2px;font-size:12px;margin-bottom:8px;font-family:'Roboto',sans-serif}
-    .pool-list{display:flex;flex-direction:column;gap:3px;max-height:520px;overflow-y:auto}
+    .pool-list{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;max-height:620px;overflow-y:auto}
+    @media(max-width:1100px){.pool-list{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){.pool-list{grid-template-columns:1fr;max-height:none}}
     .pool-list::-webkit-scrollbar{width:4px}.pool-list::-webkit-scrollbar-thumb{background:var(--border)}
-    .pc{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;padding:7px 10px;background:#fff;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
-    .pc:hover{background:var(--blue2);border-left-color:var(--blue)}
-    .pc.drafted{background:#f5f5f5;cursor:not-allowed;opacity:.5}.pc.drafted:hover{background:#f5f5f5;border-left-color:transparent}
-    .pn{font-size:13px;font-weight:600}.pm{font-size:11px;color:var(--muted);margin-top:1px}
+    .pc{display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding:8px 10px;background:#fff;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:all .15s;border-top:3px solid transparent;min-height:72px}
+    .pc:hover{background:var(--blue2);border-top-color:var(--blue)}
+    .pc.drafted{background:#f5f5f5;cursor:not-allowed;opacity:.45;border-top-color:transparent!important}
+    .pc.drafted:hover{background:#f5f5f5}
+    .pn{font-size:12px;font-weight:700;line-height:1.2;word-break:break-word}.pm{font-size:10px;color:var(--muted);margin-top:1px}
+    .pkb{width:100%;font-size:11px;font-weight:700;padding:4px 6px;border:none;background:var(--blue);color:#fff;border-radius:2px;cursor:pointer;margin-top:4px}
+    .pkb:hover{opacity:.85}.pkb:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
     .pkb{font-size:11px;font-weight:700;padding:4px 10px;border:none;background:var(--blue);color:#fff;border-radius:2px;cursor:pointer;white-space:nowrap}
     .pkb:hover{opacity:.85}.pkb:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
 
-    .team-grid{display:flex;flex-direction:column;gap:8px}
-    .tc{background:#fff;border:1px solid var(--border);overflow:hidden}
-    .th{padding:7px 10px;display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:12px;font-weight:700}
-    .th.cur{animation:tg .8s ease infinite}
-    @keyframes tg{0%,100%{opacity:1}50%{opacity:.75}}
-    .tp{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;font-size:12px;border-top:1px solid rgba(0,0,0,.06)}
-    .tp.cap{background:#f0f4ff;font-weight:600;color:var(--blue)}
-    .tp.empty{color:#ccc;font-style:italic}
-    .pi{font-family:'Roboto Mono',monospace;font-size:10px;opacity:.75}
 
     .btn{font-size:12px;font-weight:700;padding:7px 14px;border:none;border-radius:2px;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s}
     .btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{opacity:.85}
@@ -198,7 +193,7 @@
   <div class="sec" style="margin-bottom:6px">Pick Order Board <span style="font-size:10px;font-weight:400;color:var(--muted)">Yellow=active · Green=done · Grey=skip</span></div>
   <div class="board" style="margin-bottom:12px"><div class="board-scroll"><table class="bt" id="bt"></table></div></div>
 
-  <!-- ── MAIN GRID: pool + teams + log ── -->
+  <!-- ── MAIN GRID: pool (multi-col) + log ── -->
   <div class="grid">
     <div>
       <div class="sec">Player Pool <span id="pcl" style="font-weight:400;font-size:10px;color:var(--muted)"></span></div>
@@ -214,13 +209,10 @@
       <div class="pool-list" id="plist"></div>
     </div>
     <div>
-      <div class="sec">Team Rosters</div>
-      <div class="team-grid" id="teams"></div>
-    </div>
-    <div>
       <div class="sec">Draft Log</div>
-      <div class="card"><div id="dlog" style="max-height:480px;overflow-y:auto;padding:4px 0"></div></div>
-
+      <div class="card"><div id="dlog" style="max-height:620px;overflow-y:auto;padding:4px 0"></div></div>
+      <div class="sec" style="margin-top:8px">All Saved Drafts</div>
+      <div id="saves-list" class="card" style="padding:0"></div>
     </div>
   </div>
 </div>
@@ -622,35 +614,20 @@ function renderPool() {
     const safe=p.name.replace(/'/g,"\\'");
     const can=!p.drafted&&canAny;
     const skills=getSkills(p.name);
-    return `<div class="pc ${p.drafted?'drafted':''}" onclick="${can?`pickPlayer('${safe}')`:''}" title="${p.s2team}">
+    const topColor = skills.length ? ({Spiker:'#1d4ed8',Setter:'#9d174d',Defense:'#065f46',Allrounder:'#92400e',Developing:'#c2410c'}[skills[0]]||'transparent') : 'transparent';
+    return `<div class="pc ${p.drafted?'drafted':''}" onclick="${can?`pickPlayer('${safe}')`:''}" title="${p.s2team}" style="border-top-color:${topColor}">
       <div>
-        <div class="pn">${p.label||p.name} ${p.drafted?'<span class="utag">picked</span>':''}</div>
-        <div class="pm" style="margin-bottom:${skills.length?'3px':'0'}">${p.s2team}</div>
-        ${skills.length?`<div>${skillTags(skills)}</div>`:''}
+        <div class="pn">${p.label||p.name} ${p.drafted?'<span class="utag">✓</span>':''}</div>
+        <div class="pm">${p.s2team}</div>
+        ${skills.length?`<div style="margin-top:3px">${skillTags(skills)}</div>`:''}
       </div>
       ${!p.drafted?`<button class="pkb" onclick="event.stopPropagation();pickPlayer('${safe}');" ${!can?'disabled':''}>Pick</button>`:''}
     </div>`;
   }).join('');
 }
 
-// ── TEAMS ──────────────────────────────────────────────────────────
-function renderTeams() {
-  const cp=S.seq[S.cur];
-  document.getElementById('teams').innerHTML=[...S.teams].sort((a,b)=>{
-    return (S.caps.find(c=>c.name===a.captain)?.po||99)-(S.caps.find(c=>c.name===b.captain)?.po||99);
-  }).map(t=>{
-    const isCur=cp&&cp.captain===t.captain;
-    let rows=`<div class="tp cap"><span>${t.captain} ⭐</span></div>`;
-    for(let i=0;i<S.ppt;i++){
-      const p=t.players[i];
-      rows+=p?`<div class="tp" style="flex-wrap:wrap;gap:3px"><span>${p.label||p.name}</span><span style="margin-left:auto">${skillTags(getSkills(p.name))}</span></div>`:`<div class="tp empty"><span>Pick ${i+2}</span></div>`;
-    }
-    return `<div class="tc" style="border-top:3px solid ${t.col}">
-      <div class="th ${isCur?'cur':''}" style="background:${t.col}"><span>${t.captain}</span><span class="pi">${t.players.length}/${S.ppt}</span></div>
-      ${rows}
-    </div>`;
-  }).join('');
-}
+// ── TEAMS — removed from display, kept for data integrity ───────────
+function renderTeams() { /* roster display removed */ }
 
 // ── LOG ────────────────────────────────────────────────────────────
 function renderLog() {
