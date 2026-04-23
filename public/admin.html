@@ -65,7 +65,16 @@
 
     <div class="divider"></div>
 
-    <div class="title" style="font-size:16px;margin-bottom:6px">Season Migration</div>
+    <div class="title" style="font-size:16px;margin-bottom:6px">April 2026 Final Standings</div>
+    <p class="subtitle" style="margin-bottom:16px">Update Season 2 final results — Dragons win April, Falcons are Season Champions.</p>
+
+    <button class="btn" id="april-btn" onclick="runApril()" style="background:#1b5e20;color:#fff;margin-bottom:8px">
+      🏆 Update April Standings
+    </button>
+    <div class="log" id="april-log"></div>
+    <div class="status" id="april-status"></div>
+
+    <div class="divider"></div>
     <p class="subtitle" style="margin-bottom:16px">One-time: bump all Season 2 records in DB<br>from <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">season:1</code> → <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">season:2</code></p>
 
     <button class="btn" id="migrate-btn" onclick="runMigrate()" style="background:#1a3566;color:#fff;margin-bottom:8px">
@@ -184,6 +193,40 @@
         status.textContent = '❌ Could not reach server';
         btn.disabled = false;
         btn.innerHTML = '🔄 Try Again';
+      }
+    }
+
+    async function runApril() {
+      const btn = document.getElementById('april-btn');
+      const log = document.getElementById('april-log');
+      const status = document.getElementById('april-status');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spin">⏳</span> Updating...';
+      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
+      try {
+        const r = await fetch('/api/update-april-standings', { method: 'POST' });
+        const d = await r.json();
+        if (d.success) {
+          log.innerHTML = [
+            '<div class="log-line ok">✅ Dragons — April champion (6 pts)</div>',
+            '<div class="log-line ok">✅ Falcons — 3 pts · Season Champions 🏆</div>',
+            '<div class="log-line ok">✅ Titans — 3 pts</div>',
+            '<div class="log-line ok">✅ Panthers — 2 pts</div>',
+            '<div class="log-line ok">✅ Spartans — 1 pt</div>',
+            `<div class="log-line info">${d.message}</div>`,
+          ].join('');
+          status.textContent = '✅ April standings updated!';
+          status.className = 'status success';
+          btn.innerHTML = '✅ Done';
+        } else {
+          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
+          status.textContent = '❌ Update failed'; status.className = 'status error';
+          btn.disabled = false; btn.innerHTML = '🏆 Try Again';
+        }
+      } catch(e) {
+        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
+        status.textContent = '❌ Could not reach server'; status.className = 'status error';
+        btn.disabled = false; btn.innerHTML = '🏆 Try Again';
       }
     }
 

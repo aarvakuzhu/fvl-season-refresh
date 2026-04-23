@@ -52,9 +52,10 @@ async function renderStandings() {
   const pc = ['gold','','','','',''];
   document.getElementById('standings-list').innerHTML = s.map((d, i) => {
     const cm = (d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)+" '"+m.month.split(' ')[1].slice(2)).join(', ');
+    const seasonBadge = d.seasonChampion ? ' <span style="font-family:\'Roboto Mono\',monospace;font-size:9px;background:#fff3cd;color:#856404;border:1px solid #ffc107;padding:1px 5px;border-radius:2px;font-weight:700;vertical-align:middle">SEASON CHAMP</span>' : '';
     return `<div class="srow ${pc[i]||''}">
       <div class="spos ${i===0?'pos-1':''}">${i+1}</div>
-      <div><div class="sname">${d.teamName} ${tr(d.championships)}</div><div class="ssub">${cm?'Won: '+cm:''}</div></div>
+      <div><div class="sname">${d.teamName}${seasonBadge} ${tr(d.championships)}</div><div class="ssub">${cm?'Won: '+cm:''}</div></div>
       <div></div>
       <div class="spts">${d.totalPoints} pts</div>
     </div>`;

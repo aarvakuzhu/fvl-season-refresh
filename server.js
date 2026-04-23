@@ -202,6 +202,43 @@ app.post('/api/seed', async (req, res) => {
   }
 });
 
+// ── Update April 2026 final standings endpoint ───────────────────────
+app.post('/api/update-april-standings', async (req, res) => {
+  try {
+    const updates = [
+      { teamName: 'FVL Falcons',  totalPoints: 24, championships: 2, seasonChampion: true,  aprilPoints: 3,  aprilChampion: false },
+      { teamName: 'FVL Spartans', totalPoints: 19, championships: 2, seasonChampion: false, aprilPoints: 1,  aprilChampion: false },
+      { teamName: 'FVL Titans',   totalPoints: 19, championships: 0, seasonChampion: false, aprilPoints: 3,  aprilChampion: false },
+      { teamName: 'FVL Dragons',  totalPoints: 16, championships: 2, seasonChampion: false, aprilPoints: 6,  aprilChampion: true  },
+      { teamName: 'FVL Panthers', totalPoints: 12, championships: 0, seasonChampion: false, aprilPoints: 2,  aprilChampion: false },
+    ];
+    for (const u of updates) {
+      await Standing.findOneAndUpdate(
+        { season: 2, teamName: u.teamName },
+        {
+          $set: {
+            totalPoints: u.totalPoints,
+            championships: u.championships,
+            seasonChampion: u.seasonChampion,
+            relegated: false,
+          },
+          $push: {
+            monthlyResults: {
+              month: 'April 2026',
+              points: u.aprilPoints,
+              champion: u.aprilChampion,
+            },
+          },
+        },
+        { upsert: false }
+      );
+    }
+    res.json({ success: true, message: 'April 2026 standings updated. Falcons are Season 2 Champions!' });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // ── Season migration endpoint (one-time: season 1 → 2) ──────────────
 app.post('/api/migrate-season', async (req, res) => {
   try {

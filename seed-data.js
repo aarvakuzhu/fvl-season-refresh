@@ -77,58 +77,62 @@ const teams = [
 const standings = [
   {
     season: 2, teamName: 'FVL Falcons',
-    totalPoints: 21, championships: 2, relegated: false,
+    totalPoints: 24, championships: 2, seasonChampion: true, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 3, points: 3, champion: true  },
       { month: 'December 2025', wins: 3, points: 3, champion: false },
       { month: 'January 2026',  wins: 3, points: 3, champion: false },
       { month: 'February 2026', wins: 3, points: 3, champion: true  },
       { month: 'March 2026',    wins: 3, points: 3, champion: false },
-      { month: 'April 2026',    wins: 0, points: 6, champion: false }, // TBD
+      { month: 'April 2026',    wins: 0, points: 3, champion: false },
     ],
   },
   {
     season: 2, teamName: 'FVL Spartans',
-    totalPoints: 18, championships: 2, relegated: false,
+    totalPoints: 19, championships: 2, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 2, points: 2, champion: false },
       { month: 'December 2025', wins: 3, points: 3, champion: true  },
       { month: 'January 2026',  wins: 2, points: 2, champion: true  },
       { month: 'February 2026', wins: 3, points: 3, champion: false },
       { month: 'March 2026',    wins: 1, points: 1, champion: false },
+      { month: 'April 2026',    wins: 0, points: 1, champion: false },
     ],
   },
   {
     season: 2, teamName: 'FVL Titans',
-    totalPoints: 16, championships: 0, relegated: false,
+    totalPoints: 19, championships: 0, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 3, points: 3 },
       { month: 'December 2025', wins: 1, points: 1 },
       { month: 'January 2026',  wins: 2, points: 2 },
       { month: 'February 2026', wins: 3, points: 3 },
       { month: 'March 2026',    wins: 2, points: 2 },
+      { month: 'April 2026',    wins: 0, points: 3 },
     ],
   },
   {
     season: 2, teamName: 'FVL Dragons',
-    totalPoints: 10, championships: 1, relegated: false,
+    totalPoints: 16, championships: 2, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 1, points: 1 },
       { month: 'December 2025', wins: 2, points: 2 },
       { month: 'January 2026',  wins: 0, points: 0 },
       { month: 'February 2026', wins: 0, points: 0 },
       { month: 'March 2026',    wins: 3, points: 3, champion: true },
+      { month: 'April 2026',    wins: 0, points: 6, champion: true },
     ],
   },
   {
     season: 2, teamName: 'FVL Panthers',
-    totalPoints: 10, championships: 0, relegated: true,
+    totalPoints: 12, championships: 0, relegated: false,
     monthlyResults: [
       { month: 'November 2025', wins: 1, points: 1 },
       { month: 'December 2025', wins: 2, points: 2 },
       { month: 'January 2026',  wins: 3, points: 3 },
       { month: 'February 2026', wins: 1, points: 1 },
       { month: 'March 2026',    wins: 1, points: 1 },
+      { month: 'April 2026',    wins: 0, points: 2 },
     ],
   },
 ];
