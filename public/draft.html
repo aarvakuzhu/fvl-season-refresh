@@ -106,6 +106,21 @@
     .cfg{padding:10px 0;border-bottom:1px solid var(--border2);margin-bottom:8px}.cfg:last-child{border:none;margin:0}
     .cfgl{font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
     .ni{width:56px;padding:4px 8px;border:1px solid var(--border);border-radius:2px;font-size:13px;font-weight:700;font-family:'Roboto Mono',monospace;text-align:center}
+
+    /* ── Skill tags ── */
+    .sk{display:inline-block;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;padding:1px 5px;border-radius:2px;margin:1px 1px 0 0;white-space:nowrap}
+    .sk-Spiker     {background:#dbeafe;color:#1d4ed8}
+    .sk-Setter     {background:#fce7f3;color:#9d174d}
+    .sk-Defense    {background:#d1fae5;color:#065f46}
+    .sk-Allrounder {background:#fef3c7;color:#92400e}
+    .sk-Developing {background:#ffedd5;color:#c2410c}
+    .skf-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:2px;cursor:pointer;transition:all .15s;border:2px solid transparent}
+    .skf-btn:not(.skf-on){background:#fff;border-color:var(--border);color:var(--muted)}
+    .skf-btn.skf-on.sk-f-Spiker    {background:#dbeafe;border-color:#1d4ed8;color:#1d4ed8}
+    .skf-btn.skf-on.sk-f-Setter    {background:#fce7f3;border-color:#9d174d;color:#9d174d}
+    .skf-btn.skf-on.sk-f-Defense   {background:#d1fae5;border-color:#065f46;color:#065f46}
+    .skf-btn.skf-on.sk-f-Allrounder{background:#fef3c7;border-color:#92400e;color:#92400e}
+    .skf-btn.skf-on.sk-f-Developing{background:#ffedd5;border-color:#c2410c;color:#c2410c}
   </style>
 </head>
 <body>
@@ -187,10 +202,15 @@
   <div class="grid">
     <div>
       <div class="sec">Player Pool <span id="pcl" style="font-weight:400;font-size:10px;color:var(--muted)"></span></div>
-      <div class="pool-filters">
-        <button class="fbtn on" data-tier="ALL" onclick="filterTier(this)">All</button>
+      <div id="skill-filters" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">
+        <button class="skf-btn sk-f-Spiker"     onclick="toggleSkillFilter('Spiker',this)">🔵 Spiker</button>
+        <button class="skf-btn sk-f-Setter"     onclick="toggleSkillFilter('Setter',this)">🩷 Setter</button>
+        <button class="skf-btn sk-f-Defense"    onclick="toggleSkillFilter('Defense',this)">🟢 Defense</button>
+        <button class="skf-btn sk-f-Allrounder" onclick="toggleSkillFilter('Allrounder',this)">⚡ All-rounder</button>
+        <button class="skf-btn sk-f-Developing" onclick="toggleSkillFilter('Developing',this)">🟠 Developing</button>
+        <button class="fbtn" style="font-size:10px;padding:3px 8px" onclick="clearSkillFilters()">✕ Clear</button>
       </div>
-      <input class="search-box" type="text" id="psearch" placeholder="Search…" oninput="renderPool()">
+      <input class="search-box" type="text" id="psearch" placeholder="Search name or skill…" oninput="renderPool()">
       <div class="pool-list" id="plist"></div>
     </div>
     <div>
@@ -252,7 +272,39 @@ const S = {
   players: [], teams: [], picks: [],
   seq: [], cur: 0, ppt: 6,
   started: false, filterTier: 'ALL', currentUser: 'Anil', lastSavedPickCount: -1,
+  skillFilter: new Set(), // active skill filters (empty = show all)
 };
+
+// ── SKILLS ─────────────────────────────────────────────────────────
+const SKILL_DEFS = ['Spiker','Setter','Defense','Allrounder','Developing'];
+const SKILL_LABELS = {
+  Spiker:'🔵 Spiker', Setter:'🩷 Setter', Defense:'🟢 Defense',
+  Allrounder:'⚡ All-rounder', Developing:'🟠 Developing'
+};
+
+// Master skills map — to be filled once player list is confirmed
+// Format: 'Player Name': ['Skill1','Skill2',...]
+const PLAYER_SKILLS = {
+  // Example: 'Ashok': ['Spiker','Defense','Allrounder'],
+};
+
+function getSkills(name) { return PLAYER_SKILLS[name] || []; }
+
+function skillTags(skills) {
+  return (skills||[]).map(sk=>`<span class="sk sk-${sk}">${SKILL_LABELS[sk]||sk}</span>`).join('');
+}
+
+function clearSkillFilters() {
+  S.skillFilter.clear();
+  document.querySelectorAll('.skf-btn').forEach(b=>b.classList.remove('skf-on'));
+  renderPool();
+}
+
+function toggleSkillFilter(skill, btn) {
+  if (S.skillFilter.has(skill)) { S.skillFilter.delete(skill); btn.classList.remove('skf-on'); }
+  else { S.skillFilter.add(skill); btn.classList.add('skf-on'); }
+  renderPool();
+}
 
 // ── SEQUENCES ─────────────────────────────────────────────────────
 function seqOpt1() {
@@ -529,7 +581,6 @@ function renderBoard() {
 }
 
 // ── POOL ───────────────────────────────────────────────────────────
-function filterTier(btn){ document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); S.filterTier=btn.dataset.tier; renderPool(); }
 
 function renderPool() {
   const q=(document.getElementById('psearch')?.value||'').toLowerCase();
@@ -559,7 +610,7 @@ function renderTeams() {
     let rows=`<div class="tp cap"><span>${t.captain} ⭐</span></div>`;
     for(let i=0;i<S.ppt;i++){
       const p=t.players[i];
-      rows+=p?`<div class="tp"><span>${p.name}</span></div>`:`<div class="tp empty"><span>Pick ${i+2}</span></div>`;
+      rows+=p?`<div class="tp" style="flex-wrap:wrap;gap:3px"><span>${p.name}</span><span style="margin-left:auto">${skillTags(getSkills(p.name))}</span></div>`:`<div class="tp empty"><span>Pick ${i+2}</span></div>`;
     }
     return `<div class="tc" style="border-top:3px solid ${t.col}">
       <div class="th ${isCur?'cur':''}" style="background:${t.col}"><span>${t.captain}</span><span class="pi">${t.players.length}/${S.ppt}</span></div>
