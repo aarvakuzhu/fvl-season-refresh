@@ -375,13 +375,13 @@ async function init() {
       if (!capNames.has(p.name) && !OUT.has(p.name))
         pool.push({name:p.name, s1team:t.name.replace('FVL ',''), drafted:false});
     }));
-    [{name:'Surendra Kings',s1team:'New'},{name:'Raja Vasu',s1team:'New'},{name:'Gupta Ji',s1team:'Falcons'}]
+    [{name:'Surendra Kings',s1team:'New'},{name:'Raja Vasu',s1team:'New'},{name:'Ritesh',s1team:'Falcons'}]
       .forEach(p => { if(!capNames.has(p.name)) pool.push({...p,drafted:false}); });
     pool.sort((a,b)=>a.name.localeCompare(b.name));
     S.players = pool;
     document.getElementById('setup-status').textContent = `${pool.length} players · ${S.caps.length} captains · Ready`;
   } catch(e) {
-    S.players = ['Ahmed','Amrendra','Ashok','Chandu','Chandra','Divyanshu','Gopal','Gupta Ji',
+    S.players = ['Ahmed','Amrendra','Ashok','Chandu','Chandra','Divyanshu','Gopal','Ritesh',
       'Ishant','Jugal','Keshav','Kiran','Krishna','Krupa','Mukesh','Naren','Naveen',
       'Pavan','Raja S','Raja Vasu','Rajeshbabu','Rakesh','Rajan','Rahul','Rizwan',
       'Ronak','Sachin','Santosh','Saravanan','Sunil','Surendra Kings','Suri',
