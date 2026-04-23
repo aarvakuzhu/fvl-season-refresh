@@ -223,7 +223,7 @@ function renderNextSteps() {
     ['3','All 6','Finalise Season 3 draft order (based on inverse Season 2 final standings).','Before draft'],
     ['4','All 6','Publish snake draft rules, pick order table, and skip rounds to all 6 captains.','Before draft'],
     ['5','Captains','Each captain must pick their Wingman using one of their picks — must happen by end of R5.','Draft day'],
-    ['6','Captains','Run draft (Option 1 or 2 — pending decision). Each captain picks Wingman by end of pick 4 (Opt 1) or R5 (Opt 2).','Draft day'],
+    ['6','Captains','Run draft (Option 1 or 2 — pending decision). Each captain picks Wingman by end of pick 5 (Opt 1) or R5 (Opt 2).','Draft day'],
     ['7','All 6','Review rosters for tier balance. Flag any significant imbalances.','Post-draft'],
     ['8','All 6','Publish all 6 rosters. Open 48-hour player appeals window.','Post-draft'],
     ['9','All 6','Book venue. Confirm 2 courts for 3.5-hour event block.','Before Month 1'],

@@ -134,11 +134,7 @@
 
 <!-- SETUP -->
 <div id="setup-panel">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-    <div class="card">
-      <div class="chd">Captains <span style="font-size:10px;color:var(--blue);cursor:pointer" onclick="addCaptain()">+ Add</span></div>
-      <div id="cap-list"></div>
-    </div>
+  <div style="max-width:560px;margin-bottom:10px">
     <div class="card">
       <div class="chd">Draft Settings</div>
       <div class="cbody">
@@ -158,7 +154,7 @@
             <strong>Middle 2</strong> (Harsha + Shanthan): picks 5–6 and 7–8<br>
             <strong>Top 2</strong> (Koti + Karthik): picks 9–10 and 11–12<br>
             Then <strong>snake top-down from pick 13</strong>.<br>
-            <code>Wingman must be picked by end of pick 4.</code>
+            <code>Wingman must be picked by end of pick 5.</code>
           </div>
         </div>
 
@@ -262,7 +258,7 @@ function seqOpt1() {
 
 // ── INIT ───────────────────────────────────────────────────────────
 async function init() {
-  renderCapList(); updateSavedBadges();
+  updateSavedBadges();
   try {
     const r = await fetch('/api/teams?season=2');
     const teams = await r.json();
@@ -288,34 +284,6 @@ async function init() {
     document.getElementById('setup-status').textContent = `${S.players.length} players (offline) · Ready`;
   }
 }
-
-// ── CAPTAIN LIST UI ────────────────────────────────────────────────
-function renderCapList() {
-  const el = document.getElementById('cap-list');
-  const cols = '32px 1fr 72px 44px 24px';
-  const sorted = [...S.caps].sort((a,b)=>a.po-b.po);
-  el.innerHTML = `<div style="display:grid;grid-template-columns:${cols};gap:0;padding:5px 10px;background:var(--light);border-bottom:1px solid var(--border2);font-size:10px;font-weight:700;color:var(--muted)">
-    <span>#</span><span>Captain</span><span style="text-align:center">Order</span><span style="text-align:center">Tier</span><span></span>
-  </div>` + sorted.map(c => {
-    const i = S.caps.indexOf(c);
-    return `<div style="display:grid;grid-template-columns:${cols};align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--border2)" class="cap-item">
-      <span style="font-family:'Roboto Mono',monospace;font-size:15px;font-weight:900;color:var(--blue)">${c.po}</span>
-      <span style="font-size:13px;font-weight:700">${c.name}</span>
-      <div style="display:flex;gap:2px;justify-content:center">
-        <button onclick="mvp(${i},-1)" style="background:var(--light);border:1px solid var(--border);border-radius:2px;padding:2px 6px;cursor:pointer;font-size:11px;font-weight:700">↑</button>
-        <button onclick="mvp(${i},1)"  style="background:var(--light);border:1px solid var(--border);border-radius:2px;padding:2px 6px;cursor:pointer;font-size:11px;font-weight:700">↓</button>
-      </div>
-      ${isO2?`<div style="text-align:center"><select class="rs" onchange="upc(${i},'er',parseInt(this.value))">${[1,2,3,4,5,6].map(r=>`<option value="${r}" ${c.er===r?'selected':''}>${r===1?'None':'R'+r}</option>`).join('')}</select></div>`:''}
-      <div style="text-align:center"><select class="rs" onchange="upc(${i},'tier',this.value)">${['S','A','B','C'].map(t=>`<option value="${t}" ${c.tier===t?'selected':''}>${t}</option>`).join('')}</select></div>
-      <button onclick="rmv(${i})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function upc(i,k,v){ S.caps[i][k]=v; renderCapList(); }
-function mvp(i,d){ const c=S.caps[i],tp=c.po+d; if(tp<1||tp>S.caps.length) return; const o=S.caps.find(x=>x.po===tp); if(o) o.po=c.po; c.po=tp; renderCapList(); }
-function addCaptain(){ const n=prompt('Captain name:'); if(!n?.trim()) return; S.caps.push({name:n.trim(),po:S.caps.length+1,er:1,tier:'A',col:'#'+Math.floor(Math.random()*0x777777+0x111111).toString(16)}); renderCapList(); }
-function rmv(i){ S.caps.splice(i,1); renderCapList(); }
 
 // ── START / RESET ──────────────────────────────────────────────────
 function startDraft() {
@@ -351,7 +319,7 @@ function resetDraft(silent=false) {
   document.getElementById('setup-panel').style.display='block';
   document.getElementById('draft-panel').style.display='none';
   document.getElementById('undo-btn').disabled=true;
-  renderCapList(); updateSB();
+  updateSB();
 }
 
 // ── SAVE ───────────────────────────────────────────────────────────
