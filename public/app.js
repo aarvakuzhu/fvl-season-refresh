@@ -48,7 +48,7 @@ async function api(url) { const r = await fetch(url); if (!r.ok) throw new Error
 
 // ── Standings ──────────────────────────────────────────────────────
 async function renderStandings() {
-  const s = await api('/api/standings?season=1');
+  const s = await api('/api/standings?season=2');
   const pc = ['gold','','','','rel'];
   document.getElementById('standings-list').innerHTML = s.map((d, i) => {
     const cm = (d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)+" '"+m.month.split(' ')[1].slice(2)).join(', ');
@@ -64,7 +64,7 @@ async function renderStandings() {
 
 // ── Teams ──────────────────────────────────────────────────────────
 async function renderTeams() {
-  const [teams, standings] = await Promise.all([api('/api/teams?season=1'), api('/api/standings?season=1')]);
+  const [teams, standings] = await Promise.all([api('/api/teams?season=2'), api('/api/standings?season=2')]);
   const sm = {}; standings.forEach(s => sm[s.teamName] = s);
   teams.sort((a,b) => (sm[b.name]?.totalPoints||0)-(sm[a.name]?.totalPoints||0) || (sm[b.name]?.championships||0)-(sm[a.name]?.championships||0));
   document.getElementById('teams-grid').innerHTML = teams.map(t => {
@@ -81,7 +81,7 @@ async function renderTeams() {
 
 // ── Core Members ───────────────────────────────────────────────────
 async function renderCoreMembers() {
-  const m = await api('/api/core-members?season=1');
+  const m = await api('/api/core-members?season=2');
   document.getElementById('core-members-grid').innerHTML = m.map(x =>
     `<div class="cmr"><div><div class="cmname">${x.name}</div><div class="cmteam">${x.assignedTeam||''}</div></div><div class="cmrole">${x.role}</div></div>`
   ).join('');
@@ -166,7 +166,7 @@ function renderSchedule() {
 async function renderDecisionsSidebar() {
   const el = document.getElementById('decisions-sidebar');
   if (!el) return;
-  // Active S2 decisions — hardcoded (DB decisions are all archived legacy items)
+  // Active S3 decisions — hardcoded (DB decisions are all archived legacy items)
   el.innerHTML = `
     <div class="do ph" style="margin-bottom:6px"><div class="do-body">
       <span class="ptag pth">OPEN</span>
@@ -221,14 +221,14 @@ function renderNextSteps() {
   const steps=[
     ['1','All 6','Decide format: Option A (full RR + final) or Option B (2 pools + bracket). Present to captains once decided.','🔴 Open'],
     ['2','All 6','Assign role + tier to all 37 pool players. Share with captains before draft.','Before draft'],
-    ['3','All 6','Finalise Season 2 draft order (based on inverse Season 1 final standings).','Before draft'],
+    ['3','All 6','Finalise Season 3 draft order (based on inverse Season 2 final standings).','Before draft'],
     ['4','All 6','Publish snake draft rules, pick order table, and skip rounds to all 6 captains.','Before draft'],
     ['5','Captains','Each captain must pick their Wingman using one of their picks — must happen by end of R5.','Draft day'],
     ['6','Captains','Run draft (Option 1 or 2 — pending decision). Each captain picks Wingman by end of pick 4 (Opt 1) or R5 (Opt 2).','Draft day'],
     ['7','All 6','Review rosters for tier balance. Flag any significant imbalances.','Post-draft'],
     ['8','All 6','Publish all 6 rosters. Open 48-hour player appeals window.','Post-draft'],
     ['9','All 6','Book venue. Confirm 2 courts for 3.5-hour event block.','Before Month 1'],
-    ['10','All 6','Publish full Season 2 schedule and confirmed format to all 42 players.','Before Month 1'],
+    ['10','All 6','Publish full Season 3 schedule and confirmed format to all 42 players.','Before Month 1'],
   ];
   document.getElementById('nextsteps-list').innerHTML = steps.map(([n,o,t,w]) =>
     `<div class="nsitem">
@@ -244,7 +244,7 @@ function renderNextSteps() {
 // ── Checklists ─────────────────────────────────────────────────────
 function renderChecklists() {
   const monthly={'Before':['6 teams confirmed — full rosters of 7','6 Wingmen assigned (one per team)','Venue and 2 courts booked — Sundays 2 PM – 5:30 PM','Prior month standings updated','Any substitutions approved'],'Day Of':['Wingmen present with their teams','Referee confirmed for finals','Standings / seedings calculated after RR','Finals bracket set and shared'],'After':['Results and standings published within 24 hrs','Tier observations logged by all Wingmen','Conduct issues reported to core group']};
-  const season={'Tiers & Pool':['All 42 players tiered by core consensus','Draft order confirmed (inverse standings)'],'Roles':['Season 2 Wingman assignments confirmed'],'Captains':['Nominations submitted privately','All 6 captains confirmed','Wingman–captain pairings announced','Draft format (snake) confirmed and communicated'],'Draft':['Draft order published to all captains','Draft conducted — tier balance reviewed','Players notified of team within 24 hours','48-hr appeals window opened and closed','Season schedule and format published']};
+  const season={'Tiers & Pool':['All 42 players tiered by core consensus','Draft order confirmed (inverse standings)'],'Roles':['Season 3 Wingman assignments confirmed'],'Captains':['Nominations submitted privately','All 6 captains confirmed','Wingman–captain pairings announced','Draft format (snake) confirmed and communicated'],'Draft':['Draft order published to all captains','Draft conducted — tier balance reviewed','Players notified of team within 24 hours','48-hr appeals window opened and closed','Season schedule and format published']};
   const render = data => Object.entries(data).map(([sec,items]) =>
     `<div class="csh">${sec}</div>${items.map(t=>`<div class="citem"><div class="cbox"></div><span>${t}</span></div>`).join('')}`
   ).join('');

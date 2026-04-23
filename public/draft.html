@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>FVL S2 — Draft Simulator</title>
+  <title>FVL S3 — Draft Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -138,7 +138,7 @@
 <!-- HEADER -->
 <div id="hdr">
   <span class="hbadge">FVL</span>
-  <span class="htitle">Season 2 — <em>Draft Simulator</em></span>
+  <span class="htitle">Season 3 — <em>Draft Simulator</em></span>
   <div class="hright">
     <button class="hbtn hbtn-ghost" id="undo-btn" onclick="undoPick()" disabled>↩ Undo</button>
     <button class="hbtn hbtn-red"   onclick="resetDraft()">↺ Reset</button>
@@ -269,8 +269,8 @@
 
 <script>
 // ── Session storage ────────────────────────────────────────────────
-// Per-user, per-option keys: fvl_s2_opt{1|2}_user_{name}
-function ssKey(opt, user) { return `fvl_s2_opt${opt}_user_${user.replace(/\s+/g,'_')}`; }
+// Per-user, per-option keys: fvl_s3_opt{1|2}_user_{name}
+function ssKey(opt, user) { return `fvl_s3_opt${opt}_user_${user.replace(/\s+/g,'_')}`; }
 const ss = {
   save(opt, user, d) { try { sessionStorage.setItem(ssKey(opt,user), JSON.stringify({...d, user, savedAt:new Date().toISOString()})); } catch(e){} },
   load(opt, user)    { try { const r=sessionStorage.getItem(ssKey(opt,user)); return r?JSON.parse(r):null; } catch(e){return null;} },
@@ -279,7 +279,7 @@ const ss = {
     try {
       for(let i=0;i<sessionStorage.length;i++){
         const k=sessionStorage.key(i);
-        if(k&&k.startsWith(`fvl_s2_opt${opt}_user_`)){
+        if(k&&k.startsWith(`fvl_s3_opt${opt}_user_`)){
           try{ out.push(JSON.parse(sessionStorage.getItem(k))); }catch(e){}
         }
       }
@@ -288,7 +288,7 @@ const ss = {
   },
   anyForBothOpts() { // true if at least one save exists for both opt1 and opt2
     let o1=false,o2=false;
-    try{ for(let i=0;i<sessionStorage.length;i++){const k=sessionStorage.key(i)||''; if(k.startsWith('fvl_s2_opt1_')) o1=true; if(k.startsWith('fvl_s2_opt2_')) o2=true;} }catch(e){}
+    try{ for(let i=0;i<sessionStorage.length;i++){const k=sessionStorage.key(i)||''; if(k.startsWith('fvl_s3_opt1_')) o1=true; if(k.startsWith('fvl_s3_opt2_')) o2=true;} }catch(e){}
     return o1&&o2;
   }
 };
@@ -366,7 +366,7 @@ function seqOpt2() {
 async function init() {
   renderCapList(); updateSavedBadges();
   try {
-    const r = await fetch('/api/teams?season=1');
+    const r = await fetch('/api/teams?season=2');
     const teams = await r.json();
     const capNames = new Set(S.caps.map(c=>c.name));
     const OUT = new Set(['Kunal']);
