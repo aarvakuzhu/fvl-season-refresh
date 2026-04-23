@@ -215,6 +215,21 @@
 
 <!-- DRAFT BOARD -->
 <div id="draft-panel" style="display:none">
+
+  <!-- ── TOP BAR: Save + User selector ── -->
+  <div style="background:#fff;border:1px solid var(--border);border-bottom:2px solid var(--border);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)">
+    <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Saving as:</span>
+    <select id="user-select" onchange="S.currentUser=this.value;updateSavedBadges()" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:130px"></select>
+    <button class="btn btn-green" onclick="saveDraft()" style="padding:6px 14px">💾 Save Draft</button>
+    <div id="user-saved-status" style="font-size:11px;color:var(--green);font-family:'Roboto Mono',monospace"></div>
+    <div id="all-saves-summary" style="margin-left:auto;font-size:11px;color:var(--muted)"></div>
+  </div>
+
+  <!-- ── PICK ORDER BOARD ── -->
+  <div class="sec" style="margin-bottom:6px">Pick Order Board <span style="font-size:10px;font-weight:400;color:var(--muted)">Yellow=active · Green=done · Grey=skip</span></div>
+  <div class="board" style="margin-bottom:12px"><div class="board-scroll"><table class="bt" id="bt"></table></div></div>
+
+  <!-- ── MAIN GRID: pool + teams + log ── -->
   <div class="grid">
     <div>
       <div class="sec">Player Pool <span id="pcl" style="font-weight:400;font-size:10px;color:var(--muted)"></span></div>
@@ -225,16 +240,14 @@
       <div class="pool-list" id="plist"></div>
     </div>
     <div>
-      <div class="sec">Pick Order Board <span style="font-size:10px;font-weight:400;color:var(--muted)">Yellow=active · Green=done · Grey=skip</span></div>
-      <div class="board" style="margin-bottom:12px"><div class="board-scroll"><table class="bt" id="bt"></table></div></div>
       <div class="sec">Team Rosters</div>
       <div class="team-grid" id="teams"></div>
     </div>
     <div>
-      <div class="sec">Draft Log
-        <button class="btn btn-green" onclick="saveDraft()" style="font-size:11px;padding:3px 10px">💾 Save</button>
-      </div>
-      <div class="card"><div id="dlog" style="max-height:560px;overflow-y:auto;padding:4px 0"></div></div>
+      <div class="sec">Draft Log</div>
+      <div class="card"><div id="dlog" style="max-height:480px;overflow-y:auto;padding:4px 0"></div></div>
+      <div class="sec" style="margin-top:8px">All Saved Drafts</div>
+      <div id="saves-list" class="card" style="padding:0"></div>
     </div>
   </div>
 </div>
@@ -256,10 +269,28 @@
 
 <script>
 // ── Session storage ────────────────────────────────────────────────
-const SK = {1:'fvl_s2_draft_opt1', 2:'fvl_s2_draft_opt2'};
+// Per-user, per-option keys: fvl_s2_opt{1|2}_user_{name}
+function ssKey(opt, user) { return `fvl_s2_opt${opt}_user_${user.replace(/\s+/g,'_')}`; }
 const ss = {
-  save(opt,d){ try{ sessionStorage.setItem(SK[opt],JSON.stringify(d)); }catch(e){} },
-  load(opt){   try{ const r=sessionStorage.getItem(SK[opt]); return r?JSON.parse(r):null; }catch(e){return null;} },
+  save(opt, user, d) { try { sessionStorage.setItem(ssKey(opt,user), JSON.stringify({...d, user, savedAt:new Date().toISOString()})); } catch(e){} },
+  load(opt, user)    { try { const r=sessionStorage.getItem(ssKey(opt,user)); return r?JSON.parse(r):null; } catch(e){return null;} },
+  allForOpt(opt)     { // return array of {user, data} for all saved users for this option
+    const out=[];
+    try {
+      for(let i=0;i<sessionStorage.length;i++){
+        const k=sessionStorage.key(i);
+        if(k&&k.startsWith(`fvl_s2_opt${opt}_user_`)){
+          try{ out.push(JSON.parse(sessionStorage.getItem(k))); }catch(e){}
+        }
+      }
+    } catch(e){}
+    return out;
+  },
+  anyForBothOpts() { // true if at least one save exists for both opt1 and opt2
+    let o1=false,o2=false;
+    try{ for(let i=0;i<sessionStorage.length;i++){const k=sessionStorage.key(i)||''; if(k.startsWith('fvl_s2_opt1_')) o1=true; if(k.startsWith('fvl_s2_opt2_')) o2=true;} }catch(e){}
+    return o1&&o2;
+  }
 };
 
 // ── STATE ──────────────────────────────────────────────────────────
@@ -275,7 +306,7 @@ const S = {
   ],
   players: [], teams: [], picks: [],
   seq: [], cur: 0, ppt: 6,
-  started: false, filterTier: 'ALL',
+  started: false, filterTier: 'ALL', currentUser: 'Anil',
 };
 
 // ── OPTION SWITCH ──────────────────────────────────────────────────
@@ -397,10 +428,24 @@ function startDraft() {
   S.teams = S.caps.map(c=>({captain:c.name,col:c.col,players:[]}));
   S.players.forEach(p=>p.drafted=false);
   S.started=true;
+
+  // Populate user dropdown: captains + wingmen label
+  const sel = document.getElementById('user-select');
+  if (sel) {
+    const users = [
+      ...S.caps.map(c=>({name:c.name, label:`${c.name} (Captain)`})),
+      {name:'Wingman', label:'Wingman'},
+      {name:'Observer', label:'Observer'},
+    ];
+    sel.innerHTML = users.map(u=>`<option value="${u.name}">${u.label}</option>`).join('');
+    sel.value = S.currentUser || S.caps[0]?.name || '';
+    S.currentUser = sel.value;
+  }
+
   document.getElementById('setup-panel').style.display='none';
   document.getElementById('draft-panel').style.display='block';
   document.getElementById('compare-panel').style.display='none';
-  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
+  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB(); updateSavedBadges();
 }
 
 function resetDraft(silent=false) {
@@ -417,22 +462,62 @@ function resetDraft(silent=false) {
 // ── SAVE ───────────────────────────────────────────────────────────
 function saveDraft() {
   if (!S.picks.length){ toast('No picks to save.'); return; }
-  ss.save(S.opt, {
+  const user = S.currentUser || 'Unknown';
+  ss.save(S.opt, user, {
     teams: S.teams.map(t=>({captain:t.captain,col:t.col,players:t.players.map(p=>p.name)})),
     picks: S.picks, pickCount: S.picks.length,
     complete: S.cur>=S.seq.length,
+    opt: S.opt,
   });
   updateSavedBadges();
-  toast(`✓ Option ${S.opt} saved (${S.picks.length} picks)`, 2500);
+  toast(`✓ ${user} saved Option ${S.opt} (${S.picks.length} picks)`, 2500);
 }
 
 function updateSavedBadges() {
-  const s1=ss.load(1), s2=ss.load(2);
-  document.getElementById('lbl1').style.display = s1?'inline-flex':'none';
-  document.getElementById('lbl2').style.display = s2?'inline-flex':'none';
+  const user = S.currentUser || '';
+  const s1 = user ? ss.load(1, user) : null;
+  const s2 = user ? ss.load(2, user) : null;
+
+  // Update opt-bar pills — show if anyone has saved each option
+  const any1 = ss.allForOpt(1), any2 = ss.allForOpt(2);
+  document.getElementById('lbl1').style.display = any1.length?'inline-flex':'none';
+  document.getElementById('lbl2').style.display = any2.length?'inline-flex':'none';
+  if (any1.length) document.getElementById('lbl1').textContent = `✓ Opt1 (${any1.length})`;
+  if (any2.length) document.getElementById('lbl2').textContent = `✓ Opt2 (${any2.length})`;
+
+  // Compare button — enabled if any saves exist for both options
   const cb = document.getElementById('compare-btn');
-  if (s1&&s2){ cb.classList.remove('dim'); cb.title='Compare Option 1 vs Option 2'; }
-  else { cb.classList.add('dim'); cb.title='Save both Option 1 and Option 2 to compare'; }
+  if (ss.anyForBothOpts()){ cb.classList.remove('dim'); cb.title='Compare Option 1 vs Option 2'; }
+  else { cb.classList.add('dim'); cb.title='Save at least one Option 1 and one Option 2 draft to compare'; }
+
+  // Per-user status
+  const statusEl = document.getElementById('user-saved-status');
+  if (statusEl) {
+    const parts = [];
+    if (s1) parts.push(`Opt1 ✓ (${s1.pickCount} picks)`);
+    if (s2) parts.push(`Opt2 ✓ (${s2.pickCount} picks)`);
+    statusEl.textContent = parts.length ? parts.join(' · ') : '';
+    statusEl.style.color = parts.length ? 'var(--green)' : 'var(--muted)';
+  }
+
+  // All saves summary panel
+  renderSavesList();
+}
+
+function renderSavesList() {
+  const el = document.getElementById('saves-list');
+  if (!el) return;
+  const all = [...ss.allForOpt(1), ...ss.allForOpt(2)].sort((a,b)=>a.opt-b.opt||(a.user||'').localeCompare(b.user||''));
+  if (!all.length) { el.innerHTML='<div style="padding:10px;font-size:12px;color:var(--muted)">No saves yet.</div>'; return; }
+  el.innerHTML = all.map(d => `
+    <div style="display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:7px 11px;border-bottom:1px solid var(--border2)">
+      <span style="font-family:'Roboto Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;font-weight:700;background:${d.opt===1?'#e3f2fd':'#f3e5f5'};color:${d.opt===1?'var(--o1)':'var(--o2)'}">Opt ${d.opt}</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">${d.user||'Unknown'}</div>
+        <div style="font-size:11px;color:var(--muted)">${d.pickCount||0} picks${d.complete?' · complete':' · partial'}</div>
+      </div>
+      <span style="font-size:10px;color:var(--muted)">${d.savedAt?new Date(d.savedAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</span>
+    </div>`).join('');
 }
 
 // ── PICK / UNDO ────────────────────────────────────────────────────
@@ -578,8 +663,11 @@ function updateSB() {
 
 // ── COMPARE ────────────────────────────────────────────────────────
 function showCompare() {
-  const s1=ss.load(1), s2=ss.load(2);
-  if(!s1||!s2){toast('Save both Option 1 and Option 2 first.',3000);return;}
+  // Use the current user's saves if available, else first available save per option
+  const user = S.currentUser || '';
+  let s1 = (user ? ss.load(1, user) : null) || ss.allForOpt(1)[0] || null;
+  let s2 = (user ? ss.load(2, user) : null) || ss.allForOpt(2)[0] || null;
+  if(!s1||!s2){toast(`Need saves for both options. ${!s1?'Option 1 missing.':''} ${!s2?'Option 2 missing.':''}`,3000);return;}
   document.getElementById('setup-panel').style.display='none';
   document.getElementById('draft-panel').style.display='none';
   document.getElementById('compare-panel').style.display='block';
@@ -601,11 +689,11 @@ function showCompare() {
     <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
       <div style="background:#fff;border:1px solid var(--border);padding:10px 16px;border-top:3px solid var(--o1)">
         <div style="font-size:11px;font-weight:700;color:var(--o1);margin-bottom:2px">OPTION 1 — Pair Picks</div>
-        <div style="font-size:12px;color:var(--muted)">${s1.pickCount} picks · Pair picks + snake from pick 13</div>
+        <div style="font-size:12px;color:var(--muted)">${s1.pickCount} picks · by ${s1.user||'?'} · Pair picks + snake from pick 13</div>
       </div>
       <div style="background:#fff;border:1px solid var(--border);padding:10px 16px;border-top:3px solid var(--o2)">
         <div style="font-size:11px;font-weight:700;color:var(--o2);margin-bottom:2px">OPTION 2 — Bonus Round</div>
-        <div style="font-size:12px;color:var(--muted)">${s2.pickCount} picks · R0 bonus + skip rounds</div>
+        <div style="font-size:12px;color:var(--muted)">${s2.pickCount} picks · by ${s2.user||'?'} · R0 bonus + skip rounds</div>
       </div>
       <div style="background:#fff;border:1px solid var(--border);padding:10px 16px;border-top:3px solid var(--muted)">
         <div style="font-size:22px;font-weight:900;color:var(--text)">${Math.round(totalSame/(totalSame+totalDiff)*100)}%</div>
