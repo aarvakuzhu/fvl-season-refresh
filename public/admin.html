@@ -64,6 +64,17 @@
     <div class="status" id="status"></div>
 
     <div class="divider"></div>
+
+    <div class="title" style="font-size:16px;margin-bottom:6px">Season Migration</div>
+    <p class="subtitle" style="margin-bottom:16px">One-time: bump all Season 2 records in DB<br>from <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">season:1</code> → <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">season:2</code></p>
+
+    <button class="btn" id="migrate-btn" onclick="runMigrate()" style="background:#1a3566;color:#fff;margin-bottom:8px">
+      🔄 Migrate Season 1 → 2
+    </button>
+    <div class="log" id="migrate-log"></div>
+    <div class="status" id="migrate-status"></div>
+
+    <div class="divider"></div>
     <a class="back" href="/">← Back to FVL Site</a>
   </div>
 
@@ -130,6 +141,49 @@
         status.className = 'status error';
         btn.disabled = false;
         btn.innerHTML = '🌱 Try Again';
+      }
+    }
+
+    // ── Run migration ──────────────────────────────────────────────
+    async function runMigrate() {
+      const btn    = document.getElementById('migrate-btn');
+      const log    = document.getElementById('migrate-log');
+      const status = document.getElementById('migrate-status');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spin">⏳</span> Migrating...';
+      log.className = 'log show';
+      log.innerHTML = '';
+      status.className = 'status';
+
+      try {
+        const r = await fetch('/api/migrate-season', { method: 'POST' });
+        const d = await r.json();
+
+        if (d.success) {
+          log.innerHTML = [
+            `<div class="log-line ok">✅ Teams updated: ${d.teams}</div>`,
+            `<div class="log-line ok">✅ Standings updated: ${d.standings}</div>`,
+            `<div class="log-line ok">✅ Core members updated: ${d.coreMembers}</div>`,
+            `<div class="log-line ok">✅ Season record updated: ${d.season}</div>`,
+            `<div class="log-line info">${d.message}</div>`,
+          ].join('');
+          status.textContent = '✅ Migration complete!';
+          status.className = 'status success';
+          btn.innerHTML = '✅ Done';
+        } else {
+          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
+          status.textContent = '❌ Migration failed';
+          status.className = 'status error';
+          btn.disabled = false;
+          btn.innerHTML = '🔄 Try Again';
+        }
+      } catch (e) {
+        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
+        status.className = 'status error';
+        status.textContent = '❌ Could not reach server';
+        btn.disabled = false;
+        btn.innerHTML = '🔄 Try Again';
       }
     }
 
