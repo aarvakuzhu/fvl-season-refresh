@@ -3,7 +3,7 @@ const express   = require('express');
 const cors      = require('cors');
 const path      = require('path');
 const mongoose  = require('mongoose');
-const { Team, Standing, Season, CoreMember, Decision, Comment, Config } = require('./models');
+const { Team, Standing, Season, CoreMember, Decision, Comment, Config, DraftSave } = require('./models');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -259,6 +259,37 @@ app.post('/api/migrate-season', async (req, res) => {
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
+});
+
+// ── Draft Save — persist per user per season ─────────────────────────
+app.post('/api/draft-save', async (req, res) => {
+  try {
+    const { user, season = 3, picks, teams, pickCount, complete } = req.body;
+    if (!user) return res.status(400).json({ error: 'user required' });
+    const doc = await DraftSave.findOneAndUpdate(
+      { user, season },
+      { user, season, picks, teams, pickCount, complete },
+      { upsert: true, new: true }
+    );
+    res.json({ success: true, savedAt: doc.updatedAt });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/draft-save/:user', async (req, res) => {
+  try {
+    const season = Number(req.query.season) || 3;
+    const doc = await DraftSave.findOne({ user: req.params.user, season });
+    if (!doc) return res.json(null);
+    res.json(doc);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/draft-saves', async (req, res) => {
+  try {
+    const season = Number(req.query.season) || 3;
+    const docs = await DraftSave.find({ season }).sort({ updatedAt: -1 });
+    res.json(docs);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ── Draft page ───────────────────────────────────────────────────────

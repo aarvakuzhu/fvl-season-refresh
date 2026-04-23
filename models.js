@@ -98,4 +98,17 @@ const ConfigSchema = new mongoose.Schema({
   value: { type: String, required: true },
 }, { timestamps: true });
 
-module.exports.Config = mongoose.model('Config', ConfigSchema);
+// ── Draft Saves ───────────────────────────────────────────────────────
+const DraftSaveSchema = new mongoose.Schema({
+  user:       { type: String, required: true },       // captain or wingman name
+  season:     { type: Number, required: true, default: 3 },
+  picks:      { type: Array, default: [] },           // full picks array
+  teams:      { type: Array, default: [] },           // team rosters snapshot
+  pickCount:  { type: Number, default: 0 },
+  complete:   { type: Boolean, default: false },
+}, { timestamps: true });
+
+// One save per user per season — upsert on save
+DraftSaveSchema.index({ user: 1, season: 1 }, { unique: true });
+
+module.exports.DraftSave = mongoose.model('DraftSave', DraftSaveSchema);

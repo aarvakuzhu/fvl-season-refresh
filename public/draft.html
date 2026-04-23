@@ -173,7 +173,7 @@
   <!-- ── TOP BAR: Save + User selector ── -->
   <div style="background:#fff;border:1px solid var(--border);border-bottom:2px solid var(--border);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)">
     <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Saving as:</span>
-    <select id="user-select" onchange="S.currentUser=this.value;updateUserStatus();if(S.started){const sv=ss.load(S.currentUser);if(sv&&sv.picks?.length&&confirm('Load saved draft for '+S.currentUser+'?'))restoreDraft(sv);}" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:160px"></select>
+    <select id="user-select" onchange="S.currentUser=this.value;updateUserStatus();if(S.started){ss.load(S.currentUser).then(sv=>{if(sv&&sv.picks?.length&&confirm('Load saved draft for '+S.currentUser+'?'))restoreDraft(sv);});}" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:160px"></select>
     <button class="btn btn-green" onclick="saveDraft()" style="padding:6px 14px">💾 Save Draft</button>
     <div id="user-saved-status" style="font-size:11px;color:var(--green);font-family:'Roboto Mono',monospace"></div>
     <div id="all-saves-summary" style="margin-left:auto;font-size:11px;color:var(--muted)"></div>
@@ -212,11 +212,31 @@
 <script>
 // ── Session storage ────────────────────────────────────────────────
 // Per-user session storage keyed by user name
-function ssKey(user) { return `fvl_s3_draft_${user.replace(/\s+/g,'_')}`; }
+// ── DB-backed draft save/load ─────────────────────────────────────
 const ss = {
-  save(user, d) { try { sessionStorage.setItem(ssKey(user), JSON.stringify({...d, user, savedAt:new Date().toISOString()})); } catch(e){} },
-  load(user)    { try { const r=sessionStorage.getItem(ssKey(user)); return r?JSON.parse(r):null; } catch(e){return null;} },
-  all()         { const out=[]; try { for(let i=0;i<sessionStorage.length;i++){ const k=sessionStorage.key(i); if(k?.startsWith('fvl_s3_draft_')){ try{out.push(JSON.parse(sessionStorage.getItem(k)));}catch(e){} } } } catch(e){} return out; },
+  async save(user, d) {
+    try {
+      await fetch('/api/draft-save', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({user, season:3, ...d}),
+      });
+    } catch(e) { console.warn('Save failed:', e); }
+  },
+  async load(user) {
+    try {
+      const r = await fetch(`/api/draft-save/${encodeURIComponent(user)}?season=3`);
+      if (!r.ok) return null;
+      return await r.json();
+    } catch(e) { return null; }
+  },
+  async all() {
+    try {
+      const r = await fetch('/api/draft-saves?season=3');
+      if (!r.ok) return [];
+      return await r.json();
+    } catch(e) { return []; }
+  },
 };
 
 // ── STATE ──────────────────────────────────────────────────────────
@@ -320,13 +340,14 @@ function startDraft() {
   document.getElementById('draft-panel').style.display='block';
 
   // Auto-restore saved draft for this user if one exists
-  const saved = ss.load(S.currentUser);
-  if (saved && saved.picks?.length) {
-    restoreDraft(saved);
-    toast(`↩ Restored ${saved.pickCount} picks for ${S.currentUser}`, 3000);
-  } else {
-    renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
-  }
+  ss.load(S.currentUser).then(saved => {
+    if (saved && saved.picks?.length) {
+      restoreDraft(saved);
+      toast(`↩ Restored ${saved.pickCount} picks for ${S.currentUser}`, 3000);
+    } else {
+      renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB();
+    }
+  });
   renderSavesList(); updateUserStatus();
 }
 
@@ -363,10 +384,11 @@ function resetDraft(silent=false) {
 }
 
 // ── SAVE ───────────────────────────────────────────────────────────
-function saveDraft() {
+async function saveDraft() {
   if (!S.picks.length){ toast('No picks to save.'); return; }
   const user = S.currentUser || 'Unknown';
-  ss.save(user, {
+  toast(`Saving...`);
+  await ss.save(user, {
     teams: S.teams.map(t=>({captain:t.captain,col:t.col,players:t.players.map(p=>p.name)})),
     picks: S.picks, pickCount: S.picks.length,
     complete: S.cur>=S.seq.length,
@@ -375,10 +397,11 @@ function saveDraft() {
   toast(`✓ ${user} — ${S.picks.length} picks saved`, 2500);
 }
 
-function renderSavesList() {
+async function renderSavesList() {
   const el = document.getElementById('saves-list');
   if (!el) return;
-  const all = ss.all();
+  el.innerHTML='<div style="padding:10px;font-size:12px;color:var(--muted)">Loading...</div>';
+  const all = await ss.all();
   if (!all.length) { el.innerHTML='<div style="padding:10px;font-size:12px;color:var(--muted)">No saves yet.</div>'; return; }
   el.innerHTML = all.sort((a,b)=>(a.user||'').localeCompare(b.user||'')).map(d=>`
     <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:7px 11px;border-bottom:1px solid var(--border2)">
@@ -386,15 +409,15 @@ function renderSavesList() {
         <div style="font-size:12px;font-weight:700">${d.user||'Unknown'}</div>
         <div style="font-size:11px;color:var(--muted)">${d.pickCount||0} picks${d.complete?' · complete':' · partial'}</div>
       </div>
-      <span style="font-size:10px;color:var(--muted)">${d.savedAt?new Date(d.savedAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</span>
+      <span style="font-size:10px;color:var(--muted)">${d.updatedAt?new Date(d.updatedAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</span>
     </div>`).join('');
 }
 
-function updateUserStatus() {
+async function updateUserStatus() {
   const el = document.getElementById('user-saved-status');
   if (!el) return;
-  const saved = ss.load(S.currentUser);
-  if (saved) {
+  const saved = await ss.load(S.currentUser);
+  if (saved && saved.pickCount) {
     el.textContent = `✓ ${saved.pickCount} picks saved${saved.complete?' (complete)':' (partial)'}`;
     el.style.color = 'var(--green)';
   } else {
