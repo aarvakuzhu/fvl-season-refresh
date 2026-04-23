@@ -325,19 +325,30 @@ function seqOpt1() {
   return seq;
 }
 
+// ── SKILLS REFRESH — always fetch latest from DB ──────────────────
+function refreshSkills() {
+  fetch('/api/roster?season=2')  // season=2 = the S2 team data (our player pool source)
+    .then(r=>r.json())
+    .then(players=>{
+      players.forEach(p => {
+        if(p.skills?.length) PLAYER_SKILLS[p.name] = p.skills;
+        // Update displayName/label on pool players
+        const poolP = S.players.find(x=>x.name===p.name);
+        if(poolP) {
+          if(p.displayName) poolP.label = p.displayName;
+          poolP.skills = p.skills || [];
+        }
+      });
+      if(S.started) renderPool();
+    })
+    .catch(()=>{});
+}
+
 // ── INIT ───────────────────────────────────────────────────────────
 async function init() {
   renderSavesList();
-  // Load skills from roster in parallel
-  fetch('/api/roster?season=3').then(r=>r.json()).then(players=>{
-    players.forEach(p => {
-      if(p.skills?.length) PLAYER_SKILLS[p.name]=p.skills;
-      // Update label on matching pool players
-      const poolP = S.players.find(x=>x.name===p.name);
-      if(poolP && p.displayName) poolP.label = p.displayName;
-    });
-    if (S.started) renderPool(); // refresh if already on draft board
-  }).catch(()=>{});
+  // Load skills from roster (also updates labels)
+  refreshSkills();
 
   const capNames = new Set(S.caps.map(c=>c.name));
   const OUT = new Set(['Kunal']);
@@ -376,6 +387,7 @@ async function init() {
 
 // ── START / RESET ──────────────────────────────────────────────────
 function startDraft() {
+  refreshSkills(); // fetch latest skills/labels before draft starts
   S.ppt = parseInt(document.getElementById('ppt').value)||6;
   S.seq = seqOpt1();
   S.cur=0; S.picks=[];

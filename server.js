@@ -304,17 +304,17 @@ async function buildPlayerList(seasonFilter) {
   return Object.values(playerMap).map(p => {
     const e = enrichMap[p.name] || {};
     return {
-      _id:         e._id || null,       // Player doc _id (null if not yet enriched)
+      _id:         e._id ? e._id.toString() : null,
       name:        p.name,
       displayName: e.displayName || null,
-      label:       e.displayName || p.name, // what to show in UI
+      label:       e.displayName || p.name,
       skills:      e.skills || [],
       tier:        e.tier || 'B',
       notes:       e.notes || null,
       active:      e.active !== false,
-      seasons:     p.seasons.sort((a,b) => a.season - b.season),
+      seasons:     (p.seasons || []).sort((a,b) => a.season - b.season),
     };
-  }).sort((a,b) => a.name.localeCompare(b.name));
+  }).sort((a,b) => a.label.localeCompare(b.label));
 }
 
 // GET /api/players — all players merged from Team + Player enrichment

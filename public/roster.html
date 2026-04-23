@@ -248,18 +248,20 @@ function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase();
   let list = ALL.filter(p => {
     // Season filter — player must have a season record for the selected season
-    if (seasonF !== 'all' && !(p.seasons||[]).some(s=>s.season===seasonF)) return false;
+    if (seasonF !== 'all' && !(p.seasons||[]).some(s=>s.season===Number(seasonF))) return false;
     // Role filter — use role from the relevant season, or any season
     if (roleF.size) {
-      const seasons = seasonF === 'all' ? (p.seasons||[]) : (p.seasons||[]).filter(s=>s.season===seasonF);
-      if (!seasons.some(s=>roleF.has(s.role))) return false;
+      const ss = p.seasons || [];
+      const relevant = seasonF === 'all' ? ss : ss.filter(s=>s.season===Number(seasonF));
+      const check = relevant.length ? relevant : ss;
+      if (!check.some(s=>roleF.has(s.role))) return false;
     }
     // Skill filter
     if (skillF.size && ![...skillF].every(sk=>(p.skills||[]).includes(sk))) return false;
     // Text search
     if (q) {
       const teams = (p.seasons||[]).map(s=>s.team||'').join(' ');
-      const hay = [p.name, p.displayName, teams, ...(p.skills||[])].join(' ').toLowerCase();
+      const hay = [p.name, p.displayName||'', p.label||'', teams, ...(p.skills||[])].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -267,12 +269,16 @@ function applyFilters() {
 
   document.getElementById('count-lbl').textContent = `${list.length} / ${ALL.length} players`;
 
-  // Sort: by role in selected season (Captain→Wingman→Player), then name
+  // Sort: Captain→Wingman→Player, then by label
   const roleOrder = {Captain:0,Wingman:1,Player:2};
   list = [...list].sort((a,b) => {
-    const ra = seasonF==='all' ? Math.min(...(a.seasons||[{role:'Player'}]).map(s=>roleOrder[s.role]??2)) : roleOrder[(a.seasons||[]).find(s=>s.season===seasonF)?.role]??2;
-    const rb = seasonF==='all' ? Math.min(...(b.seasons||[{role:'Player'}]).map(s=>roleOrder[s.role]??2)) : roleOrder[(b.seasons||[]).find(s=>s.season===seasonF)?.role]??2;
-    return ra-rb || a.label.localeCompare(b.label);
+    const rank = (p) => {
+      const ss = p.seasons||[];
+      const rel = seasonF==='all' ? ss : ss.filter(s=>s.season===Number(seasonF));
+      const src = rel.length ? rel : ss;
+      return src.length ? Math.min(...src.map(s=>roleOrder[s.role]??2)) : 2;
+    };
+    return rank(a)-rank(b) || (a.label||a.name).localeCompare(b.label||b.name);
   });
 
   document.getElementById('roster-grid').innerHTML = list.length
