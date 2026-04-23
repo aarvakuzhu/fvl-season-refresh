@@ -259,11 +259,9 @@ function seqOpt1() {
 // ── INIT ───────────────────────────────────────────────────────────
 async function init() {
   updateSavedBadges();
-  const WINGMEN = new Set(['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil']);
   const capNames = new Set(S.caps.map(c=>c.name));
   const OUT = new Set(['Kunal']);
-  // Exclude: Season 3 captains, wingmen (core members), and OUT list
-  const exclude = new Set([...capNames, ...WINGMEN, ...OUT]);
+  const exclude = new Set([...capNames, ...OUT]);
 
   try {
     const r = await fetch('/api/teams?season=2');
@@ -276,7 +274,7 @@ async function init() {
       if (!exclude.has(p.name))
         pool.push({name:p.name, s2team:t.name.replace('FVL ',''), drafted:false});
     }));
-    // Add new Season 3 players not in Season 2 rosters
+    // New Season 3 players not in Season 2 rosters
     [{name:'Surendra Kings',s2team:'New'},{name:'Raja Vasu',s2team:'New'}]
       .forEach(p => { if(!exclude.has(p.name) && !pool.find(x=>x.name===p.name)) pool.push({...p,drafted:false}); });
     pool.sort((a,b)=>a.name.localeCompare(b.name));
@@ -284,10 +282,10 @@ async function init() {
     document.getElementById('setup-status').textContent = `${pool.length} players · ${S.caps.length} captains · Ready`;
   } catch(e) {
     console.warn('API failed, using fallback:', e.message);
-    const fallback = ['Ahmed','Ashok','Chandu','Chandra','Divyanshu','Gopal','Ritesh',
-      'Ishant','Jugal','Keshav','Kiran','Krishna','Krupa','Mukesh','Naveen',
-      'Pavan','Raja S','Raja Vasu','Rajeshbabu','Rakesh','Rajan','Rizwan',
-      'Ronak','Santosh','Saravanan','Surendra Kings','Suri',
+    const fallback = ['Ahmed','Amrendra','Ashok','Chandu','Chandra','Divyanshu','Gopal','Ritesh',
+      'Ishant','Jugal','Keshav','Kiran','Krishna','Krupa','Mukesh','Naren','Naveen',
+      'Pavan','Raja S','Raja Vasu','Rajeshbabu','Rakesh','Rajan','Rahul','Rizwan',
+      'Ronak','Sachin','Santosh','Saravanan','Surendra Kings','Suri',
       'Uday Dragon','Uday K','Venkat','Vikas'];
     S.players = fallback
       .filter(name => !exclude.has(name))
