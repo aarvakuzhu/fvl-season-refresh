@@ -259,28 +259,39 @@ function seqOpt1() {
 // ── INIT ───────────────────────────────────────────────────────────
 async function init() {
   updateSavedBadges();
+  const WINGMEN = new Set(['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil']);
+  const capNames = new Set(S.caps.map(c=>c.name));
+  const OUT = new Set(['Kunal']);
+  // Exclude: Season 3 captains, wingmen (core members), and OUT list
+  const exclude = new Set([...capNames, ...WINGMEN, ...OUT]);
+
   try {
     const r = await fetch('/api/teams?season=2');
+    if (!r.ok) throw new Error(`API error ${r.status}`);
     const teams = await r.json();
-    const capNames = new Set(S.caps.map(c=>c.name));
-    const OUT = new Set(['Kunal']);
+    if (!teams || !teams.length) throw new Error('No teams returned');
+
     const pool = [];
-    teams.forEach(t => t.players.forEach(p => {
-      if (!capNames.has(p.name) && !OUT.has(p.name))
+    teams.forEach(t => (t.players||[]).forEach(p => {
+      if (!exclude.has(p.name))
         pool.push({name:p.name, s2team:t.name.replace('FVL ',''), drafted:false});
     }));
-    [{name:'Surendra Kings',s2team:'New'},{name:'Raja Vasu',s2team:'New'},{name:'Ritesh',s2team:'Falcons'}]
-      .forEach(p => { if(!capNames.has(p.name)) pool.push({...p,drafted:false}); });
+    // Add new Season 3 players not in Season 2 rosters
+    [{name:'Surendra Kings',s2team:'New'},{name:'Raja Vasu',s2team:'New'}]
+      .forEach(p => { if(!exclude.has(p.name) && !pool.find(x=>x.name===p.name)) pool.push({...p,drafted:false}); });
     pool.sort((a,b)=>a.name.localeCompare(b.name));
     S.players = pool;
     document.getElementById('setup-status').textContent = `${pool.length} players · ${S.caps.length} captains · Ready`;
   } catch(e) {
-    S.players = ['Ahmed','Amrendra','Ashok','Chandu','Chandra','Divyanshu','Gopal','Ritesh',
-      'Ishant','Jugal','Keshav','Kiran','Krishna','Krupa','Mukesh','Naren','Naveen',
-      'Pavan','Raja S','Raja Vasu','Rajeshbabu','Rakesh','Rajan','Rahul','Rizwan',
-      'Ronak','Sachin','Santosh','Saravanan','Sunil','Surendra Kings','Suri',
-      'Uday Dragon','Uday K','Venkat','Vikas']
-      .map(name=>({name,s2team:'—',drafted:false}));
+    console.warn('API failed, using fallback:', e.message);
+    const fallback = ['Ahmed','Ashok','Chandu','Chandra','Divyanshu','Gopal','Ritesh',
+      'Ishant','Jugal','Keshav','Kiran','Krishna','Krupa','Mukesh','Naveen',
+      'Pavan','Raja S','Raja Vasu','Rajeshbabu','Rakesh','Rajan','Rizwan',
+      'Ronak','Santosh','Saravanan','Surendra Kings','Suri',
+      'Uday Dragon','Uday K','Venkat','Vikas'];
+    S.players = fallback
+      .filter(name => !exclude.has(name))
+      .map(name=>({name, s2team:'—', drafted:false}));
     document.getElementById('setup-status').textContent = `${S.players.length} players (offline) · Ready`;
   }
 }
