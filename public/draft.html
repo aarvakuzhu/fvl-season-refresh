@@ -301,19 +301,18 @@ function switchOption(opt) {
 function seqOpt1() {
   const caps = [...S.caps].sort((a,b)=>a.po-b.po);
   const seq = []; let n=1;
-  // Pair phase: pairs (0,1), (2,3), (4,5) — each pair does pick 1 then pick 2
-  [[0,1],[2,3],[4,5]].forEach(([a,b],pi) => {
-    seq.push({rk:'P1', lbl:`Pair${pi+1} 1st`, captain:caps[a].name, pickNum:n++});
-    seq.push({rk:'P1', lbl:`Pair${pi+1} 1st`, captain:caps[b].name, pickNum:n++});
-  });
-  [[0,1],[2,3],[4,5]].forEach(([a,b],pi) => {
-    seq.push({rk:'P2', lbl:`Pair${pi+1} 2nd`, captain:caps[a].name, pickNum:n++});
-    seq.push({rk:'P2', lbl:`Pair${pi+1} 2nd`, captain:caps[b].name, pickNum:n++});
+  // Each pair does BOTH picks before the next pair starts
+  // Bottom (0,1): picks 1,2,3,4 → Middle (2,3): picks 5,6,7,8 → Top (4,5): picks 9,10,11,12
+  [['Bottom',0,1],['Middle',2,3],['Top',4,5]].forEach(([lbl,a,b]) => {
+    seq.push({rk:'P1', lbl:`${lbl} 1st`, captain:caps[a].name, pickNum:n++});
+    seq.push({rk:'P1', lbl:`${lbl} 1st`, captain:caps[b].name, pickNum:n++});
+    seq.push({rk:'P2', lbl:`${lbl} 2nd`, captain:caps[a].name, pickNum:n++});
+    seq.push({rk:'P2', lbl:`${lbl} 2nd`, captain:caps[b].name, pickNum:n++});
   });
   // Snake from pick 13, top-down first
   const snakeRounds = S.ppt - 2;
   for (let r=0; r<snakeRounds; r++) {
-    const topDown = r%2===0; // 1st snake = top-down
+    const topDown = r%2===0;
     const ordered = topDown ? [...caps].reverse() : [...caps];
     ordered.forEach(c => seq.push({rk:`S${r+3}`, lbl:`Snake R${r+3} ${topDown?'↓':'↑'}`, captain:c.name, pickNum:n++}));
   }
