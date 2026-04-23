@@ -177,7 +177,7 @@
   <!-- ── TOP BAR: Save + User selector ── -->
   <div style="background:#fff;border:1px solid var(--border);border-bottom:2px solid var(--border);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)">
     <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Saving as:</span>
-    <select id="user-select" onchange="S.currentUser=this.value;updateSavedBadges()" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:130px"></select>
+    <select id="user-select" onchange="S.currentUser=this.value;renderSavesList();updateUserStatus()" style="font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;padding:5px 10px;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;min-width:160px"></select>
     <button class="btn btn-green" onclick="saveDraft()" style="padding:6px 14px">💾 Save Draft</button>
     <div id="user-saved-status" style="font-size:11px;color:var(--green);font-family:'Roboto Mono',monospace"></div>
     <div id="all-saves-summary" style="margin-left:auto;font-size:11px;color:var(--muted)"></div>
@@ -329,10 +329,10 @@ function startDraft() {
   // Populate user dropdown: captains + wingmen label
   const sel = document.getElementById('user-select');
   if (sel) {
+    const WINGMEN = ['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil'];
     const users = [
-      ...S.caps.map(c=>({name:c.name, label:`${c.name} (Captain)`})),
-      {name:'Wingman', label:'Wingman'},
-      {name:'Observer', label:'Observer'},
+      ...S.caps.map(c => ({name:c.name,  label:`${c.name} (Captain)`})),
+      ...WINGMEN.map(w => ({name:w,       label:`${w} (Wingman)`})),
     ];
     sel.innerHTML = users.map(u=>`<option value="${u.name}">${u.label}</option>`).join('');
     sel.value = S.currentUser || S.caps[0]?.name || '';
@@ -341,7 +341,7 @@ function startDraft() {
 
   document.getElementById('setup-panel').style.display='none';
   document.getElementById('draft-panel').style.display='block';
-  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB(); renderSavesList();
+  renderBoard(); renderPool(); renderTeams(); renderLog(); updateSB(); renderSavesList(); updateUserStatus();
 }
 
 function resetDraft(silent=false) {
@@ -363,7 +363,7 @@ function saveDraft() {
     picks: S.picks, pickCount: S.picks.length,
     complete: S.cur>=S.seq.length,
   });
-  renderSavesList();
+  renderSavesList(); updateUserStatus();
   toast(`✓ ${user} — ${S.picks.length} picks saved`, 2500);
 }
 
@@ -380,6 +380,19 @@ function renderSavesList() {
       </div>
       <span style="font-size:10px;color:var(--muted)">${d.savedAt?new Date(d.savedAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</span>
     </div>`).join('');
+}
+
+function updateUserStatus() {
+  const el = document.getElementById('user-saved-status');
+  if (!el) return;
+  const saved = ss.load(S.currentUser);
+  if (saved) {
+    el.textContent = `✓ ${saved.pickCount} picks saved${saved.complete?' (complete)':' (partial)'}`;
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = 'Not saved yet';
+    el.style.color = 'var(--muted)';
+  }
 }
 
 // ── PICK / UNDO ────────────────────────────────────────────────────
