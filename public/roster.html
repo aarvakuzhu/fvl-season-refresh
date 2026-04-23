@@ -302,6 +302,9 @@ function currentSeasonData(p) {
 }
 
 function cardHTML(p) {
+  // Use _id if available, else a slug from name (for unenriched players)
+  const uid = p._id || ('new_' + p.name.replace(/[^a-zA-Z0-9]/g,'_'));
+  p = {...p, uid}; // attach uid to local copy
   const cur    = currentSeasonData(p);
   const role   = cur?.role || 'Player';
   const skills = p.skills || [];
@@ -314,7 +317,7 @@ function cardHTML(p) {
       S${s.season} · ${s.team||'?'} · ${s.role}
     </span>`).join('');
 
-  return `<div class="pcard" id="card-${p._id}" data-id="${p._id}">
+  return `<div class="pcard" id="card-${uid}" data-id="${uid}">
     <div class="pc-stripe ${stripeClass(p)}"></div>
     <div class="pc-body">
       <div class="pc-top">
@@ -322,7 +325,7 @@ function cardHTML(p) {
           <div class="pc-name">${p.label}</div>
           ${p.displayName?`<div class="pc-dispname">${p.name}</div>`:''}
         </div>
-        <button class="pc-edit-btn" onclick="toggleEdit('${p._id}',this)">✏️ Edit</button>
+        <button class="pc-edit-btn" onclick="toggleEdit('${uid}',this)">✏️ Edit</button>
       </div>
       <div class="pc-meta">
         <span class="badge badge-${role}">${role==='Captain'?'⭐ Cap':role==='Wingman'?'🤝 Wing':'Player'}</span>
@@ -335,11 +338,11 @@ function cardHTML(p) {
     <div class="pc-edit">
       <div class="ef">
         <label class="el">Name <span style="opacity:.5;font-weight:400">(canonical)</span></label>
-        <input class="ei" id="cn-${p._id}" value="${p.name}">
+        <input class="ei" id="cn-${uid}" value="${p.name}">
       </div>
       <div class="ef">
         <label class="el">Display Name <span style="opacity:.5;font-weight:400">(shown in UI — overrides name)</span></label>
-        <input class="ei" id="dn-${p._id}" value="${p.displayName||''}" placeholder="${p.name}">
+        <input class="ei" id="dn-${uid}" value="${p.displayName||''}" placeholder="${p.name}">
       </div>
       <div class="ef">
         <label class="el">Skills <span style="opacity:.5;font-weight:400">(tap to toggle multiple)</span></label>
@@ -355,14 +358,12 @@ function cardHTML(p) {
       </div>
       ${(p.seasons||[]).length?`
       <div class="ef">
-        <label class="el">Season Roles <span style="opacity:.5;font-weight:400">(per-season)</span></label>
+        <label class="el">Season History <span style="opacity:.5;font-weight:400">(from team records)</span></label>
         ${[...(p.seasons||[])].sort((a,b)=>a.season-b.season).map(s=>`
-          <div class="season-edit-row">
-            <span class="sea-lbl">S${s.season}</span>
-            <input class="sea-inp" id="steam-${s._id}" value="${s.team||''}" placeholder="Team">
-            <div class="role-toggles">
-              ${['Captain','Wingman','Player'].map(r=>`<button class="role-tog ${s.role===r?'on':''}" onclick="selectOne(this,'.role-tog','on')" data-psid="${s._id}">${r}</button>`).join('')}
-            </div>
+          <div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border2);font-size:12px">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--blue);min-width:24px">S${s.season}</span>
+            <span style="color:var(--muted)">${s.team||'?'}</span>
+            <span class="badge badge-${s.role||'Player'}" style="margin-left:auto">${s.role||'Player'}</span>
           </div>`).join('')}
       </div>`:''}
       <div class="ef">
@@ -370,22 +371,21 @@ function cardHTML(p) {
         <input class="ei" id="notes-${p._id}" value="${p.notes||''}" placeholder="Any notes…">
       </div>
       <div class="edit-actions">
-        <button class="btn-save" onclick="savePlayer('${p._id}')">💾 Save</button>
-        <button class="btn-cancel" onclick="toggleEdit('${p._id}',null,true)">Cancel</button>
-        <span class="si" id="si-${p._id}"></span>
+        <button class="btn-save" onclick="savePlayer('${uid}')">💾 Save</button>
+        <button class="btn-cancel" onclick="toggleEdit('${uid}',null,true)">Cancel</button>
+        <span class="si" id="si-${uid}"></span>
       </div>
     </div>
   </div>`;
 }
 
 // ── EDIT HELPERS ──────────────────────────────────────────────────
-function toggleEdit(id, btn, cancel=false) {
-  const card = document.getElementById(`card-${id}`);
+function toggleEdit(uid, btn, cancel=false) {
+  const card = document.getElementById(`card-${uid}`);
   const isOpen = card.classList.contains('editing');
   if (cancel || isOpen) {
     card.classList.remove('editing');
-    card.querySelector('.pc-edit-btn').classList.remove('active');
-    card.querySelector('.pc-edit-btn').textContent = '✏️ Edit';
+    if(card.querySelector('.pc-edit-btn')){card.querySelector('.pc-edit-btn').classList.remove('active');card.querySelector('.pc-edit-btn').textContent='✏️ Edit';}
   } else {
     card.classList.add('editing');
     if (btn) { btn.classList.add('active'); btn.textContent = '✕ Close'; }
@@ -399,14 +399,17 @@ function selectOne(btn, selector, cls) {
 }
 
 // ── SAVE ──────────────────────────────────────────────────────────
-async function savePlayer(id) {
-  const card = document.getElementById(`card-${id}`);
-  const si   = document.getElementById(`si-${id}`);
+async function savePlayer(uid) {
+  const card = document.getElementById(`card-${uid}`);
+  const si   = document.getElementById(`si-${uid}`);
   si.textContent = 'Saving…'; si.className = 'si';
 
-  const name        = document.getElementById(`cn-${id}`).value.trim();
-  const displayName = document.getElementById(`dn-${id}`).value.trim();
-  const notes       = document.getElementById(`notes-${id}`).value.trim();
+  const name        = document.getElementById(`cn-${uid}`).value.trim();
+  const displayName = document.getElementById(`dn-${uid}`).value.trim();
+  const notes       = document.getElementById(`notes-${uid}`).value.trim();
+  // Resolve real _id from ALL data
+  const playerData = ALL.find(p => (p._id||('new_'+p.name.replace(/[^a-zA-Z0-9]/g,'_'))) === uid);
+  const id = playerData?._id || null;
   const skills      = [...card.querySelectorAll('.sk-tog.on')].map(b=>b.classList[1]);
   const tier        = card.querySelector('.tier-tog.on')?.classList[1] || 'B';
 
@@ -439,8 +442,14 @@ async function savePlayer(id) {
     }
 
     // Update local data
-    const idx = ALL.findIndex(p=>p._id===id);
-    if (idx>=0) { ALL[idx] = {...ALL[idx], ...updated, name: updated.name || ALL[idx].name}; }
+    const idx = ALL.findIndex(p=>(p._id||('new_'+p.name.replace(/[^a-zA-Z0-9]/g,'_')))===uid);
+    if (idx>=0) {
+      ALL[idx] = {...ALL[idx], ...updated,
+        _id: updated._id?.toString() || ALL[idx]._id,
+        name: updated.name || ALL[idx].name,
+        label: updated.displayName || updated.name || ALL[idx].label,
+      };
+    }
 
     si.textContent = '✓ Saved'; si.className = 'si ok';
     // Refresh card — close edit mode, show updated data
