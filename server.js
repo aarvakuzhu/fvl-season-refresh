@@ -16,7 +16,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 let dbConnected = false;
 if (process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI)
-    .then(() => { dbConnected = true; console.log('MongoDB connected'); })
+    .then(async () => {
+      dbConnected = true;
+      console.log('MongoDB connected');
+      // Drop old unique index (user+season) if it exists — replaced by (user+season+opt)
+      try {
+        await mongoose.connection.collection('draftsaves').dropIndex('user_1_season_1');
+        console.log('Dropped old DraftSave index user_1_season_1');
+      } catch(e) { /* index may not exist — that's fine */ }
+    })
     .catch(err => console.error('MongoDB error:', err.message));
 } else {
   console.warn('MONGODB_URI not set');
@@ -584,9 +592,10 @@ app.post('/api/draft-clone', async (req, res) => {
     const src = await DraftSave.findOne({ user: fromUser, season, opt })
       || await DraftSave.findOne({ user: fromUser, season }).sort({ updatedAt: -1 });
     if (!src) return res.status(404).json({ error: `No draft found for ${fromUser}` });
-    await DraftSave.deleteMany({ user: toUser, season, opt });
+    // Delete ANY existing save for toUser+season+opt (handles old index remnants)
+    await DraftSave.deleteMany({ user: toUser, season });
     const clone = await DraftSave.create({
-      user: toUser, season, opt,
+      user: toUser, season, opt: Number(opt),
       picks: src.picks, teams: src.teams,
       pickCount: src.pickCount, complete: src.complete,
     });
