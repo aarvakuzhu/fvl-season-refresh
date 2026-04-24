@@ -610,17 +610,22 @@ function renderBoard() {
   rks.forEach(rk => {
     const rps=byRk[rk]||[];
     const lbl=rps[0]?.lbl||rk;
-    const isPair=rk==='P1'||rk==='P2';
-    const isBonus = rk == 0;  // loose equality handles both number 0 and string '0'
-    const isSnake=rk.startsWith('S');
-    const snakeNum=isSnake?parseInt(rk.slice(1)):0;
-    const isTopDown=isSnake && (snakeNum-3)%2===0;
-    const rCls=isPair?'rc rp':isBonus?'rc rb':isTopDown?'rc rv':'rc';
-    h+=`<tr><td class="${rCls}">${lbl}</td>`;
+    const rkStr   = String(rk);
+    const isPair  = rkStr==='P1' || rkStr==='P2';
+    const isBonus = rk == 0;
+    const isSnake = rkStr.startsWith('S');
+    const snakeNum = isSnake ? parseInt(rkStr.slice(1)) : 0;
+    const isTopDown = isSnake
+      ? (snakeNum-3)%2===0          // Option 1 snake: S3 first = top-down
+      : (!isPair && !isBonus && parseInt(rk)%2===0); // Option 2: even rounds = top-down (R2,R4,R6)
+    const rCls = isPair?'rc rp' : isBonus?'rc rb' : isTopDown?'rc rv' : 'rc';
+    const dirArrow = isPair?'⇄' : isBonus?'★' : isTopDown?'↓':'↑';
+    const rowLbl = isPair ? (rps[0]?.lbl||rkStr) : isBonus ? 'R0 Bonus' : `R${rk} ${isTopDown?'↓':'↑'}`;
+    h+=`<tr><td class="${rCls}">${rowLbl}</td>`;
 
     sortedCaps.forEach(c => {
       const pr=rps.find(p=>p.captain===c.name);
-      const isSkip=S.opt===2 && c.er===parseInt(rk) && c.er>1;
+      const isSkip = S.opt===2 && c.er === Number(rk) && c.er > 1;
       if (isSkip){ h+=`<td class="cs"><div class="ci"><span class="csl">SKIP</span></div></td>`; return; }
       if (!pr){ h+=`<td class="cc"><div class="ci"><span style="font-size:10px;font-weight:700;color:var(--blue)">Cap</span></div></td>`; return; }
       const idx=S.seq.indexOf(pr);
@@ -701,7 +706,8 @@ function updateSB() {
   const p=S.seq[S.cur];
   document.getElementById('sb-r').textContent=p.lbl||`R${p.rk}`;
   document.getElementById('sb-p').textContent=`Pick #${p.pickNum} — ${p.captain}`;
-  document.getElementById('sb-d').textContent = String(p.rk).startsWith('P') ? '⇄ Pair' : p.rk==0 ? '★ Bonus' : p.lbl?.includes('↑') ? '↑ Up' : '↓ Down';
+  const rkStr2 = String(p.rk);
+  document.getElementById('sb-d').textContent = rkStr2.startsWith('P') ? '⇄ Pair' : p.rk==0 ? '★ Bonus' : (rkStr2.startsWith('S') ? p.lbl?.includes('↑') : Number(p.rk)%2===1) ? '↑ Up' : '↓ Down';
   document.getElementById('sb-m').textContent='';
 }
 
