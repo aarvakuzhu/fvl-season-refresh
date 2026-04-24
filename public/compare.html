@@ -150,15 +150,15 @@ async function loadSaves() {
   ['user-a','user-b'].forEach((id,i) => {
     const sel = document.getElementById(id);
     sel.innerHTML = users.map(u=>`<option value="${u}">${u}</option>`).join('');
-    if (i===0) sel.value = users.includes('Ashok') ? 'Ashok' : users[0];
+    if (i===0) sel.value = users.includes('Amrendra') ? 'Amrendra' : users[0];
     else sel.value = users.includes('Sachin') ? 'Sachin' : (users[1]||users[0]);
   });
 
   // Set opt based on what's actually saved for each user
-  const ashokSave = ALL_SAVES.find(s=>s.user==='Ashok');
-  const sachinSave = ALL_SAVES.find(s=>s.user==='Sachin');
-  document.getElementById('opt-a').value = ashokSave?.opt || '2';
-  document.getElementById('opt-b').value = sachinSave?.opt || '1';
+  const amrendraSave = ALL_SAVES.find(s=>s.user==='Amrendra');
+  const sachinSave   = ALL_SAVES.find(s=>s.user==='Sachin');
+  document.getElementById('opt-a').value = amrendraSave?.opt || '2';
+  document.getElementById('opt-b').value = sachinSave?.opt   || '1';
 
   // Auto-run comparison
   runCompare();
