@@ -576,3 +576,20 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`FVL running on port ${PORT}`));
+
+// ── Clone draft save ─────────────────────────────────────────────────
+app.post('/api/draft-clone', async (req, res) => {
+  try {
+    const { fromUser, toUser, season = 3, opt = 2 } = req.body;
+    const src = await DraftSave.findOne({ user: fromUser, season, opt })
+      || await DraftSave.findOne({ user: fromUser, season }).sort({ updatedAt: -1 });
+    if (!src) return res.status(404).json({ error: `No draft found for ${fromUser}` });
+    await DraftSave.deleteMany({ user: toUser, season, opt });
+    const clone = await DraftSave.create({
+      user: toUser, season, opt,
+      picks: src.picks, teams: src.teams,
+      pickCount: src.pickCount, complete: src.complete,
+    });
+    res.json({ success: true, message: `Cloned ${fromUser} opt${opt} → ${toUser}`, pickCount: clone.pickCount });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
