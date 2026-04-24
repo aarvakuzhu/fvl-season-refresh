@@ -610,7 +610,7 @@ function renderBoard() {
     const rps=byRk[rk]||[];
     const lbl=rps[0]?.lbl||rk;
     const isPair=rk==='P1'||rk==='P2';
-    const isBonus=rk==='0';
+    const isBonus = rk == 0;  // loose equality handles both number 0 and string '0'
     const isSnake=rk.startsWith('S');
     const snakeNum=isSnake?parseInt(rk.slice(1)):0;
     const isTopDown=isSnake && (snakeNum-3)%2===0;
@@ -700,7 +700,7 @@ function updateSB() {
   const p=S.seq[S.cur];
   document.getElementById('sb-r').textContent=p.lbl||`R${p.rk}`;
   document.getElementById('sb-p').textContent=`Pick #${p.pickNum} — ${p.captain}`;
-  document.getElementById('sb-d').textContent=String(p.rk).startsWith('P')?'⇄ Pair':p.rk===0?'★ Bonus':p.lbl?.includes('↑')?'↑ Up':'↓ Down';
+  document.getElementById('sb-d').textContent = String(p.rk).startsWith('P') ? '⇄ Pair' : p.rk==0 ? '★ Bonus' : p.lbl?.includes('↑') ? '↑ Up' : '↓ Down';
   document.getElementById('sb-m').textContent='';
 }
 
