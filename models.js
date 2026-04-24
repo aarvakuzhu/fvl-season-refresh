@@ -127,13 +127,15 @@ PlayerSeasonSchema.index({ name: 1, season: 1 });
 const DraftSaveSchema = new mongoose.Schema({
   user:      { type: String, required: true },
   season:    { type: Number, required: true, default: 3 },
+  opt:       { type: Number, default: 1 },   // 1 = Option 1, 2 = Option 2
   picks:     { type: Array, default: [] },
   teams:     { type: Array, default: [] },
   pickCount: { type: Number, default: 0 },
   complete:  { type: Boolean, default: false },
 }, { timestamps: true });
 
-DraftSaveSchema.index({ user: 1, season: 1 }, { unique: true });
+// One save per user per season per option
+DraftSaveSchema.index({ user: 1, season: 1, opt: 1 }, { unique: true });
 
 // ── Exports ───────────────────────────────────────────────────────────
 module.exports = {

@@ -379,21 +379,27 @@ app.get('/api/roster', async (req, res) => {
 // ── Draft Save — persist per user per season ─────────────────────────
 app.post('/api/draft-save', async (req, res) => {
   try {
-    const { user, season = 3, picks, teams, pickCount, complete } = req.body;
+    const { user, season = 3, opt = 1, picks, teams, pickCount, complete } = req.body;
     if (!user) return res.status(400).json({ error: 'user required' });
     const doc = await DraftSave.findOneAndUpdate(
-      { user, season },
-      { user, season, picks, teams, pickCount, complete },
+      { user, season, opt },
+      { user, season, opt, picks, teams, pickCount, complete },
       { upsert: true, new: true }
     );
-    res.json({ success: true, savedAt: doc.updatedAt });
+    res.json({ success: true, savedAt: doc.updatedAt, opt });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/draft-save/:user', async (req, res) => {
   try {
     const season = Number(req.query.season) || 3;
-    const doc = await DraftSave.findOne({ user: req.params.user, season });
+    const opt    = req.query.opt ? Number(req.query.opt) : null;
+    const query  = { user: req.params.user, season };
+    if (opt) query.opt = opt;
+    // If no opt specified, return most recent save for this user
+    const doc = opt
+      ? await DraftSave.findOne(query)
+      : await DraftSave.findOne({ user: req.params.user, season }).sort({ updatedAt: -1 });
     if (!doc) return res.json(null);
     res.json(doc);
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -402,8 +408,62 @@ app.get('/api/draft-save/:user', async (req, res) => {
 app.get('/api/draft-saves', async (req, res) => {
   try {
     const season = Number(req.query.season) || 3;
-    const docs = await DraftSave.find({ season }).sort({ updatedAt: -1 });
+    const docs = await DraftSave.find({ season }).sort({ opt: 1, user: 1 });
     res.json(docs);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Compare two saves: GET /api/draft-compare?user1=Ashok&opt1=2&user2=Sachin&opt2=1
+app.get('/api/draft-compare', async (req, res) => {
+  try {
+    const season = Number(req.query.season) || 3;
+    const { user1, opt1=2, user2, opt2=1 } = req.query;
+    const [d1, d2] = await Promise.all([
+      DraftSave.findOne({ user: user1, season, opt: Number(opt1) }),
+      DraftSave.findOne({ user: user2, season, opt: Number(opt2) }),
+    ]);
+    if (!d1) return res.status(404).json({ error: `No draft found for ${user1} opt${opt1}` });
+    if (!d2) return res.status(404).json({ error: `No draft found for ${user2} opt${opt2}` });
+
+    // Build per-captain team maps
+    const teamMap = (teams) => {
+      const m = {};
+      (teams||[]).forEach(t => { m[t.captain] = new Set(t.players||[]); });
+      return m;
+    };
+    const m1 = teamMap(d1.teams), m2 = teamMap(d2.teams);
+    const captains = [...new Set([...Object.keys(m1), ...Object.keys(m2)])];
+
+    const comparison = captains.map(cap => {
+      const s1 = m1[cap] || new Set(), s2 = m2[cap] || new Set();
+      const allPlayers = [...new Set([...s1, ...s2])].sort();
+      return {
+        captain: cap,
+        players: allPlayers.map(p => ({
+          name: p,
+          inOpt1: s1.has(p),
+          inOpt2: s2.has(p),
+          same: s1.has(p) && s2.has(p),
+        })),
+        sameCount:  allPlayers.filter(p=>s1.has(p)&&s2.has(p)).length,
+        diffCount:  allPlayers.filter(p=>!(s1.has(p)&&s2.has(p))).length,
+      };
+    });
+
+    const totalSame = comparison.reduce((a,c)=>a+c.sameCount,0);
+    const totalDiff = comparison.reduce((a,c)=>a+c.diffCount,0);
+
+    res.json({
+      meta: {
+        a: { user: user1, opt: Number(opt1), pickCount: d1.pickCount },
+        b: { user: user2, opt: Number(opt2), pickCount: d2.pickCount },
+        totalSame, totalDiff,
+        similarityPct: Math.round(totalSame/(totalSame+totalDiff)*100),
+      },
+      teams: comparison,
+      picksA: d1.picks,
+      picksB: d2.picks,
+    });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -456,12 +516,17 @@ app.post('/api/seed-ashok-draft', async (req, res) => {
     caps.forEach(c=>teamsMap[c.name]={captain:c.name,col:'#333',players:[]});
     picks.forEach(p=>teamsMap[p.captain].players.push(p.player));
     const doc = await DraftSave.findOneAndUpdate(
-      { user:'Ashok', season:3 },
-      { user:'Ashok', season:3, picks, teams:Object.values(teamsMap), pickCount:36, complete:true },
+      { user:'Ashok', season:3, opt:2 },
+      { user:'Ashok', season:3, opt:2, picks, teams:Object.values(teamsMap), pickCount:36, complete:true },
       { upsert:true, new:true }
     );
     res.json({ success:true, message:'Ashok Option 2 draft saved', pickCount:doc.pickCount });
   } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Compare page ─────────────────────────────────────────────────────
+app.get('/compare', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'compare.html'));
 });
 
 // ── Roster page ──────────────────────────────────────────────────────

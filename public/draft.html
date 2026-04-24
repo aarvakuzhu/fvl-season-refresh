@@ -131,6 +131,7 @@
   <div class="hright">
     <button class="hbtn hbtn-ghost" id="undo-btn" onclick="undoPick()" disabled>↩ Undo</button>
     <button class="hbtn hbtn-red"   onclick="handleReset()">↺ Reset</button>
+    <a href="/compare" class="hbtn hbtn-ghost" target="_blank">⚖ Compare</a>
     <a href="/" class="hbtn hbtn-ghost" onclick="return handleBack(event)">← Back</a>
   </div>
 </div>
@@ -244,13 +245,13 @@ const ss = {
       await fetch('/api/draft-save', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({user, season:3, ...d}),
+        body: JSON.stringify({user, season:3, opt: S.opt, ...d}),
       });
     } catch(e) { console.warn('Save failed:', e); }
   },
   async load(user) {
     try {
-      const r = await fetch(`/api/draft-save/${encodeURIComponent(user)}?season=3`);
+      const r = await fetch(`/api/draft-save/${encodeURIComponent(user)}?season=3&opt=${S.opt}`);
       if (!r.ok) return null;
       return await r.json();
     } catch(e) { return null; }
