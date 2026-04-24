@@ -459,20 +459,31 @@ app.get('/api/draft-compare', async (req, res) => {
           inOpt2: s2.has(p),
           same: s1.has(p) && s2.has(p),
         })),
+        onlyInA:    allPlayers.filter(p=>s1.has(p)&&!s2.has(p)).length,
+        onlyInB:    allPlayers.filter(p=>s2.has(p)&&!s1.has(p)).length,
         sameCount:  allPlayers.filter(p=>s1.has(p)&&s2.has(p)).length,
-        diffCount:  allPlayers.filter(p=>!(s1.has(p)&&s2.has(p))).length,
+        // diffCount = players who changed on this team = those only in A (they were replaced)
+        // A player leaving one team always arrives at another — count once per swap not twice
+        diffCount:  allPlayers.filter(p=>s1.has(p)&&!s2.has(p)).length,
       };
     });
 
-    const totalSame = comparison.reduce((a,c)=>a+c.sameCount,0);
-    const totalDiff = comparison.reduce((a,c)=>a+c.diffCount,0);
+    // totalSame = players who are on the same team in both drafts
+    // totalDiff = number of swaps = players who moved teams (count once: only-in-A across all teams)
+    // Each swap moves one player out of one team and into another — so onlyInA sum = number of swaps
+    const totalSame = comparison.reduce((a,c)=>a+c.sameCount, 0);
+    const playersMovd = comparison.reduce((a,c)=>a+c.onlyInA, 0); // each trade moves 2
+    const totalSwaps = Math.round(playersMovd / 2); // actual trades
+    const totalPlayers = 36; // fixed pool
+    // Similarity: players correctly placed / total players
+    const similarityPct = Math.round(totalSame / totalPlayers * 100);
 
     res.json({
       meta: {
         a: { user: user1, opt: Number(opt1), pickCount: d1.pickCount },
         b: { user: user2, opt: Number(opt2), pickCount: d2.pickCount },
-        totalSame, totalDiff,
-        similarityPct: Math.round(totalSame/(totalSame+totalDiff)*100),
+        totalSame, totalDiff: playersMovd, totalSwaps, playersMovd,
+        similarityPct,
       },
       teams: comparison,
       picksA: d1.picks,
