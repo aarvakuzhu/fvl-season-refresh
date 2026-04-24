@@ -98,6 +98,10 @@
     .toast.hide{opacity:0}
     .utag{font-family:'Roboto Mono',monospace;font-size:9px;background:var(--amber2);color:var(--amber);padding:1px 5px;border:1px solid #ffcc80;border-radius:2px}
     code{font-family:'Roboto Mono',monospace;font-size:11px;background:#f0f0f0;padding:1px 4px;border-radius:2px}
+    .opt-btn{padding:5px 16px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s;color:rgba(255,255,255,.5);background:transparent}
+    .opt-btn.active-1{background:#1a5fb4;color:#fff}
+    .opt-btn.active-2{background:#7b1fa2;color:#fff}
+    #status-bar.opt2{background:#7b1fa2}
     .cfg{padding:10px 0;border-bottom:1px solid var(--border2);margin-bottom:8px}.cfg:last-child{border:none;margin:0}
     .cfgl{font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
     .ni{width:56px;padding:4px 8px;border:1px solid var(--border);border-radius:2px;font-size:13px;font-weight:700;font-family:'Roboto Mono',monospace;text-align:center}
@@ -131,6 +135,15 @@
   </div>
 </div>
 
+
+<!-- OPTION TOGGLE BAR -->
+<div id="opt-bar" style="background:#1a2744;padding:6px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+  <div style="display:flex;border:1px solid rgba(255,255,255,.2);border-radius:3px;overflow:hidden">
+    <button id="ob1" class="opt-btn active-1" onclick="switchOption(1)">Option 1</button>
+    <button id="ob2" class="opt-btn"          onclick="switchOption(2)">Option 2</button>
+  </div>
+  <span id="opt-rule" style="font-size:11px;color:rgba(255,255,255,.55);font-style:italic;flex:1">Pair picks — bottom 2 / middle 2 / top 2 each pick 1st &amp; 2nd together, then snake top-down from pick 13</span>
+</div>
 
 <!-- STATUS BAR -->
 <div id="status-bar">
@@ -172,7 +185,7 @@
     </div>
   </div>
   <div style="text-align:center;padding:8px 0 14px">
-    <button class="btn btn-blue" style="font-size:14px;padding:10px 28px" onclick="startDraft()">🐍 Start Draft</button>
+    <button class="btn btn-blue" style="font-size:14px;padding:10px 28px" id="start-btn" onclick="startDraft()">🐍 Start Draft — Option 1</button>
     <div style="font-size:11px;color:var(--muted);margin-top:6px" id="setup-status">Loading players…</div>
   </div>
 </div>
@@ -263,9 +276,24 @@ const S = {
   ],
   players: [], teams: [], picks: [],
   seq: [], cur: 0, ppt: 6,
+  opt: 1,  // 1 = Pair picks + snake, 2 = R0 bonus + skip rounds
   started: false, filterTier: 'ALL', currentUser: 'Anil', lastSavedPickCount: -1,
   skillFilter: new Set(), // active skill filters (empty = show all)
 };
+
+function seqOpt2() {
+  const seq=[]; let n=1;
+  // R0 bonus: captains with entryRound > 1, sorted by pickOrder
+  S.caps.filter(c=>c.er>1).sort((a,b)=>a.po-b.po)
+    .forEach(c=>seq.push({rk:0,lbl:'R0 Bonus',captain:c.name,pickNum:n++}));
+  // R1-R6 snake with skip
+  for(let r=1;r<=S.ppt;r++){
+    const active=S.caps.filter(c=>!(c.er===r&&c.er>1)).sort((a,b)=>a.po-b.po);
+    const ordered=r%2===1?[...active]:[...active].reverse();
+    ordered.forEach(c=>seq.push({rk:r,lbl:`R${r} ${r%2===1?'↑':'↓'}`,captain:c.name,pickNum:n++}));
+  }
+  return seq;
+}
 
 // ── SKILLS ─────────────────────────────────────────────────────────
 const SKILL_DEFS = ['Spiker','Setter','Defense','Allrounder','Developing'];
@@ -293,6 +321,23 @@ function toggleSkillFilter(skill, btn) {
   if (S.skillFilter.has(skill)) { S.skillFilter.delete(skill); btn.classList.remove('skf-on'); }
   else { S.skillFilter.add(skill); btn.classList.add('skf-on'); }
   renderPool();
+}
+
+// ── OPTION SWITCH ──────────────────────────────────────────────────
+function switchOption(opt) {
+  if (S.started && !confirm(`Switch to Option ${opt}? Save first if needed.`)) return;
+  S.opt = opt;
+  document.getElementById('ob1').className = 'opt-btn' + (opt===1?' active-1':'');
+  document.getElementById('ob2').className = 'opt-btn' + (opt===2?' active-2':'');
+  document.getElementById('opt-rule').textContent = opt===1
+    ? 'Pair picks — bottom 2 / middle 2 / top 2 each pick 1st & 2nd together, then snake top-down from pick 13'
+    : 'R0 bonus picks for weaker captains, then skipped in their entry round — snake throughout';
+  document.getElementById('status-bar').className = opt===2 ? 'opt2' : '';
+  // Update setup card text
+  const cfgl = document.querySelector('.cfgl:not(:first-child)');
+  if (cfgl) cfgl.textContent = opt===1 ? 'Option 1 — Pair Picks + Snake' : 'Option 2 — R0 Bonus + Skip Rounds';
+  document.getElementById('start-btn').textContent = `🐍 Start Draft — Option ${opt}`;
+  if (S.started) resetDraft(true);
 }
 
 // ── SEQUENCES ─────────────────────────────────────────────────────
@@ -381,7 +426,7 @@ async function init() {
 function startDraft() {
   refreshSkills(); // fetch latest skills/labels before draft starts
   S.ppt = parseInt(document.getElementById('ppt').value)||6;
-  S.seq = seqOpt1();
+  S.seq = S.opt===1 ? seqOpt1() : seqOpt2();
   S.cur=0; S.picks=[];
   S.teams = S.caps.map(c=>({captain:c.name,col:c.col,players:[]}));
   S.players.forEach(p=>p.drafted=false);
@@ -574,7 +619,7 @@ function renderBoard() {
 
     sortedCaps.forEach(c => {
       const pr=rps.find(p=>p.captain===c.name);
-      const isSkip=false; // Option 1 has no skip rounds
+      const isSkip=S.opt===2 && c.er===parseInt(rk) && c.er>1;
       if (isSkip){ h+=`<td class="cs"><div class="ci"><span class="csl">SKIP</span></div></td>`; return; }
       if (!pr){ h+=`<td class="cc"><div class="ci"><span style="font-size:10px;font-weight:700;color:var(--blue)">Cap</span></div></td>`; return; }
       const idx=S.seq.indexOf(pr);
