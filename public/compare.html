@@ -222,8 +222,12 @@ function renderComparison(data, userA, optA, userB, optB) {
 
   document.getElementById('team-grid').innerHTML = sortedTeams.map(t => {
     const col = capColors[t.captain] || '#333';
+    const teamSize = t.players.length;
+    const sameCount = t.players.filter(p=>p.same).length;
+    const swaps = t.players.filter(p=>p.inOpt1&&!p.same).length; // players who left
+    const pct = teamSize ? Math.round(sameCount/teamSize*100) : 100;
     const rows = t.players.map(p => {
-      const cls = p.same ? 'same' : p.inOpt1 ? 'only-a' : 'only-b'; // inOpt1 = in A
+      const cls = p.same ? 'same' : p.inOpt1 ? 'only-a' : 'only-b';
       const tag = p.same
         ? `<span class="tp-tag ts">Both</span>`
         : p.inOpt1
@@ -234,7 +238,7 @@ function renderComparison(data, userA, optA, userB, optB) {
     return `<div class="tc">
       <div class="tc-hd" style="background:${col}">
         <span>${t.captain}</span>
-        <span class="diff-ct">${t.diffCount} diff</span>
+        <span class="diff-ct">${pct}%${swaps?` · ${swaps} swap${swaps!==1?'s':''}`:''}</span>
       </div>
       ${rows}
     </div>`;
