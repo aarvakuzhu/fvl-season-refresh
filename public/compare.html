@@ -141,17 +141,28 @@ async function loadSaves() {
   const r = await fetch('/api/draft-saves?season=3');
   ALL_SAVES = await r.json();
   const users = [...new Set(ALL_SAVES.map(s=>s.user))].sort();
+
+  if (!users.length) {
+    document.getElementById('team-grid').innerHTML =
+      '<div class="empty" style="grid-column:1/-1">No draft saves found. Complete a draft on the draft screen first.</div>';
+    return;
+  }
+
   ['user-a','user-b'].forEach((id,i) => {
     const sel = document.getElementById(id);
     sel.innerHTML = users.map(u=>`<option value="${u}">${u}</option>`).join('');
-    // Default: A=Ashok opt2, B=Sachin opt1
-    sel.value = i===0 ? 'Ashok' : (users.includes('Sachin') ? 'Sachin' : users[1]||users[0]);
+    if (i===0) sel.value = users.includes('Ashok') ? 'Ashok' : users[0];
+    else sel.value = users.includes('Sachin') ? 'Sachin' : (users[1]||users[0]);
   });
-  document.getElementById('opt-a').value = '2';
-  document.getElementById('opt-b').value = '1';
 
-  // Auto-run if Ashok/Sachin both available
-  if (users.includes('Ashok')) runCompare();
+  // Set opt based on what's actually saved for each user
+  const ashokSave = ALL_SAVES.find(s=>s.user==='Ashok');
+  const sachinSave = ALL_SAVES.find(s=>s.user==='Sachin');
+  document.getElementById('opt-a').value = ashokSave?.opt || '2';
+  document.getElementById('opt-b').value = sachinSave?.opt || '1';
+
+  // Auto-run comparison
+  runCompare();
 }
 
 async function runCompare() {
@@ -161,6 +172,8 @@ async function runCompare() {
   const optB  = document.getElementById('opt-b').value;
   const status = document.getElementById('sel-status');
 
+  if (!userA || !userB) { status.textContent = 'Select two users'; return; }
+  if (userA === userB && optA === optB) { status.textContent = 'Select different drafts'; return; }
   status.textContent = 'Loading…';
   document.getElementById('team-grid').innerHTML =
     Array(6).fill('<div class="skel"></div>').join('');

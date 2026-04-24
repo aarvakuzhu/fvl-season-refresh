@@ -381,11 +381,22 @@ app.post('/api/draft-save', async (req, res) => {
   try {
     const { user, season = 3, opt = 1, picks, teams, pickCount, complete } = req.body;
     if (!user) return res.status(400).json({ error: 'user required' });
-    const doc = await DraftSave.findOneAndUpdate(
-      { user, season, opt },
-      { user, season, opt, picks, teams, pickCount, complete },
-      { upsert: true, new: true }
-    );
+    // Try with opt field first; fall back to legacy (user+season only) on duplicate key
+    let doc;
+    try {
+      doc = await DraftSave.findOneAndUpdate(
+        { user, season, opt: Number(opt) },
+        { user, season, opt: Number(opt), picks, teams, pickCount, complete },
+        { upsert: true, new: true }
+      );
+    } catch(e) {
+      // Old index (user+season) conflict — update without opt filter
+      doc = await DraftSave.findOneAndUpdate(
+        { user, season },
+        { user, season, opt: Number(opt), picks, teams, pickCount, complete },
+        { upsert: true, new: true }
+      );
+    }
     res.json({ success: true, savedAt: doc.updatedAt, opt });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -418,12 +429,15 @@ app.get('/api/draft-compare', async (req, res) => {
   try {
     const season = Number(req.query.season) || 3;
     const { user1, opt1=2, user2, opt2=1 } = req.query;
-    const [d1, d2] = await Promise.all([
-      DraftSave.findOne({ user: user1, season, opt: Number(opt1) }),
-      DraftSave.findOne({ user: user2, season, opt: Number(opt2) }),
-    ]);
-    if (!d1) return res.status(404).json({ error: `No draft found for ${user1} opt${opt1}` });
-    if (!d2) return res.status(404).json({ error: `No draft found for ${user2} opt${opt2}` });
+    // Find save — match on opt if field exists, else fall back to most recent for that user
+    const findSave = async (user, opt) => {
+      let doc = await DraftSave.findOne({ user, season, opt: Number(opt) });
+      if (!doc) doc = await DraftSave.findOne({ user, season }).sort({ updatedAt: -1 });
+      return doc;
+    };
+    const [d1, d2] = await Promise.all([findSave(user1, opt1), findSave(user2, opt2)]);
+    if (!d1) return res.status(404).json({ error: `No draft found for ${user1}` });
+    if (!d2) return res.status(404).json({ error: `No draft found for ${user2}` });
 
     // Build per-captain team maps
     const teamMap = (teams) => {
@@ -515,11 +529,12 @@ app.post('/api/seed-ashok-draft', async (req, res) => {
     const teamsMap = {};
     caps.forEach(c=>teamsMap[c.name]={captain:c.name,col:'#333',players:[]});
     picks.forEach(p=>teamsMap[p.captain].players.push(p.player));
-    const doc = await DraftSave.findOneAndUpdate(
-      { user:'Ashok', season:3, opt:2 },
-      { user:'Ashok', season:3, opt:2, picks, teams:Object.values(teamsMap), pickCount:36, complete:true },
-      { upsert:true, new:true }
-    );
+    // Drop any existing save for Ashok S3 to avoid index conflicts
+    await DraftSave.deleteMany({ user:'Ashok', season:3 });
+    const doc = await DraftSave.create({
+      user:'Ashok', season:3, opt:2, picks,
+      teams:Object.values(teamsMap), pickCount:36, complete:true
+    });
     res.json({ success:true, message:'Ashok Option 2 draft saved', pickCount:doc.pickCount });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
