@@ -222,9 +222,10 @@ function renderComparison(data, userA, optA, userB, optB) {
 
   document.getElementById('team-grid').innerHTML = sortedTeams.map(t => {
     const col = capColors[t.captain] || '#333';
-    const teamSize = t.players.length;
     const sameCount = t.players.filter(p=>p.same).length;
-    const swaps = t.players.filter(p=>p.inOpt1&&!p.same).length; // players who left
+    const swaps = t.players.filter(p=>p.inOpt1&&!p.same).length;
+    // Team size = same + players only in A (= actual roster size, not merged list)
+    const teamSize = sameCount + swaps;
     const pct = teamSize ? Math.round(sameCount/teamSize*100) : 100;
     const rows = t.players.map(p => {
       const cls = p.same ? 'same' : p.inOpt1 ? 'only-a' : 'only-b';
