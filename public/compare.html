@@ -114,7 +114,6 @@
     <div class="stat-card" id="sc-a"></div>
     <div class="stat-card" id="sc-b"></div>
     <div class="stat-card similarity"><div class="stat-n" id="sn-pct">—</div><div class="stat-l">Same placement %</div></div>
-    <div class="stat-card diff"><div class="stat-n" id="sn-swaps" style="color:var(--red)">—</div><div class="stat-l">Trades (player pairs)</div></div>
     <div class="stat-card"><div class="stat-n" id="sn-same">—</div><div class="stat-l">Same placement</div></div>
   </div>
 
@@ -205,7 +204,6 @@ function renderComparison(data, userA, optA, userB, optB) {
   document.getElementById('sc-b').innerHTML = `<div class="stat-n" style="color:var(--o${optB})">${userB}</div><div class="stat-l">Option ${optB} · ${meta.b.pickCount} picks</div>`;
   document.getElementById('sc-b').style.borderTopColor = optB=='1'?'var(--o1)':'var(--o2)';
   document.getElementById('sn-pct').textContent  = meta.similarityPct + '%';
-  document.getElementById('sn-swaps').textContent = `${meta.totalSwaps} trade${meta.totalSwaps!==1?'s':''} (${meta.playersMovd} players)` ;
   document.getElementById('sn-same').textContent = meta.totalSame;
 
   // Captain stripe colors
