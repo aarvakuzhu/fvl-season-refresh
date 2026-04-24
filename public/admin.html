@@ -94,6 +94,22 @@
     </button>
     <div class="log" id="ashok-log"></div>
     <div class="status" id="ashok-status"></div>
+
+    <div class="divider"></div>
+    <div class="title" style="font-size:16px;margin-bottom:6px">Clone Draft Save</div>
+    <p class="subtitle" style="margin-bottom:12px">Copy one user's draft to another.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      <input id="clone-from" value="Ashok" placeholder="From" style="padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:13px;width:120px">
+      <span style="color:rgba(255,255,255,.5)">→</span>
+      <input id="clone-to" value="Amrendra" placeholder="To" style="padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:13px;width:120px">
+      <select id="clone-opt" style="padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:13px">
+        <option value="1">Option 1</option>
+        <option value="2" selected>Option 2</option>
+      </select>
+    </div>
+    <button class="btn" id="clone-btn" onclick="runClone()" style="background:#1a5fb4;color:#fff;margin-bottom:8px">📋 Clone Draft</button>
+    <div class="log" id="clone-log"></div>
+    <div class="status" id="clone-status"></div>
   </div>
 
   <script>
@@ -236,6 +252,37 @@
         log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
         status.textContent = '❌ Could not reach server'; status.className = 'status error';
         btn.disabled = false; btn.innerHTML = '🏆 Try Again';
+      }
+    }
+
+    async function runClone() {
+      const btn    = document.getElementById('clone-btn');
+      const log    = document.getElementById('clone-log');
+      const status = document.getElementById('clone-status');
+      const from   = document.getElementById('clone-from').value.trim();
+      const to     = document.getElementById('clone-to').value.trim();
+      const opt    = document.getElementById('clone-opt').value;
+      if (!from || !to) { status.textContent = '✗ Fill in both users'; status.className = 'status error'; return; }
+      btn.disabled = true; btn.innerHTML = '⏳ Cloning…';
+      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
+      try {
+        const r = await fetch('/api/draft-clone', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ fromUser: from, toUser: to, opt: Number(opt), season: 3 }),
+        });
+        const d = await r.json();
+        if (d.success) {
+          log.innerHTML = `<div class="log-line ok">✅ ${d.message}</div><div class="log-line ok">✅ ${d.pickCount} picks cloned · Option ${opt}</div>`;
+          status.textContent = '✅ Done'; status.className = 'status success';
+          btn.innerHTML = '✅ Done';
+        } else {
+          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
+          status.textContent = '❌ Failed'; status.className = 'status error';
+          btn.disabled = false; btn.innerHTML = '📋 Clone Draft';
+        }
+      } catch(e) {
+        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
+        status.className = 'status error'; btn.disabled = false; btn.innerHTML = '📋 Clone Draft';
       }
     }
 
