@@ -85,6 +85,15 @@
 
     <div class="divider"></div>
     <a class="back" href="/">← Back to FVL Site</a>
+
+    <div class="divider"></div>
+    <div class="title" style="font-size:16px;margin-bottom:6px">Seed Ashok's Option 2 Draft</div>
+    <p class="subtitle" style="margin-bottom:16px">Saves the 36-pick Option 2 draft (from offline spreadsheet) as Ashok's Season 3 save.</p>
+    <button class="btn" id="ashok-btn" onclick="runAshokSeed()" style="background:#311b92;color:#fff;margin-bottom:8px">
+      🏐 Save Ashok's Option 2 Draft
+    </button>
+    <div class="log" id="ashok-log"></div>
+    <div class="status" id="ashok-status"></div>
   </div>
 
   <script>
@@ -231,6 +240,30 @@
     }
 
     checkHealth();
+
+    async function runAshokSeed() {
+      const btn = document.getElementById('ashok-btn');
+      const log = document.getElementById('ashok-log');
+      const status = document.getElementById('ashok-status');
+      btn.disabled = true; btn.innerHTML = '⏳ Saving...';
+      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
+      try {
+        const r = await fetch('/api/seed-ashok-draft', { method: 'POST' });
+        const d = await r.json();
+        if (d.success) {
+          log.innerHTML = `<div class="log-line ok">✅ ${d.message}</div><div class="log-line ok">✅ ${d.pickCount} picks saved · Season 3 · Option 2 · User: Ashok</div>`;
+          status.textContent = '✅ Saved!'; status.className = 'status success';
+          btn.innerHTML = '✅ Done';
+        } else {
+          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
+          status.textContent = '❌ Failed'; status.className = 'status error';
+          btn.disabled = false; btn.innerHTML = '🏐 Try Again';
+        }
+      } catch(e) {
+        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
+        status.className = 'status error'; btn.disabled = false; btn.innerHTML = '🏐 Try Again';
+      }
+    }
   </script>
 </body>
 </html>
