@@ -432,6 +432,63 @@ app.get('/api/draft-saves', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+
+// ── Seed Naren Option 2 draft ────────────────────────────────────────
+app.post('/api/seed-naren-draft', async (req, res) => {
+  try {
+    const nameMap = {
+      'Venkat EZ Pass':'Venkat','Raja EZ Pass':'Raja Vasu','Pawan':'Pavan',
+      'Sarva':'Saravanan','Chandu':'Chandu','Mukesh':'Mukesh','Ahmed':'Ahmed',
+      'Krishna':'Krishna','Kiran':'Kiran','Ashok':'Ashok','Keshav':'Keshav',
+      'Amar':'Amrendra','Rajesh':'Rajeshbabu','Krupa':'Krupa','Jugal':'Jugal',
+      'Sachin':'Sachin','Rizwan':'Rizwan','Rajan':'Rajan','Vikas':'Vikas',
+      'Naveen':'Naveen','Rahul':'Rahul','Chandra':'Chandra','Gopal':'Gopal',
+      'Surendra Konga':'Surendra Kings','Naren':'Naren','Sunil Ji':'Sunil',
+      'Uday B':'Uday K','Uday D':'Uday Dragon','Santosh':'Santosh','Raja':'Raja S',
+      'Ishant':'Ishant','Suri':'Suri','Divyanshu':'Divyanshu','Rakesh':'Rakesh',
+      'Gupta Ji':'Ritesh','Ronak':'Ronak',
+    };
+    const rawPicks = [
+      [1,'Anil','Venkat EZ Pass'],[2,'Pratik','Raja EZ Pass'],[3,'Harsha','Pawan'],
+      [4,'Anil','Sarva'],[5,'Pratik','Chandu'],[6,'Harsha','Mukesh'],
+      [7,'Shanthan','Ahmed'],[8,'Koti','Krishna'],[9,'Karthik S','Kiran'],
+      [10,'Karthik S','Ashok'],[11,'Koti','Keshav'],[12,'Shanthan','Amar'],
+      [13,'Pratik','Rajesh'],[14,'Anil','Krupa'],[15,'Anil','Jugal'],
+      [16,'Harsha','Sachin'],[17,'Shanthan','Rizwan'],[18,'Koti','Rajan'],
+      [19,'Karthik S','Vikas'],[20,'Karthik S','Naveen'],[21,'Koti','Rahul'],
+      [22,'Shanthan','Chandra'],[23,'Harsha','Gopal'],[24,'Pratik','Surendra Konga'],
+      [25,'Anil','Naren'],[26,'Pratik','Sunil Ji'],[27,'Harsha','Uday B'],
+      [28,'Shanthan','Uday D'],[29,'Koti','Santosh'],[30,'Karthik S','Raja'],
+      [31,'Karthik S','Ishant'],[32,'Koti','Suri'],[33,'Shanthan','Divyanshu'],
+      [34,'Harsha','Rakesh'],[35,'Pratik','Gupta Ji'],[36,'Anil','Ronak'],
+    ];
+    const caps = [{name:'Anil',po:1,er:4},{name:'Pratik',po:2,er:3},{name:'Harsha',po:3,er:2},
+                  {name:'Shanthan',po:4,er:1},{name:'Koti',po:5,er:1},{name:'Karthik S',po:6,er:1}];
+    const seq=[]; let n=1;
+    caps.filter(c=>c.er>1).sort((a,b)=>a.po-b.po).forEach(c=>seq.push({rk:0,captain:c.name,pickNum:n++}));
+    for(let r=1;r<=6;r++){
+      const active=caps.filter(c=>!(c.er===r&&c.er>1)).sort((a,b)=>a.po-b.po);
+      const ordered=r%2===1?[...active]:[...active].reverse();
+      ordered.forEach(c=>seq.push({rk:r,captain:c.name,pickNum:n++}));
+    }
+    const picks = rawPicks.map(([pickNum,captain,display])=>({
+      round: seq.find(s=>s.pickNum===pickNum)?.rk,
+      pickNum, captain,
+      player: nameMap[display]||display,
+      label: display, s2team:'—', ts: new Date(),
+    }));
+    const teamsMap = {};
+    caps.forEach(c=>teamsMap[c.name]={captain:c.name,col:'#333',players:[]});
+    picks.forEach(p=>teamsMap[p.captain].players.push(p.player));
+    await DraftSave.deleteMany({ user:'Naren', season:3 });
+    const doc = await DraftSave.create({
+      user:'Naren', season:3, opt:2, picks,
+      teams:Object.values(teamsMap), pickCount:36, complete:true
+    });
+    res.json({ success:true, message:"Naren Option 2 draft saved", pickCount:doc.pickCount });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // Compare two saves: GET /api/draft-compare?user1=Ashok&opt1=2&user2=Sachin&opt2=1
 app.get('/api/draft-compare', async (req, res) => {
   try {

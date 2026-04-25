@@ -96,6 +96,15 @@
     <div class="status" id="ashok-status"></div>
 
     <div class="divider"></div>
+    <div class="title" style="font-size:16px;margin-bottom:6px">Seed Naren's Option 2 Draft</div>
+    <p class="subtitle" style="margin-bottom:16px">Saves the 36-pick Option 2 draft (from offline spreadsheet) as Naren's Season 3 save.</p>
+    <button class="btn" id="naren-btn" onclick="runNarenSeed()" style="background:#1b5e20;color:#fff;margin-bottom:8px">
+      🏐 Save Naren's Option 2 Draft
+    </button>
+    <div class="log" id="naren-log"></div>
+    <div class="status" id="naren-status"></div>
+
+    <div class="divider"></div>
     <div class="title" style="font-size:16px;margin-bottom:6px">Clone Draft Save</div>
     <p class="subtitle" style="margin-bottom:12px">Copy one user's draft to another.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
@@ -252,6 +261,30 @@
         log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
         status.textContent = '❌ Could not reach server'; status.className = 'status error';
         btn.disabled = false; btn.innerHTML = '🏆 Try Again';
+      }
+    }
+
+    async function runNarenSeed() {
+      const btn = document.getElementById('naren-btn');
+      const log = document.getElementById('naren-log');
+      const status = document.getElementById('naren-status');
+      btn.disabled = true; btn.innerHTML = '⏳ Saving...';
+      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
+      try {
+        const r = await fetch('/api/seed-naren-draft', { method: 'POST' });
+        const d = await r.json();
+        if (d.success) {
+          log.innerHTML = `<div class="log-line ok">✅ ${d.message}</div><div class="log-line ok">✅ ${d.pickCount} picks saved · Season 3 · Option 2 · User: Naren</div>`;
+          status.textContent = '✅ Saved!'; status.className = 'status success';
+          btn.innerHTML = '✅ Done';
+        } else {
+          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
+          status.textContent = '❌ Failed'; status.className = 'status error';
+          btn.disabled = false; btn.innerHTML = '🏐 Try Again';
+        }
+      } catch(e) {
+        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
+        status.className = 'status error'; btn.disabled = false; btn.innerHTML = '🏐 Try Again';
       }
     }
 
