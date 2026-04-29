@@ -116,24 +116,25 @@ function renderSchedule() {
     return `${h12}:${m.toString().padStart(2,'0')} ${ampm}`;
   }
 
-  // Option A: 6 RR slots (12 games, each team plays 4 times) + 2 final slots = 8 slots = 3h20
+  // Option A: 6 RR slots (12 games, each team plays exactly 4) + 3 final slots = 9 slots = 3h45
+  // Each team plays 4 league games. Finals: 5th/6th → 3rd/4th → 1st/2nd
   const rrA = [
-    [0,'rr1','T1 vs T2  |  T3 vs T4'],
-    [1,'rr1','T1 vs T3  |  T5 vs T6'],
-    [2,'rr1','T2 vs T4  |  T1 vs T6'],
-    [3,'rr2','T2 vs T5  |  T3 vs T6'],
-    [4,'rr2','T1 vs T4  |  T2 vs T6'],
-    [5,'rr2','T3 vs T5  |  T4 vs T6'],
+    [0,'rr1','T1 vs T2  |  T3 vs T5'],
+    [1,'rr1','T1 vs T3  |  T4 vs T6'],
+    [2,'rr1','T2 vs T4  |  T1 vs T5'],
+    [3,'rr2','T2 vs T6  |  T3 vs T4'],
+    [4,'rr2','T1 vs T6  |  T4 vs T5'],
+    [5,'rr2','T2 vs T3  |  T5 vs T6'],
   ];
   const finA = [
-    [6,'po','🏆 Final · #1 vs #2  |  3rd Place · #3 vs #4'],
-    [7,'po','5th Place · #5 vs #6'],
+    [6,'po','5th Place · #5 vs #6  |  3rd Place · #3 vs #4'],
+    [7,'po','🏆 Final · #1 vs #2'],
   ];
   const elA = document.getElementById('schedule-a');
   if (elA) {
     elA.innerHTML =
-      `<div class="sblk"><div class="shd">Round Robin — 6 rounds on 2 courts</div>${rrA.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
-      `<div class="sblk"><div class="shd">Finals — Rankings by wins/points diff</div>${finA.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 5:20 PM')}</div>`;
+      `<div class="sblk"><div class="shd">Round Robin — 6 rounds · each team plays 4 games</div>${rrA.map(([i,c,t]) => row([timeStr(i),c,t])).join('')}</div>` +
+      `<div class="sblk"><div class="shd">Finals — 5th &amp; 3rd place simultaneous, then Grand Final</div>${finA.map(([i,c,t]) => fin([timeStr(i),c,t])).join('')}${end(timeStr(8),'Complete — 5:20 PM')}</div>`;
   }
 
   // Option B: Pool stage (3+3 games) + cross-pool (3 games) + bracket (3 games) = 9 game slots on 2 courts
