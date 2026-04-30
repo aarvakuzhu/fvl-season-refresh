@@ -134,10 +134,10 @@
 </div>
 
 <div id="tabs">
-  <div class="tab on"  onclick="showTab('teams')">🏐 Teams</div>
-  <div class="tab"     onclick="showTab('schedule')">📅 Schedule</div>
-  <div class="tab"     onclick="showTab('standings')">🏆 Standings</div>
-  <div class="tab"     onclick="showTab('rotation')">🔄 Rotation</div>
+  <div class="tab on"  data-tab="teams"     onclick="showTab('teams')">🏐 Teams</div>
+  <div class="tab"     data-tab="schedule"  onclick="showTab('schedule')">📅 Schedule</div>
+  <div class="tab"     data-tab="standings" onclick="showTab('standings')">🏆 Standings</div>
+  <div class="tab"     data-tab="rotation"  onclick="showTab('rotation')">🔄 Rotation</div>
 </div>
 
 <!-- RESULT ENTRY MODAL -->
@@ -221,10 +221,10 @@ function dot(name,lg=false) { return `<span class="${lg?'team-dot-lg':'team-dot'
 
 // ── TABS ──────────────────────────────────────────────────────────
 function showTab(id) {
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',['teams','schedule','standings','rotation'][i]===id));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#tabs .tab').forEach(t => t.classList.toggle('on', t.dataset.tab === id));
+  document.querySelectorAll('.page > .panel').forEach(p => p.classList.remove('on'));
   document.getElementById('panel-'+id).classList.add('on');
-  if(id==='schedule'&&!allEvents.length) loadSchedule();
+  if(id==='schedule' && !allEvents.length) loadSchedule();
   if(id==='standings') loadStandings();
   if(id==='rotation') renderRotation();
 }
