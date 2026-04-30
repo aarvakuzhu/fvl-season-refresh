@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FVL — Sitemap</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1b2a;--blue:#1a5fb4;--blue2:#e8eef8;--red:#c62828;--green:#1b7a1b;--green2:#e8f5e9;--amber:#d35400;--bg:#f0f2f5;--white:#fff;--border:#dde3ed;--border2:#eaeef5;--text:#1a1a2e;--muted:#64748b;--light:#f8fafc}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-height:100vh}
+#hdr{background:var(--navy);height:50px;display:flex;align-items:center;padding:0 16px;gap:10px}
+.hbadge{background:var(--red);color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:2px;letter-spacing:1px}
+.htitle{font-size:16px;font-weight:700;color:#fff}.htitle span{color:#f5c842}
+.hbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:2px;text-decoration:none;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);margin-left:auto}
+.hbtn:hover{color:#fff}
+.page{max-width:800px;margin:0 auto;padding:24px 16px}
+h1{font-size:22px;font-weight:900;margin-bottom:4px}
+.sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.section-title{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.url-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.url-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:12px 16px;display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:start;text-decoration:none;color:inherit;transition:box-shadow .15s;border-left:3px solid var(--border)}
+.url-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);border-left-color:var(--blue)}
+.url-card.primary{border-left-color:var(--blue)}
+.url-card.secondary{border-left-color:var(--amber)}
+.url-card.utility{border-left-color:var(--muted)}
+.url-path{font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;color:var(--blue);white-space:nowrap}
+.url-card.secondary .url-path{color:var(--amber)}
+.url-card.utility .url-path{color:var(--muted)}
+.url-title{font-size:14px;font-weight:700;margin-bottom:2px}
+.url-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.url-badge{display:inline-block;font-family:'Roboto Mono',monospace;font-size:9px;padding:1px 6px;border-radius:2px;font-weight:700;margin-right:4px;margin-top:4px}
+.badge-live{background:#e8f5e9;color:var(--green);border:1px solid #a5d6a7}
+.badge-tool{background:#e8eef8;color:var(--blue);border:1px solid #90caf9}
+.badge-history{background:#f5f5f5;color:var(--muted);border:1px solid #ddd}
+.badge-admin{background:#fff3cd;color:#856404;border:1px solid #ffc107}
+</style>
+</head>
+<body>
+<div id="hdr">
+  <span class="hbadge">FVL</span>
+  <span class="htitle">Fowler Volleyball <span>League</span></span>
+  <a href="/" class="hbtn">← Home</a>
+</div>
+<div class="page">
+  <h1>Site Map</h1>
+  <p class="sub">All pages in the FVL site — Fowler Volleyball League · Season 3</p>
+
+  <div class="section-title">Main</div>
+  <div class="url-grid">
+    <a href="/" class="url-card primary">
+      <div class="url-path">/</div>
+      <div><div class="url-title">Home — FVL Overview</div><div class="url-desc">Season 3 live banner, team cards, current month schedule widget, Season 2 final standings, format details, governance &amp; feedback tabs.</div><span class="url-badge badge-live">LIVE</span></div>
+    </a>
+    <a href="/season3" class="url-card primary">
+      <div class="url-path">/season3</div>
+      <div><div class="url-title">Season 3 — Schedule &amp; Standings</div><div class="url-desc">Live Season 3 page with 4 tabs: Teams (rosters), Schedule (6 months with score entry), Standings (running totals), Rotation (shift-right table). Admin score entry available.</div><span class="url-badge badge-live">LIVE</span></div>
+    </a>
+  </div>
+
+  <div class="section-title">Tools</div>
+  <div class="url-grid">
+    <a href="/draft" class="url-card secondary">
+      <div class="url-path">/draft</div>
+      <div><div class="url-title">Draft Simulator</div><div class="url-desc">Mock draft tool for captains and wingmen. Option 1 (pair picks + snake) and Option 2 (R0 bonus + skip rounds). Per-user saves persisted to DB. 12 users supported.</div><span class="url-badge badge-tool">TOOL</span></div>
+    </a>
+    <a href="/roster" class="url-card secondary">
+      <div class="url-path">/roster</div>
+      <div><div class="url-title">Player Registry</div><div class="url-desc">All players across seasons with skills assignment (Spiker, Setter, Defense, All-rounder, Developing), tier, display name, notes. Edit mode per player card. Filters by season, skill, role.</div><span class="url-badge badge-tool">TOOL</span></div>
+    </a>
+    <a href="/compare" class="url-card secondary">
+      <div class="url-path">/compare</div>
+      <div><div class="url-title">Draft Comparison</div><div class="url-desc">Side-by-side comparison of two saved draft simulations. Shows per-team similarity %, swap counts, pick-by-pick diff table. Default: Amrendra (Opt 2) vs Sachin (Opt 1).</div><span class="url-badge badge-tool">TOOL</span></div>
+    </a>
+  </div>
+
+  <div class="section-title">History</div>
+  <div class="url-grid">
+    <a href="/season2" class="url-card utility">
+      <div class="url-path">/season2</div>
+      <div><div class="url-title">Season 2 — Historical Record</div><div class="url-desc">Final standings, monthly champions (Nov 2025 – Apr 2026), team rosters, season overview. Falcons were Season Champions; Dragons won March &amp; April.</div><span class="url-badge badge-history">HISTORY</span></div>
+    </a>
+  </div>
+
+  <div class="section-title">Admin</div>
+  <div class="url-grid">
+    <a href="/admin" class="url-card utility">
+      <div class="url-path">/admin</div>
+      <div><div class="url-title">Admin Panel</div><div class="url-desc">Season 3 seeding (teams, 6-month schedule, standings), draft save cloning. Password protected.</div><span class="url-badge badge-admin">ADMIN</span></div>
+    </a>
+  </div>
+
+  <div style="margin-top:8px;padding:12px 16px;background:var(--light);border:1px solid var(--border);border-radius:4px;font-size:12px;color:var(--muted)">
+    <strong style="color:var(--text)">API Base:</strong> <span style="font-family:'Roboto Mono',monospace">/api/</span> — 
+    <span style="font-family:'Roboto Mono',monospace">/api/health · /api/s3/teams · /api/s3/schedule · /api/s3/standings · /api/players · /api/draft-saves · /api/standings · /api/teams</span>
+  </div>
+</div>
+</body>
+</html>
