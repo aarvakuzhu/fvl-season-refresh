@@ -40,14 +40,14 @@ nav{background:#0d1b2a;border-bottom:1px solid #1a2f4a;height:50px;display:flex;
 
 /* TEAM CARDS */
 .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.team-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
-.team-header{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.team-name{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;letter-spacing:.5px}
-.team-captain{font-size:11px;font-family:'Source Code Pro',monospace;opacity:.75;margin-top:2px}
-.team-initial{font-family:'Oswald',sans-serif;font-size:48px;font-weight:700;opacity:.15;line-height:1}
-.team-roster{padding:10px 16px 14px;display:flex;flex-wrap:wrap;gap:5px}
-.player-tag{font-size:11px;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
-.player-tag.captain{border-color:currentColor;font-weight:600}
+.team-card{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.team-stripe{height:5px}
+.team-body{padding:12px 14px 8px}
+.team-name{font-family:'Oswald',sans-serif;font-size:21px;font-weight:700;letter-spacing:.5px;margin-bottom:1px}
+.team-captain{font-size:11px;font-family:'Source Code Pro',monospace;color:var(--muted);margin-bottom:8px}
+.team-roster{padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:4px;border-top:1px solid var(--border2);padding-top:8px}
+.player-tag{font-size:11px;padding:2px 8px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.player-tag.captain{font-weight:700;background:#fff}
 
 /* SCHEDULE */
 .month-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px}
@@ -65,23 +65,31 @@ nav{background:#0d1b2a;border-bottom:1px solid #1a2f4a;height:50px;display:flex;
 .month-body{display:none;border-top:1px solid var(--border)}
 .month-body.open{display:block}
 .section-label{font-family:'Oswald',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);padding:10px 16px 6px;background:#f8fafc;border-bottom:1px solid var(--border)}
+.schedule-search{width:100%;padding:9px 14px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit;outline:none;margin-bottom:12px;background:#fff}
+.schedule-search:focus{border-color:var(--accent)}
+.no-results{text-align:center;padding:20px;color:var(--muted);font-size:13px;font-style:italic}
 
 /* GAME ROWS */
-.game-row{display:grid;grid-template-columns:70px 1fr 1fr;border-bottom:1px solid var(--border);min-height:44px}
-.game-row:last-child{border:none}
-.time-cell{display:flex;align-items:center;justify-content:center;font-family:'Source Code Pro',monospace;font-size:10px;color:var(--muted);background:#f8fafc;border-right:1px solid var(--border);padding:6px}
-.game-cell{display:flex;align-items:center;gap:8px;padding:8px 12px;border-right:1px solid var(--border)}
-.game-cell:last-child{border-right:none}
-.g-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.g-name{font-size:12px;font-weight:600;flex:1}
-.g-score{font-family:'Source Code Pro',monospace;font-size:13px;font-weight:600;color:var(--accent);min-width:32px;text-align:center}
-.g-type{font-family:'Source Code Pro',monospace;font-size:9px;padding:1px 5px;border-radius:2px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;flex-shrink:0}
-.g-type.final{border-color:var(--gold);color:var(--gold)}
-.g-type.third{border-color:var(--accent);color:var(--accent)}
+.slot-group{border-bottom:1px solid var(--border)}
+.slot-group:last-child{border:none}
+.slot-header{display:grid;grid-template-columns:72px 1fr;background:#f8fafc;border-bottom:1px solid var(--border2)}
+.slot-time{padding:6px 10px;font-family:'Source Code Pro',monospace;font-size:10px;color:var(--muted);font-weight:600;display:flex;align-items:center;border-right:1px solid var(--border2)}
+.slot-empty{padding:5px 10px;font-size:10px;color:#ccc;font-family:'Source Code Pro',monospace;display:flex;align-items:center}
+.court-row{display:grid;grid-template-columns:72px 1fr;border-bottom:1px solid var(--border2);min-height:42px}
+.court-row:last-child{border-bottom:none}
+.court-label{padding:6px 8px;font-family:'Source Code Pro',monospace;font-size:9px;font-weight:700;color:var(--muted);background:#f8fafc;border-right:1px solid var(--border2);display:flex;align-items:center;justify-content:center;text-align:center;text-transform:uppercase;letter-spacing:.5px;line-height:1.2}
+.game-cell{display:flex;align-items:center;gap:8px;padding:8px 14px}
+.g-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.g-name{font-size:13px;font-weight:700;flex:1}
+.g-vs{font-size:11px;color:var(--muted);font-weight:500;padding:0 4px}
+.g-score{font-family:'Source Code Pro',monospace;font-size:14px;font-weight:700;min-width:52px;text-align:center;background:#f0f4ff;border-radius:3px;padding:2px 8px}
+.g-type{font-family:'Source Code Pro',monospace;font-size:9px;padding:2px 6px;border-radius:2px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;flex-shrink:0;font-weight:700}
+.g-type.final{border-color:var(--gold);color:var(--gold);background:#fffbeb}
+.g-type.third{border-color:var(--accent);color:var(--accent);background:#eff6ff}
 .g-type.fifth{border-color:var(--muted);color:var(--muted)}
-.score-btn{font-size:10px;padding:2px 8px;border:1px solid var(--border);background:transparent;color:var(--accent);border-radius:2px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
-.score-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-.lock-btn{font-size:11px;padding:4px 10px;border:none;background:var(--predators);color:#000;border-radius:3px;cursor:pointer;font-weight:700;font-family:inherit}
+.score-btn{font-size:11px;padding:3px 10px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:3px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0;font-weight:600}
+.score-btn:hover{background:var(--accent);color:#fff}
+.lock-btn{font-size:11px;padding:4px 10px;border:none;background:#1b5e20;color:#fff;border-radius:3px;cursor:pointer;font-weight:700;font-family:inherit}
 
 /* STANDINGS */
 .standings-wrap{overflow-x:auto}
@@ -200,6 +208,7 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
 
 <!-- SCHEDULE -->
 <div class="panel" id="panel-schedule">
+  <input class="schedule-search" type="text" id="schedule-search" placeholder="🔍 Search team name…" oninput="filterSchedule()">
   <div id="schedule-list"></div>
 </div>
 
@@ -289,15 +298,13 @@ function toggleAdmin() {
 function renderTeams() {
   document.getElementById('teams-grid').innerHTML = TEAMS.map(t => `
     <div class="team-card">
-      <div class="team-header" style="background:linear-gradient(135deg,${t.color}15,${t.color}05);border-bottom:1px solid ${t.color}30">
-        <div>
-          <div class="team-name" style="color:${t.color}">${t.name}</div>
-          <div class="team-captain" style="color:${t.color}99">⭐ ${t.captain}</div>
-        </div>
-        <div class="team-initial" style="color:${t.color}">${t.name[0]}</div>
+      <div class="team-stripe" style="background:${t.color}"></div>
+      <div class="team-body">
+        <div class="team-name" style="color:${t.color}">${t.name}</div>
+        <div class="team-captain">⭐ ${t.captain} &nbsp;·&nbsp; <span style="color:var(--muted)">${(ROSTERS[t.name]||[]).length+1} players</span></div>
       </div>
       <div class="team-roster">
-        <span class="player-tag captain" style="color:${t.color};border-color:${t.color}55">${t.captain}</span>
+        <span class="player-tag captain" style="color:${t.color};border-color:${t.color}66">${t.captain}</span>
         ${(ROSTERS[t.name]||[]).map(p=>`<span class="player-tag">${p}</span>`).join('')}
       </div>
     </div>`).join('');
@@ -338,24 +345,38 @@ function monthCard(ev, mi) {
   const played   = ev.games.filter(g => g.played).length;
   const total    = ev.games.length;
 
-  // Group RR by slot
+  // Group RR by slot, then show each court as its own labeled row
   const slotMap = {};
   rrGames.forEach(g => { if (!slotMap[g.slot]) slotMap[g.slot]=[]; slotMap[g.slot].push(g); });
 
-  const rrRows = Object.values(slotMap).map(games => `
-    <div class="game-row">
-      <div class="time-cell">${TIMES[games[0].slot]||''}</div>
-      ${games.map(g => gameCell(g, ev.month, ev.games.indexOf(g))).join('')}
-    </div>`).join('');
-
-  const finRows = finGames.map(g => `
-    <div class="game-row">
-      <div class="time-cell">${TIMES[g.slot]||''}</div>
-      ${gameCell(g, ev.month, ev.games.indexOf(g))}
-      <div class="game-cell" style="background:var(--surface2);justify-content:center">
-        <span style="font-size:11px;color:var(--muted)">—</span>
+  const rrRows = Object.values(slotMap).map(games => {
+    const time = TIMES[games[0].slot]||'';
+    // Sort by court number
+    const sorted = [...games].sort((a,b)=>(a.court||1)-(b.court||1));
+    const courtRows = sorted.map((g,ci) => `
+      <div class="court-row">
+        <div class="court-label">Court ${g.court||ci+1}</div>
+        ${gameCell(g, ev.month, ev.games.indexOf(g))}
+      </div>`).join('');
+    return `<div class="slot-group">
+      <div class="slot-header">
+        <div class="slot-time">${time}</div>
       </div>
-    </div>`).join('');
+      ${courtRows}
+    </div>`;
+  }).join('');
+
+  // Finals — each on its own row with court label
+  const finRows = finGames.map(g => {
+    const courtLabel = {final:'Final',third:'Court 2',fifth:'Court 1'}[g.type]||'Court';
+    return `<div class="slot-group">
+      <div class="slot-header"><div class="slot-time">${TIMES[g.slot]||''}</div></div>
+      <div class="court-row">
+        <div class="court-label">${courtLabel}</div>
+        ${gameCell(g, ev.month, ev.games.indexOf(g))}
+      </div>
+    </div>`;
+  }).join('');
 
   const isOpen = mi === 0;
   return `
@@ -385,21 +406,53 @@ function monthCard(ev, mi) {
 
 function gameCell(g, month, idx) {
   const typeLabel = {rr:'RR',final:'FINAL',third:'3RD',fifth:'5TH'}[g.type];
-  const typeCls   = g.type;
   const isPlaceholder = g.teamA?.startsWith('#') || g.teamB?.startsWith('#');
-  const teamAdisp = isPlaceholder ? `<span style="color:var(--muted)">${g.teamA}</span>` : `${dot(g.teamA)} <span class="g-name">${g.teamA}</span>`;
-  const teamBdisp = isPlaceholder ? `<span style="color:var(--muted)">${g.teamB}</span>` : `<span class="g-name">${g.teamB}</span> ${dot(g.teamB)}`;
-  const scoreDisp = g.played
-    ? `<span class="g-score" style="color:${g.scoreA>g.scoreB?teamColor(g.teamA):teamColor(g.teamB)}">${g.scoreA}–${g.scoreB}</span>`
+  const winnerA = g.played && g.scoreA > g.scoreB;
+  const winnerB = g.played && g.scoreB > g.scoreA;
+  const teamA = isPlaceholder
+    ? `<span style="color:var(--muted);font-weight:500">${g.teamA}</span>`
+    : `<span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0"><span class="g-dot" style="background:${teamColor(g.teamA)}"></span><span class="g-name" style="${winnerA?'color:'+teamColor(g.teamA)+';':'color:var(--text);'}">${g.teamA}</span></span>`;
+  const teamB = isPlaceholder
+    ? `<span style="color:var(--muted);font-weight:500">${g.teamB}</span>`
+    : `<span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;justify-content:flex-end"><span class="g-name" style="${winnerB?'color:'+teamColor(g.teamB)+';':'color:var(--text);'}">${g.teamB}</span><span class="g-dot" style="background:${teamColor(g.teamB)}"></span></span>`;
+  const score = g.played
+    ? `<span class="g-score" style="background:#f0f4ff;color:var(--accent)">${g.scoreA}–${g.scoreB}</span>`
     : (isAdmin && !events.find(e=>e.month===month)?.locked && !isPlaceholder)
       ? `<button class="score-btn" onclick="openModal(${month},${idx})">+ Score</button>`
-      : `<span class="g-score" style="color:var(--muted)">–</span>`;
-  return `<div class="game-cell">
-    <span class="g-type ${typeCls}">${typeLabel}</span>
-    ${teamAdisp}
-    ${scoreDisp}
-    ${teamBdisp}
+      : `<span class="g-score" style="background:transparent;color:#ccc">vs</span>`;
+  return `<div class="game-cell" style="flex:1">
+    ${g.type!=='rr'?`<span class="g-type ${g.type}">${typeLabel}</span>`:''}
+    ${teamA}
+    ${score}
+    ${teamB}
   </div>`;
+}
+
+function filterSchedule() {
+  const q = document.getElementById('schedule-search')?.value?.toLowerCase().trim();
+  document.querySelectorAll('.month-card').forEach(card => {
+    if (!q) { card.style.display=''; return; }
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(q) ? '' : 'none';
+    // If matches, open the month body
+    if (text.includes(q)) {
+      const body = card.querySelector('.month-body');
+      const chev = card.querySelector('.chevron');
+      if (body && !body.classList.contains('open')) {
+        body.classList.add('open');
+        chev?.classList.add('open');
+      }
+    }
+  });
+  // Show no-results if all hidden
+  const visible = [...document.querySelectorAll('.month-card')].filter(c=>c.style.display!=='none');
+  const el = document.getElementById('schedule-list');
+  const noRes = el.querySelector('.no-results');
+  if (!visible.length) {
+    if (!noRes) el.insertAdjacentHTML('afterbegin','<div class="no-results">No matches for "'+q+'"</div>');
+  } else {
+    noRes?.remove();
+  }
 }
 
 function toggleMonth(month) {
