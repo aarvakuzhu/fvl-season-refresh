@@ -408,6 +408,21 @@ app.get('/admin', (req, res) => {
 });
 
 // ── Frontend (catch-all) ─────────────────────────────────────────────
+// ── Sitemap ──────────────────────────────────────────────────────────────
+app.get('/sitemap', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'sitemap.html'));
+});
+
+// ── Season 2 history page ────────────────────────────────────────────────
+app.get('/season2', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'season2.html'));
+});
+
+// ── Season 3 page ─────────────────────────────────────────────────────
+app.get('/season3', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'season3.html'));
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -684,17 +699,3 @@ function computeFullStandings(ev) {
   return result;
 }
 
-// ── Sitemap ──────────────────────────────────────────────────────────────
-app.get('/sitemap', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sitemap.html'));
-});
-
-// ── Season 2 history page ────────────────────────────────────────────────
-app.get('/season2', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'season2.html'));
-});
-
-// ── Season 3 page ─────────────────────────────────────────────────────
-app.get('/season3', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'season3.html'));
-});
