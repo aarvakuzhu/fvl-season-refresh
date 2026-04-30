@@ -516,24 +516,42 @@ function setTeamFilter(team,btn){
   _teamF=team;
   document.querySelectorAll('#team-chips .chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  applyFilters();
+  if(!team && !_courtF) restoreDefaultMonths();
+  else applyFilters();
 }
 function setCourtFilter(court,btn){
   _courtF=court;
   document.querySelectorAll('#court-chips .chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  applyFilters();
+  if(!court && !_teamF) restoreDefaultMonths();
+  else applyFilters();
+}
+function restoreDefaultMonths(){
+  document.querySelectorAll('.game-row').forEach(r=>r.classList.remove('hidden'));
+  document.querySelectorAll('.month-card').forEach((card,i)=>{
+    const body=card.querySelector('.month-body');
+    const chev=card.querySelector('.chevron');
+    body?.classList.toggle('open', i===0);
+    chev?.classList.toggle('open', i===0);
+  });
 }
 function applyFilters(){
   document.querySelectorAll('.game-row').forEach(row=>{
-    const teamOk  = !_teamF  || (row.dataset.teams||'').includes(_teamF.toLowerCase());
-    const courtOk = !_courtF || (row.dataset.type!=='rr')||parseInt(row.dataset.court)===_courtF;
-    row.classList.toggle('hidden',!teamOk||!courtOk);
+    // Use comma-delimited exact match to avoid "raptors" matching inside "predators" etc.
+    const teams = (row.dataset.teams||'').split(',');
+    const teamOk  = !_teamF || teams.includes(_teamF.toLowerCase());
+    const courtOk = !_courtF || row.dataset.type!=='rr' || parseInt(row.dataset.court)===_courtF;
+    row.classList.toggle('hidden', !teamOk || !courtOk);
   });
+  // Open months with visible rows, collapse months with no visible rows
   document.querySelectorAll('.month-card').forEach(card=>{
-    if(_teamF||_courtF){
-      const vis=card.querySelectorAll('.game-row:not(.hidden)');
-      if(vis.length){card.querySelector('.month-body')?.classList.add('open');card.querySelector('.chevron')?.classList.add('open');}
+    const body  = card.querySelector('.month-body');
+    const chev  = card.querySelector('.chevron');
+    const vis   = card.querySelectorAll('.game-row:not(.hidden)');
+    if (_teamF || _courtF) {
+      const hasVis = vis.length > 0;
+      body?.classList.toggle('open', hasVis);
+      chev?.classList.toggle('open', hasVis);
     }
   });
 }
