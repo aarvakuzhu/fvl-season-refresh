@@ -1,481 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>FVL Season 3</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --navy:#0d1b2a;--navy2:#1a2f4a;--blue:#1a5fb4;--blue2:#e8eef8;
-      --red:#c62828;--green:#1b7a1b;--green2:#e8f5e9;--amber:#d35400;--gold:#b8860b;
-      --bg:#f0f2f5;--white:#fff;--border:#dde3ed;--border2:#eaeef5;
-      --text:#1a1a2e;--muted:#64748b;--light:#f8fafc;
-      --dragons:#c62828;--predators:#1b5e20;--falcons:#1a3566;
-      --spartans:#311b92;--titans:#e65100;--raptors:#004d40;
-    }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
-    #hdr{background:var(--navy);height:52px;display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-    .hbadge{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;padding:2px 8px;border-radius:2px}
-    .htitle{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#fff}
-    .htitle em{color:#f5c842;font-style:normal}
-    .hright{margin-left:auto;display:flex;gap:8px;align-items:center}
-    .hbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:2px;text-decoration:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
-    .hbtn-ghost{background:transparent;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.25)}.hbtn-ghost:hover{color:#fff}
-    .hbtn-amber{background:#f5c842;color:var(--navy);font-weight:700}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FVL Season 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0e17; --surface:#111827; --surface2:#1a2236; --border:#242f45;
+  --text:#e8edf5; --muted:#6b7a99; --accent:#3b82f6;
+  --dragons:#ef4444; --predators:#22c55e; --falcons:#3b82f6;
+  --spartans:#8b5cf6; --titans:#f97316; --raptors:#14b8a6;
+  --gold:#f5c842;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Source Sans 3',sans-serif;min-height:100vh}
 
-    /* TABS */
-    #tabs{background:#fff;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 16px;gap:0;position:sticky;top:52px;z-index:99}
-    .tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
-    .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
-    .tab:hover{color:var(--text)}
+/* NAV */
+nav{background:var(--surface);border-bottom:1px solid var(--border);height:50px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
+.nav-badge{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;background:var(--accent);color:#fff;padding:3px 8px;border-radius:2px}
+.nav-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:var(--text);letter-spacing:.5px}
+.nav-title span{color:var(--gold)}
+.nav-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.nav-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;text-decoration:none;transition:all .15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--text)}
+.nav-btn.admin-active{border-color:var(--gold);color:var(--gold)}
 
-    .page{max-width:1400px;margin:0 auto;padding:14px 16px}
-    .panel{display:none}.panel.on{display:block}
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px;gap:0;overflow-x:auto}
+.tab-btn{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;letter-spacing:.5px;padding:12px 20px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-    /* TEAMS GRID */
-    .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px}
-    .team-card{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden}
-    .team-hd{padding:10px 14px;color:#fff;display:flex;justify-content:space-between;align-items:center}
-    .team-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:.5px}
-    .team-captain{font-size:11px;opacity:.85;font-family:'DM Mono',monospace}
-    .team-players{padding:8px 14px;display:flex;flex-wrap:wrap;gap:5px}
-    .player-chip{font-size:11px;padding:2px 8px;border-radius:3px;background:var(--light);border:1px solid var(--border);color:var(--text)}
+/* PANELS */
+.page{max-width:1320px;margin:0 auto;padding:20px}
+.panel{display:none}
+.panel.active{display:block}
 
-    /* SCHEDULE */
-    .month-section{background:#fff;border:1px solid var(--border);border-radius:4px;margin-bottom:12px;overflow:hidden}
-    .month-hd{padding:10px 14px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;cursor:pointer;justify-content:space-between}
-    .month-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
-    .month-date{font-size:12px;color:rgba(255,255,255,.65);font-family:'DM Mono',monospace}
-    .month-champ{font-size:11px;background:#f5c842;color:var(--navy);padding:2px 8px;border-radius:2px;font-weight:700}
-    .month-locked{font-size:10px;background:var(--green);color:#fff;padding:2px 6px;border-radius:2px;font-weight:700}
-    .month-body{padding:12px 14px}
-    .slot-row{display:grid;grid-template-columns:80px 1fr 1fr;gap:0;border-bottom:1px solid var(--border2);font-size:13px}
-    .slot-row:last-child{border:none}
-    .slot-time{padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);font-weight:600;background:var(--light);border-right:1px solid var(--border2)}
-    .slot-game{padding:7px 10px;display:flex;align-items:center;gap:6px;border-right:1px solid var(--border2)}
-    .slot-game:last-child{border:none}
-    .g-team{font-size:12px;font-weight:600;flex:1}
-    .g-score{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;min-width:50px;text-align:center;color:var(--blue)}
-    .g-vs{font-size:11px;color:var(--muted);font-weight:600}
-    .g-type{font-size:9px;padding:1px 5px;border-radius:2px;font-weight:700;font-family:'DM Mono',monospace;background:var(--light);color:var(--muted);border:1px solid var(--border2)}
-    .g-type.final{background:#fff3cd;color:#856404;border-color:#ffc107}
-    .g-type.third{background:#e3f2fd;color:#1565c0;border-color:#90caf9}
-    .g-type.fifth{background:var(--light);color:var(--muted);border-color:var(--border)}
-    .g-played{color:var(--green);font-weight:700}
-    .team-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* TEAM CARDS */
+.teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.team-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.team-header{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.team-name{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;letter-spacing:.5px}
+.team-captain{font-size:11px;font-family:'Source Code Pro',monospace;opacity:.75;margin-top:2px}
+.team-initial{font-family:'Oswald',sans-serif;font-size:48px;font-weight:700;opacity:.15;line-height:1}
+.team-roster{padding:10px 16px 14px;display:flex;flex-wrap:wrap;gap:5px}
+.player-tag{font-size:11px;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
+.player-tag.captain{border-color:currentColor;font-weight:600}
 
-    /* RESULTS ENTRY */
-    .result-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
-    .result-modal.on{display:flex}
-    .result-box{background:#fff;border-radius:4px;padding:24px;max-width:400px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)}
-    .result-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:14px}
-    .score-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-    .score-team{flex:1;font-size:13px;font-weight:700;text-align:center}
-    .score-inp{width:64px;padding:8px;border:2px solid var(--border);border-radius:3px;font-size:20px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;outline:none}
-    .score-inp:focus{border-color:var(--blue)}
-    .score-vs{font-size:14px;font-weight:700;color:var(--muted)}
-    .pw-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-    .pw-inp{padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none}
-    .pw-inp:focus{border-color:var(--blue)}
-    .modal-btns{display:flex;gap:8px;justify-content:flex-end}
-    .btn-save{padding:8px 16px;border:none;border-radius:3px;background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer}
-    .btn-cancel{padding:8px 16px;border:1px solid var(--border);border-radius:3px;background:#fff;color:var(--muted);font-size:13px;cursor:pointer}
-    .err-msg{font-size:12px;color:var(--red);margin-bottom:8px;display:none}
+/* SCHEDULE */
+.month-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px}
+.month-header{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.month-header:hover{background:var(--surface2)}
+.month-num{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:2px;flex-shrink:0}
+.month-label{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600}
+.month-date{font-size:11px;color:var(--muted);font-family:'Source Code Pro',monospace}
+.month-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.month-progress{font-size:11px;color:var(--muted);font-family:'Source Code Pro',monospace}
+.champion-tag{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px;background:var(--gold);color:#000}
+.locked-tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;background:var(--predators);color:#000;font-family:'Source Code Pro',monospace}
+.chevron{color:var(--muted);font-size:12px;transition:transform .2s}
+.chevron.open{transform:rotate(180deg)}
+.month-body{display:none;border-top:1px solid var(--border)}
+.month-body.open{display:block}
+.section-label{font-family:'Oswald',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);padding:10px 16px 6px;background:var(--surface2)}
 
-    /* STANDINGS */
-    .standings-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden}
-    .standings-table th{background:var(--navy);color:#fff;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-    .standings-table td{padding:9px 12px;border-bottom:1px solid var(--border2);font-size:13px}
-    .standings-table tr:last-child td{border:none}
-    .standings-table tr:hover td{background:var(--light)}
-    .team-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700}
-    .team-dot-lg{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-    .champ-star{color:#f5c842;font-size:14px}
-    .month-cell{font-family:'DM Mono',monospace;font-size:11px;text-align:center;padding:4px 6px}
-    .pos-1{color:var(--gold);font-weight:700}
-    .pos-2{color:#888;font-weight:700}
-    .pos-3{color:#cd7f32;font-weight:700}
+/* GAME ROWS */
+.game-row{display:grid;grid-template-columns:70px 1fr 1fr;border-bottom:1px solid var(--border);min-height:44px}
+.game-row:last-child{border:none}
+.time-cell{display:flex;align-items:center;justify-content:center;font-family:'Source Code Pro',monospace;font-size:10px;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);padding:6px}
+.game-cell{display:flex;align-items:center;gap:8px;padding:8px 12px;border-right:1px solid var(--border)}
+.game-cell:last-child{border-right:none}
+.g-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.g-name{font-size:12px;font-weight:600;flex:1}
+.g-score{font-family:'Source Code Pro',monospace;font-size:13px;font-weight:600;color:var(--accent);min-width:32px;text-align:center}
+.g-type{font-family:'Source Code Pro',monospace;font-size:9px;padding:1px 5px;border-radius:2px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;flex-shrink:0}
+.g-type.final{border-color:var(--gold);color:var(--gold)}
+.g-type.third{border-color:var(--accent);color:var(--accent)}
+.g-type.fifth{border-color:var(--muted);color:var(--muted)}
+.score-btn{font-size:10px;padding:2px 8px;border:1px solid var(--border);background:transparent;color:var(--accent);border-radius:2px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0}
+.score-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lock-btn{font-size:11px;padding:4px 10px;border:none;background:var(--predators);color:#000;border-radius:3px;cursor:pointer;font-weight:700;font-family:inherit}
 
-    /* ROTATION VIEW */
-    .rotation-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;border:1px solid var(--border);background:#fff;border-radius:4px;overflow:hidden;font-size:12px}
-    .rg-hd{padding:8px 10px;background:var(--navy);color:#fff;font-weight:700;font-size:11px;text-align:center;font-family:'DM Mono',monospace}
-    .rg-cell{padding:7px 10px;border-bottom:1px solid var(--border2);border-right:1px solid var(--border2);text-align:center;font-size:11px;font-weight:600}
-    .rg-cell:last-child{border-right:none}
-    .rg-row:last-child .rg-cell{border-bottom:none}
+/* STANDINGS */
+.standings-wrap{overflow-x:auto}
+table.s-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.s-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);white-space:nowrap}
+.s-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.s-table tr:last-child td{border:none}
+.s-table tr:hover td{background:var(--surface2)}
+.rank-num{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--muted)}
+.rank-1 .rank-num{color:var(--gold)}
+.rank-2 .rank-num{color:#9ca3af}
+.rank-3 .rank-num{color:#cd7f32}
+.team-cell{display:flex;align-items:center;gap:8px;font-weight:600}
+.pts{font-family:'Source Code Pro',monospace;font-weight:700;font-size:16px}
+.month-pos{font-family:'Source Code Pro',monospace;font-size:12px;text-align:center;color:var(--muted)}
+.month-pos.p1{color:var(--gold);font-weight:700}
+.month-pos.p2{color:#9ca3af;font-weight:700}
+.month-pos.p3{color:#cd7f32;font-weight:700}
+.month-pos.champ::before{content:'🏆 '}
 
-    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 18px;border-radius:3px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none}
-    .toast.hide{opacity:0}
-    .skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200%;animation:sk 1.3s infinite;border-radius:4px;height:100px;margin-bottom:12px}
-    @keyframes sk{0%{background-position:200%}100%{background-position:-200%}}
-    .admin-bar{background:var(--amber);color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600}
-    .admin-bar button{padding:4px 10px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:2px;cursor:pointer;font-size:11px;font-weight:700}
-    .entry-btn{font-size:11px;padding:3px 8px;border:1px solid var(--border);background:#fff;border-radius:2px;cursor:pointer;color:var(--blue);font-family:'DM Sans',sans-serif;transition:all .15s}
-    .entry-btn:hover{background:var(--blue);color:#fff}
-    .lock-btn{font-size:11px;padding:4px 10px;border:none;background:var(--green);color:#fff;border-radius:2px;cursor:pointer;font-weight:700}
-  </style>
+/* ROTATION */
+.rot-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.rot-table th{background:var(--surface2);padding:8px 12px;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);text-align:center}
+.rot-table th:first-child{text-align:left}
+.rot-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;text-align:center}
+.rot-table tr:last-child td{border:none}
+.rot-table td:first-child{font-family:'Oswald',sans-serif;font-weight:600;text-align:left;color:var(--muted)}
+.rot-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:2px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;width:90%;max-width:380px}
+.modal-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:600;margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.score-inputs{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.score-team{flex:1;text-align:center;font-weight:600;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.score-field{width:64px;padding:10px;background:var(--surface2);border:2px solid var(--border);border-radius:4px;font-size:22px;font-weight:700;font-family:'Source Code Pro',monospace;text-align:center;color:var(--text);outline:none}
+.score-field:focus{border-color:var(--accent)}
+.score-vs{font-family:'Oswald',sans-serif;font-weight:600;color:var(--muted)}
+.modal-pw{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:6px;outline:none}
+.modal-pw:focus{border-color:var(--accent)}
+.modal-err{font-size:12px;color:var(--dragons);margin-bottom:12px;min-height:16px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.btn-primary{padding:8px 18px;border:none;background:var(--accent);color:#fff;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-secondary{padding:8px 14px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit}
+.btn-primary:hover{opacity:.9}
+
+/* ADMIN BAR */
+.admin-notice{background:rgba(245,200,66,.1);border-bottom:1px solid rgba(245,200,66,.2);padding:6px 20px;font-size:12px;color:var(--gold);display:none;align-items:center;gap:12px}
+.admin-notice button{font-size:11px;padding:2px 8px;border:1px solid rgba(245,200,66,.3);background:transparent;color:var(--gold);border-radius:2px;cursor:pointer}
+
+/* MISC */
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:4px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.toast.hide{opacity:0}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+</style>
 </head>
 <body>
 
-<div id="hdr">
-  <span class="hbadge">FVL</span>
-  <span class="htitle">Season <em>3</em> — Mini League</span>
-  <div class="hright">
-    <button class="hbtn hbtn-amber" onclick="toggleAdmin()">🔐 Admin</button>
-    <a href="/" class="hbtn hbtn-ghost">← Home</a>
+<nav>
+  <span class="nav-badge">FVL</span>
+  <span class="nav-title">Season <span>3</span> · Mini League</span>
+  <div class="nav-right">
+    <button class="nav-btn" id="admin-btn" onclick="toggleAdmin()">🔐 Admin</button>
+    <a href="/" class="nav-btn">← Home</a>
   </div>
-</div>
+</nav>
 
-<div id="admin-bar" class="admin-bar" style="display:none">
-  🔐 Admin mode active
-  <button onclick="lockMonth()">🔒 Lock Month</button>
+<div class="admin-notice" id="admin-notice">
+  🔐 Admin mode active — you can enter scores and lock months
   <button onclick="toggleAdmin()">Exit</button>
 </div>
 
-<div id="tabs">
-  <div class="tab on"  data-tab="teams"     onclick="showTab('teams')">🏐 Teams</div>
-  <div class="tab"     data-tab="schedule"  onclick="showTab('schedule')">📅 Schedule</div>
-  <div class="tab"     data-tab="standings" onclick="showTab('standings')">🏆 Standings</div>
-  <div class="tab"     data-tab="rotation"  onclick="showTab('rotation')">🔄 Rotation</div>
+<div class="tabs">
+  <button class="tab-btn active" data-panel="teams"    onclick="switchTab(this)">🏐 Teams</button>
+  <button class="tab-btn"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</button>
+  <button class="tab-btn"        data-panel="standings"onclick="switchTab(this)">🏆 Standings</button>
+  <button class="tab-btn"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</button>
 </div>
 
-<!-- RESULT ENTRY MODAL -->
-<div class="result-modal" id="result-modal">
-  <div class="result-box">
-    <div class="result-title" id="modal-title">Enter Result</div>
-    <div class="err-msg" id="modal-err"></div>
-    <div class="score-row">
-      <div class="score-team" id="modal-teamA">Team A</div>
-      <input class="score-inp" type="number" id="score-a" min="0" max="30" placeholder="0">
-      <span class="score-vs">vs</span>
-      <input class="score-inp" type="number" id="score-b" min="0" max="30" placeholder="0">
-      <div class="score-team" id="modal-teamB">Team B</div>
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="m-title">Enter Result</div>
+    <div class="modal-sub"  id="m-sub"></div>
+    <div class="score-inputs">
+      <div class="score-team">
+        <span class="dot" id="m-dot-a"></span>
+        <span id="m-name-a">Team A</span>
+        <input class="score-field" type="number" id="m-score-a" min="0" max="30">
+      </div>
+      <span class="score-vs">VS</span>
+      <div class="score-team">
+        <input class="score-field" type="number" id="m-score-b" min="0" max="30">
+        <span id="m-name-b">Team B</span>
+        <span class="dot" id="m-dot-b"></span>
+      </div>
     </div>
-    <div class="pw-row">
-      <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Admin Password</label>
-      <input class="pw-inp" type="password" id="modal-pw" placeholder="Password">
-    </div>
+    <input class="modal-pw" type="password" id="m-pw" placeholder="Admin password" autocomplete="current-password">
+    <div class="modal-err" id="m-err"></div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save"   onclick="submitResult()">💾 Save</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary"   onclick="submitScore()">Save Result</button>
     </div>
   </div>
 </div>
 
 <div class="page">
 
-<!-- TEAMS TAB -->
-<div class="panel on" id="panel-teams">
-  <div class="teams-grid" id="teams-grid">
-    <div class="skel"></div><div class="skel"></div><div class="skel"></div>
-    <div class="skel"></div><div class="skel"></div><div class="skel"></div>
-  </div>
+<!-- TEAMS -->
+<div class="panel active" id="panel-teams">
+  <div class="teams-grid" id="teams-grid"></div>
 </div>
 
-<!-- SCHEDULE TAB -->
+<!-- SCHEDULE -->
 <div class="panel" id="panel-schedule">
   <div id="schedule-list"></div>
 </div>
 
-<!-- STANDINGS TAB -->
+<!-- STANDINGS -->
 <div class="panel" id="panel-standings">
-  <div style="overflow-x:auto">
-    <table class="standings-table" id="standings-table">
+  <div class="standings-wrap">
+    <table class="s-table">
       <thead><tr>
-        <th>#</th><th>Team</th><th>Pts</th><th>W</th><th>🏆</th>
+        <th style="width:40px">#</th>
+        <th>Team</th>
+        <th>Pts</th><th>W</th><th>🏆</th>
         <th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th>
       </tr></thead>
-      <tbody id="standings-body"><tr><td colspan="11" style="padding:20px;text-align:center;color:var(--muted)">No results yet</td></tr></tbody>
+      <tbody id="standings-body">
+        <tr><td colspan="11" class="empty">No results yet — season starting May 2026</td></tr>
+      </tbody>
     </table>
   </div>
 </div>
 
-<!-- ROTATION TAB -->
+<!-- ROTATION -->
 <div class="panel" id="panel-rotation">
-  <div style="margin-bottom:10px;font-size:13px;color:var(--muted)">Each team shifts right by one position every month. Same matchup grid applies — opponents change naturally.</div>
-  <div class="rotation-grid" id="rotation-grid"></div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Each team shifts right by one position every month. T1–T6 positions determine matchups — opponents change naturally each month.</p>
+  <div style="overflow-x:auto"><table class="rot-table" id="rot-table"></table></div>
 </div>
 
-</div>
+</div><!-- /page -->
 <div class="toast hide" id="toast"></div>
 
 <script>
+// ── DATA ──────────────────────────────────────────────────────────────
 const TEAMS = [
-  {name:'Dragons',   captain:'Anil',     color:'#c62828', players:['Ishant','Jugal','Krupa','Naren','Saravanan','Venkat']},
-  {name:'Predators', captain:'Harsha',   color:'#1b5e20', players:['Gopal','Mukhesh','Pawan','Rakesh','Sachin','Uday B']},
-  {name:'Falcons',   captain:'Karthik',  color:'#1a3566', players:['Ashok','Divyanshu','Kiran','Naveen','Raja S','Vikas']},
-  {name:'Spartans',  captain:'Koti',     color:'#311b92', players:['Keshav','Krishna','Rahul','Rajan','Santosh','Suri']},
-  {name:'Titans',    captain:'Pratik',   color:'#e65100', players:['Chandu','Raja Vasu','Rajesh','Ritesh','Sunil','Surendra K']},
-  {name:'Raptors',   captain:'Shanthan', color:'#004d40', players:['Ahmed','Amrendra','Chandra','Rizwan','Ronak','Uday K']},
+  {name:'Dragons',   captain:'Anil',     color:'#ef4444'},
+  {name:'Predators', captain:'Harsha',   color:'#22c55e'},
+  {name:'Falcons',   captain:'Karthik',  color:'#3b82f6'},
+  {name:'Spartans',  captain:'Koti',     color:'#8b5cf6'},
+  {name:'Titans',    captain:'Pratik',   color:'#f97316'},
+  {name:'Raptors',   captain:'Shanthan', color:'#14b8a6'},
 ];
-const MONTHS = ['May 2026','June 2026','July 2026','August 2026','September 2026','October 2026'];
-const TIMES  = ['2:00 PM','2:25 PM','2:50 PM','3:15 PM','3:40 PM','4:05 PM','4:30 PM','4:55 PM'];
+const ROSTERS = {
+  Dragons:   ['Ishant','Jugal','Krupa','Naren','Saravanan','Venkat'],
+  Predators: ['Gopal','Mukhesh','Pawan','Rakesh','Sachin','Uday B'],
+  Falcons:   ['Ashok','Divyanshu','Kiran','Naveen','Raja S','Vikas'],
+  Spartans:  ['Keshav','Krishna','Rahul','Rajan','Santosh','Suri'],
+  Titans:    ['Chandu','Raja Vasu','Rajesh','Ritesh','Sunil','Surendra K'],
+  Raptors:   ['Ahmed','Amrendra','Chandra','Rizwan','Ronak','Uday K'],
+};
+const MONTH_LABELS = ['May 2026','June 2026','July 2026','August 2026','September 2026','October 2026'];
+const MONTH_DATES  = ['Sun 3 May','Sun 7 Jun','Sun 5 Jul','Sun 2 Aug','Sun 6 Sep','Sun 4 Oct'];
+const TIMES = ['2:00 PM','2:25 PM','2:50 PM','3:15 PM','3:40 PM','4:05 PM','4:30 PM','4:55 PM'];
 
 let isAdmin = false;
-let currentModal = null; // {month, gameIndex}
-let allEvents = [];
+let events = [];
+let pendingModal = null;
 
-function teamColor(name) { return TEAMS.find(t=>t.name===name)?.color||'#888'; }
-function dot(name,lg=false) { return `<span class="${lg?'team-dot-lg':'team-dot'}" style="background:${teamColor(name)}"></span>`; }
+function teamColor(n){ return TEAMS.find(t=>t.name===n)?.color||'#888'; }
+function dot(n,sz=6){ return `<span class="dot" style="width:${sz}px;height:${sz}px;background:${teamColor(n)}"></span>`; }
 
-// ── TABS ──────────────────────────────────────────────────────────
-function showTab(id) {
-  document.querySelectorAll('#tabs .tab').forEach(t => t.classList.toggle('on', t.dataset.tab === id));
-  document.querySelectorAll('.page > .panel').forEach(p => p.classList.remove('on'));
-  document.getElementById('panel-'+id).classList.add('on');
-  if(id==='schedule' && !allEvents.length) loadSchedule();
-  if(id==='standings') loadStandings();
-  if(id==='rotation') renderRotation();
+// ── TAB SWITCHING ─────────────────────────────────────────────────────
+function switchTab(btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById('panel-' + btn.dataset.panel);
+  if (panel) panel.classList.add('active');
+  if (btn.dataset.panel === 'schedule')  loadSchedule();
+  if (btn.dataset.panel === 'standings') loadStandings();
+  if (btn.dataset.panel === 'rotation')  renderRotation();
 }
 
-// ── ADMIN ─────────────────────────────────────────────────────────
+// ── ADMIN ─────────────────────────────────────────────────────────────
 function toggleAdmin() {
-  if (!isAdmin) {
+  if (isAdmin) {
+    isAdmin = false;
+  } else {
     const pw = prompt('Admin password:');
     if (!pw) return;
     if (pw !== 'fvl2026') { alert('Wrong password'); return; }
     isAdmin = true;
-  } else {
-    isAdmin = false;
   }
-  document.getElementById('admin-bar').style.display = isAdmin ? 'flex' : 'none';
-  if(allEvents.length) renderSchedule();
+  document.getElementById('admin-btn').classList.toggle('admin-active', isAdmin);
+  document.getElementById('admin-notice').style.display = isAdmin ? 'flex' : 'none';
+  if (events.length) renderSchedule();
 }
 
-// ── TEAMS ─────────────────────────────────────────────────────────
+// ── TEAMS ─────────────────────────────────────────────────────────────
 function renderTeams() {
   document.getElementById('teams-grid').innerHTML = TEAMS.map(t => `
     <div class="team-card">
-      <div class="team-hd" style="background:${t.color}">
+      <div class="team-header" style="background:linear-gradient(135deg,${t.color}22,${t.color}08)">
         <div>
-          <div class="team-name">${t.name}</div>
-          <div class="team-captain">⭐ ${t.captain}</div>
+          <div class="team-name" style="color:${t.color}">${t.name}</div>
+          <div class="team-captain" style="color:${t.color}99">⭐ ${t.captain}</div>
         </div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;opacity:.3">${t.name[0]}</div>
+        <div class="team-initial" style="color:${t.color}">${t.name[0]}</div>
       </div>
-      <div class="team-players">
-        ${[t.captain,...t.players].map(p=>`<span class="player-chip">${p}</span>`).join('')}
+      <div class="team-roster">
+        <span class="player-tag captain" style="color:${t.color};border-color:${t.color}55">${t.captain}</span>
+        ${(ROSTERS[t.name]||[]).map(p=>`<span class="player-tag">${p}</span>`).join('')}
       </div>
     </div>`).join('');
 }
 
-// ── SCHEDULE ──────────────────────────────────────────────────────
+// ── SCHEDULE ──────────────────────────────────────────────────────────
 async function loadSchedule() {
   const el = document.getElementById('schedule-list');
-  el.innerHTML = MONTHS.map(()=>'<div class="skel"></div>').join('');
+  if (events.length) { renderSchedule(); return; }
+  el.innerHTML = '<div class="empty">Loading schedule…</div>';
   try {
     const r = await fetch('/api/s3/schedule');
-    allEvents = await r.json();
+    if (!r.ok) throw new Error('API error');
+    events = await r.json();
+    if (!events.length) throw new Error('No events');
     renderSchedule();
   } catch(e) {
-    el.innerHTML = '<div style="padding:20px;color:var(--muted)">Could not load schedule. Make sure the season is seeded via Admin.</div>';
+    el.innerHTML = `<div class="empty">Could not load schedule.<br><small style="color:var(--muted)">${e.message} — Make sure Season 3 is seeded via /admin</small></div>`;
   }
 }
 
 function renderSchedule() {
-  const el = document.getElementById('schedule-list');
-  if (!allEvents.length) { loadSchedule(); return; }
-  el.innerHTML = allEvents.map(ev => monthSection(ev)).join('');
+  document.getElementById('schedule-list').innerHTML = events.map((ev,mi) => monthCard(ev, mi)).join('');
+  // Open first month by default
+  const first = document.getElementById('mb-1');
+  if (first) { first.classList.add('open'); document.querySelector('.chevron')?.classList.add('open'); }
 }
 
-function monthSection(ev) {
-  const rrGames  = ev.games.filter(g=>g.type==='rr');
-  const finGames = ev.games.filter(g=>g.type!=='rr');
-  const played   = ev.games.filter(g=>g.played).length;
+function monthCard(ev, mi) {
+  const rrGames  = ev.games.filter(g => g.type === 'rr');
+  const finGames = ev.games.filter(g => g.type !== 'rr');
+  const played   = ev.games.filter(g => g.played).length;
   const total    = ev.games.length;
 
   // Group RR by slot
-  const slots = {};
-  rrGames.forEach(g=>{ if(!slots[g.slot]) slots[g.slot]=[]; slots[g.slot].push(g); });
+  const slotMap = {};
+  rrGames.forEach(g => { if (!slotMap[g.slot]) slotMap[g.slot]=[]; slotMap[g.slot].push(g); });
 
-  const rrRows = Object.entries(slots).map(([slot,games]) => `
-    <div class="slot-row">
-      <div class="slot-time">${TIMES[slot]||''}</div>
-      ${games.map((g,gi) => gameCell(g, ev.month, ev.games.indexOf(g))).join('')}
+  const rrRows = Object.values(slotMap).map(games => `
+    <div class="game-row">
+      <div class="time-cell">${TIMES[games[0].slot]||''}</div>
+      ${games.map(g => gameCell(g, ev.month, ev.games.indexOf(g))).join('')}
     </div>`).join('');
 
   const finRows = finGames.map(g => `
-    <div class="slot-row">
-      <div class="slot-time">${TIMES[g.slot]||''}</div>
+    <div class="game-row">
+      <div class="time-cell">${TIMES[g.slot]||''}</div>
       ${gameCell(g, ev.month, ev.games.indexOf(g))}
-      <div class="slot-game" style="background:var(--light);justify-content:center">
+      <div class="game-cell" style="background:var(--surface2);justify-content:center">
         <span style="font-size:11px;color:var(--muted)">—</span>
       </div>
     </div>`).join('');
 
-  return `<div class="month-section">
-    <div class="month-hd" onclick="toggleMonth('m${ev.month}')">
+  const isOpen = mi === 0;
+  return `
+  <div class="month-card">
+    <div class="month-header" onclick="toggleMonth(${ev.month})">
+      <span class="month-num">M${ev.month}</span>
       <div>
-        <span class="month-title">${ev.label}</span>
-        <span class="month-date"> · ${ev.date}</span>
-        ${ev.champion?`<span class="month-champ">🏆 ${ev.champion}</span>`:''}
-        ${ev.locked?'<span class="month-locked">LOCKED</span>':''}
+        <div class="month-label">${ev.label}</div>
+        <div class="month-date">${ev.date} · 2:00–5:20 PM</div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:rgba(255,255,255,.6)">${played}/${total} played</span>
-        ${isAdmin&&!ev.locked?`<button class="lock-btn" onclick="event.stopPropagation();lockMonth(${ev.month})">🔒 Lock</button>`:''}
-        <span style="color:rgba(255,255,255,.5)">▾</span>
+      <div class="month-right">
+        ${ev.champion ? `<span class="champion-tag">🏆 ${ev.champion}</span>` : ''}
+        ${ev.locked   ? `<span class="locked-tag">LOCKED</span>` : ''}
+        <span class="month-progress">${played}/${total}</span>
+        ${isAdmin && !ev.locked ? `<button class="lock-btn" onclick="event.stopPropagation();lockMonth(${ev.month})">🔒 Lock</button>` : ''}
+        <span class="chevron ${isOpen?'open':''}">▾</span>
       </div>
     </div>
-    <div id="m${ev.month}" class="month-body">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px">Round Robin</div>
+    <div class="month-body ${isOpen?'open':''}" id="mb-${ev.month}">
+      <div class="section-label">ROUND ROBIN · 2 COURTS</div>
       ${rrRows}
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:10px 0 6px">Finals</div>
+      <div class="section-label">FINALS</div>
       ${finRows}
     </div>
   </div>`;
 }
 
-function gameCell(g, month, gameIndex) {
-  const typeLabel = {rr:'RR',final:'FINAL',third:'3rd',fifth:'5th'}[g.type];
-  const typeCls   = g.type==='rr'?'':''+g.type;
-  const score = g.played
-    ? `<span class="g-score g-played">${g.scoreA}–${g.scoreB}</span>`
-    : isAdmin && !allEvents.find(e=>e.month===month)?.locked
-      ? `<button class="entry-btn" onclick="openModal(${month},${gameIndex})">+ Score</button>`
-      : `<span class="g-score" style="color:#ccc">–</span>`;
-  const teamA = g.teamA?.startsWith('#') ? `<span style="color:var(--muted)">${g.teamA}</span>` : `${dot(g.teamA)}<span class="g-team">${g.teamA}</span>`;
-  const teamB = g.teamB?.startsWith('#') ? `<span style="color:var(--muted)">${g.teamB}</span>` : `<span class="g-team">${g.teamB}</span>${dot(g.teamB)}`;
-  return `<div class="slot-game">
+function gameCell(g, month, idx) {
+  const typeLabel = {rr:'RR',final:'FINAL',third:'3RD',fifth:'5TH'}[g.type];
+  const typeCls   = g.type;
+  const isPlaceholder = g.teamA?.startsWith('#') || g.teamB?.startsWith('#');
+  const teamAdisp = isPlaceholder ? `<span style="color:var(--muted)">${g.teamA}</span>` : `${dot(g.teamA)} <span class="g-name">${g.teamA}</span>`;
+  const teamBdisp = isPlaceholder ? `<span style="color:var(--muted)">${g.teamB}</span>` : `<span class="g-name">${g.teamB}</span> ${dot(g.teamB)}`;
+  const scoreDisp = g.played
+    ? `<span class="g-score" style="color:${g.scoreA>g.scoreB?teamColor(g.teamA):teamColor(g.teamB)}">${g.scoreA}–${g.scoreB}</span>`
+    : (isAdmin && !events.find(e=>e.month===month)?.locked && !isPlaceholder)
+      ? `<button class="score-btn" onclick="openModal(${month},${idx})">+ Score</button>`
+      : `<span class="g-score" style="color:var(--muted)">–</span>`;
+  return `<div class="game-cell">
     <span class="g-type ${typeCls}">${typeLabel}</span>
-    ${teamA}
-    ${score}
-    <span class="g-vs">vs</span>
-    ${teamB}
+    ${teamAdisp}
+    ${scoreDisp}
+    ${teamBdisp}
   </div>`;
 }
 
-function toggleMonth(id) {
-  const el = document.getElementById(id);
-  el.style.display = el.style.display==='none' ? '' : 'none';
+function toggleMonth(month) {
+  const body = document.getElementById('mb-'+month);
+  const card = body.previousElementSibling;
+  const chevron = card.querySelector('.chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron?.classList.toggle('open', !isOpen);
 }
 
-// ── RESULT MODAL ──────────────────────────────────────────────────
-function openModal(month, gameIndex) {
-  const ev = allEvents.find(e=>e.month===month);
-  const g  = ev?.games[gameIndex];
+// ── MODAL ─────────────────────────────────────────────────────────────
+function openModal(month, idx) {
+  const ev = events.find(e=>e.month===month);
+  const g  = ev?.games[idx];
   if (!g) return;
-  currentModal = {month, gameIndex};
-  document.getElementById('modal-title').textContent = `${g.teamA} vs ${g.teamB}`;
-  document.getElementById('modal-teamA').textContent = g.teamA;
-  document.getElementById('modal-teamB').textContent = g.teamB;
-  document.getElementById('score-a').value = g.scoreA ?? '';
-  document.getElementById('score-b').value = g.scoreB ?? '';
-  document.getElementById('modal-pw').value = isAdmin ? 'fvl2026' : '';
-  document.getElementById('modal-err').style.display = 'none';
-  document.getElementById('result-modal').classList.add('on');
-  document.getElementById('score-a').focus();
+  pendingModal = {month, idx};
+  document.getElementById('m-title').textContent = `${g.teamA} vs ${g.teamB}`;
+  document.getElementById('m-sub').textContent   = `${ev.label} · ${g.type.toUpperCase()} · ${TIMES[g.slot]||''}`;
+  document.getElementById('m-name-a').textContent = g.teamA;
+  document.getElementById('m-name-b').textContent = g.teamB;
+  document.getElementById('m-dot-a').style.background = teamColor(g.teamA);
+  document.getElementById('m-dot-b').style.background = teamColor(g.teamB);
+  document.getElementById('m-score-a').value = g.scoreA ?? '';
+  document.getElementById('m-score-b').value = g.scoreB ?? '';
+  document.getElementById('m-pw').value = '';
+  document.getElementById('m-err').textContent = '';
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('m-score-a').focus();
 }
 
 function closeModal() {
-  document.getElementById('result-modal').classList.remove('on');
-  currentModal = null;
+  document.getElementById('modal').classList.remove('open');
+  pendingModal = null;
 }
 
-async function submitResult() {
-  if (!currentModal) return;
-  const sa = parseInt(document.getElementById('score-a').value);
-  const sb = parseInt(document.getElementById('score-b').value);
-  const pw = document.getElementById('modal-pw').value;
-  const err = document.getElementById('modal-err');
-
-  if (isNaN(sa)||isNaN(sb)) { err.textContent='Enter both scores'; err.style.display='block'; return; }
-  if (sa===sb) { err.textContent='No draws — one team must win'; err.style.display='block'; return; }
-  if (Math.abs(sa-sb)<2) { err.textContent='Must win by at least 2 points'; err.style.display='block'; return; }
-  const maxScore = Math.max(sa,sb);
-  const minScore = Math.min(sa,sb);
-  if (maxScore<21) { err.textContent='Winning score must be at least 21'; err.style.display='block'; return; }
-  if (maxScore>25) { err.textContent='Max score is 25'; err.style.display='block'; return; }
-  if (maxScore===25 && Math.abs(sa-sb)<1) { err.textContent='At 25 any lead wins'; err.style.display='block'; return; }
-
-  err.style.display='none';
+async function submitScore() {
+  if (!pendingModal) return;
+  const sa  = parseInt(document.getElementById('m-score-a').value);
+  const sb  = parseInt(document.getElementById('m-score-b').value);
+  const pw  = document.getElementById('m-pw').value || 'fvl2026';
+  const err = document.getElementById('m-err');
+  err.textContent = '';
+  if (isNaN(sa)||isNaN(sb))        { err.textContent='Enter both scores'; return; }
+  if (sa === sb)                    { err.textContent='No draws allowed'; return; }
+  if (Math.abs(sa-sb) < 2)         { err.textContent='Must win by at least 2 points'; return; }
+  if (Math.max(sa,sb) < 21)        { err.textContent='Winning score must be at least 21'; return; }
+  if (Math.max(sa,sb) > 25)        { err.textContent='Maximum score is 25'; return; }
   try {
     const r = await fetch('/api/s3/result', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({password:pw, month:currentModal.month, gameIndex:currentModal.gameIndex, scoreA:sa, scoreB:sb}),
+      body: JSON.stringify({password:pw, month:pendingModal.month, gameIndex:pendingModal.idx, scoreA:sa, scoreB:sb}),
     });
     const d = await r.json();
-    if (!d.success) { err.textContent = d.error||'Error'; err.style.display='block'; return; }
+    if (!d.success) { err.textContent = d.error||'Error saving'; return; }
     closeModal();
-    // Refresh event
-    const ev = await fetch(`/api/s3/event/${currentModal?.month||d.month}`).then(r=>r.json()).catch(()=>null);
-    if (ev) {
-      const idx = allEvents.findIndex(e=>e.month===ev.month);
-      if(idx>=0) allEvents[idx]=ev;
-    }
+    // Refresh this event
+    const ev = await fetch(`/api/s3/event/${pendingModal?.month||d.month}`).then(r=>r.json()).catch(()=>null);
+    if (ev) { const i=events.findIndex(e=>e.month===ev.month); if(i>=0) events[i]=ev; }
     renderSchedule();
     toast('✓ Result saved');
-  } catch(e) { err.textContent='Network error'; err.style.display='block'; }
+  } catch(e) { err.textContent = 'Network error'; }
 }
 
-// ── LOCK MONTH ────────────────────────────────────────────────────
+// ── LOCK MONTH ────────────────────────────────────────────────────────
 async function lockMonth(month) {
-  const m = month || parseInt(prompt('Lock which month? (1-6)'));
-  if (!m||m<1||m>6) return;
-  if (!confirm(`Lock Month ${m} and calculate standings?`)) return;
-  const pw = isAdmin ? 'fvl2026' : prompt('Password:');
-  const r = await fetch(`/api/s3/lock/${m}`, {
+  if (!confirm(`Lock Month ${month} and record the champion?`)) return;
+  const r = await fetch(`/api/s3/lock/${month}`, {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({password:pw}),
+    body: JSON.stringify({password:'fvl2026'}),
   });
   const d = await r.json();
-  if (d.success) { toast(`🏆 Month ${m} locked · Champion: ${d.champion}`); allEvents=[]; loadSchedule(); loadStandings(); }
-  else toast('Error: '+d.error);
+  if (d.success) {
+    toast(`🏆 Month ${month} locked · Champion: ${d.champion}`);
+    events = [];
+    loadSchedule();
+    loadStandings();
+  } else toast('Error: '+d.error);
 }
 
-// ── STANDINGS ─────────────────────────────────────────────────────
+// ── STANDINGS ─────────────────────────────────────────────────────────
 async function loadStandings() {
-  const r = await fetch('/api/s3/standings');
-  const data = await r.json();
-  if (!data.length) return;
-  const MONTH_LABELS = ['May','Jun','Jul','Aug','Sep','Oct'];
-  document.getElementById('standings-body').innerHTML = data.map((s,i) => {
-    const team = TEAMS.find(t=>t.name===s.team)||{color:'#888'};
-    const monthCells = [1,2,3,4,5,6].map(m => {
-      const mdata = s.months?.find(x=>x.month===m);
-      if (!mdata) return '<td class="month-cell" style="color:#ccc">—</td>';
-      const posCls = mdata.position===1?'pos-1':mdata.position===2?'pos-2':mdata.position===3?'pos-3':'';
-      return `<td class="month-cell ${posCls}">${mdata.champion?'🏆':mdata.position}</td>`;
+  try {
+    const r = await fetch('/api/s3/standings');
+    const data = await r.json();
+    if (!data.length) return;
+    document.getElementById('standings-body').innerHTML = data.map((s,i) => {
+      const col = teamColor(s.team);
+      const monthCells = [1,2,3,4,5,6].map(m => {
+        const md = s.months?.find(x=>x.month===m);
+        if (!md) return '<td class="month-pos">–</td>';
+        const cls = md.champion?'month-pos champ p1':md.position===2?'month-pos p2':md.position===3?'month-pos p3':'month-pos';
+        const label = md.champion ? '' : md.position;
+        return `<td class="${cls}">${md.champion?'🏆':label}</td>`;
+      }).join('');
+      return `<tr class="rank-${i+1<=3?i+1:''}">
+        <td><span class="rank-num">${i+1}</span></td>
+        <td><div class="team-cell">${dot(s.team,8)} ${s.team}</div></td>
+        <td><span class="pts" style="color:${col}">${s.totalPoints}</span></td>
+        <td style="font-family:'Source Code Pro',monospace">${s.totalWins}</td>
+        <td style="text-align:center">${'🏆'.repeat(s.championships)||'–'}</td>
+        ${monthCells}
+      </tr>`;
     }).join('');
-    return `<tr>
-      <td style="font-family:'DM Mono',monospace;font-weight:700;text-align:center">${i+1}</td>
-      <td><span class="team-badge">${dot(s.team,true)} ${s.team}</span></td>
-      <td style="font-weight:700;font-family:'DM Mono',monospace">${s.totalPoints}</td>
-      <td style="font-family:'DM Mono',monospace">${s.totalWins}</td>
-      <td style="text-align:center">${'⭐'.repeat(s.championships||0)||'—'}</td>
-      ${monthCells}
-    </tr>`;
-  }).join('');
+  } catch(e) { /* standings load silently fails */ }
 }
 
-// ── ROTATION ──────────────────────────────────────────────────────
+// ── ROTATION ─────────────────────────────────────────────────────────
 function renderRotation() {
-  const base = TEAMS.map(t=>t.name);
-  const n = base.length;
-  let h = '<div class="rg-hd">Month</div>' + ['T1','T2','T3','T4','T5','T6'].map(p=>`<div class="rg-hd">${p}</div>`).join('');
-  MONTHS.forEach((label, mi) => {
+  const n = TEAMS.length;
+  let html = '<thead><tr><th>Month</th>';
+  for(let i=1;i<=6;i++) html += `<th>T${i}</th>`;
+  html += '</tr></thead><tbody>';
+  MONTH_LABELS.forEach((label, mi) => {
     const positions = new Array(n);
-    base.forEach((team,i) => { positions[(i+mi)%n] = team; });
-    h += `<div class="rg-cell" style="background:var(--light);font-weight:700;border-right:1px solid var(--border2)">${label.split(' ')[0]}</div>`;
-    positions.forEach(team => {
-      const col = teamColor(team);
-      h += `<div class="rg-cell" style="border-right:1px solid var(--border2);border-bottom:1px solid var(--border2)">${dot(team)} ${team}</div>`;
+    TEAMS.forEach((t,i) => { positions[(i+mi)%n] = t; });
+    html += `<tr><td>${label.split(' ')[0]}</td>`;
+    positions.forEach(t => {
+      html += `<td><span class="rot-chip" style="background:${t.color}22;color:${t.color}">${dot(t.name,6)} ${t.name}</span></td>`;
     });
+    html += '</tr>';
   });
-  document.getElementById('rotation-grid').innerHTML = h;
+  html += '</tbody>';
+  document.getElementById('rot-table').innerHTML = html;
 }
 
+// ── TOAST ─────────────────────────────────────────────────────────────
 let _tt;
 function toast(msg,dur=3000){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
 
-// Close modal on backdrop click
-document.getElementById('result-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+// ── KEYBOARD ─────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') closeModal();
+  if (e.key==='Enter' && pendingModal) submitScore();
+});
 
-// Enter key submits score
-document.addEventListener('keydown', e => { if(e.key==='Enter'&&currentModal) submitResult(); if(e.key==='Escape') closeModal(); });
-
-// Boot
+// ── BOOT ─────────────────────────────────────────────────────────────
 renderTeams();
 </script>
 </body>
