@@ -45,6 +45,21 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 .card{background:var(--white);border:1px solid var(--border);border-radius:3px;margin-bottom:12px}
 .card-hd{padding:9px 13px;font-size:12px;font-weight:700;border-bottom:1px solid var(--border2);background:var(--light)}
 
+/* ── OVERVIEW (season2 style) ── */
+.ov-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
+.ov-cell{padding:11px 13px;border-right:1px solid var(--border2);border-bottom:1px solid var(--border2)}
+.ov-cell:nth-child(2n){border-right:none}
+.ov-cell:nth-last-child(-n+2){border-bottom:none}
+.ov-lbl{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.ov-val{font-size:20px;font-weight:900;color:var(--blue)}
+.ov-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.month-row{display:grid;grid-template-columns:130px 1fr auto;align-items:center;padding:8px 13px;border-bottom:1px solid var(--border2);gap:8px;font-size:12px}
+.month-row:last-child{border:none}
+.m-label{font-family:'Roboto Mono',monospace;font-weight:700;color:var(--muted)}
+.m-champ{font-size:11px;background:#fff3cd;color:#856404;padding:1px 7px;border-radius:2px;font-weight:700}
+.srow-ov{display:grid;grid-template-columns:36px 1fr auto auto;align-items:center;padding:9px 13px;border-bottom:1px solid var(--border2);gap:8px}
+.srow-ov:last-child{border:none}
+
 /* ── TEAMS ── */
 .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:12px}
 .team-card{background:var(--white);border:1px solid var(--border);border-radius:3px;overflow:hidden}
@@ -208,7 +223,8 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 </div>
 
 <div class="tabs" id="tabs">
-  <div class="tab active" data-panel="teams"    onclick="switchTab(this)">🏐 Teams</div>
+  <div class="tab active" data-panel="overview" onclick="switchTab(this)">🏠 Overview</div>
+  <div class="tab"        data-panel="teams"    onclick="switchTab(this)">🏐 Teams</div>
   <div class="tab"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</div>
   <div class="tab"        data-panel="standings"onclick="switchTab(this)">🏆 Standings</div>
   <div class="tab"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</div>
@@ -243,8 +259,46 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 <div class="page">
 
+<!-- OVERVIEW -->
+<div class="panel active" id="panel-overview">
+  <div class="sec" style="padding-top:0">Season 3 Standings</div>
+  <span class="sec-line"></span>
+  <div class="card">
+    <div class="card-hd">Season 3 · May – Oct 2026 · Cumulative points</div>
+    <div id="ov-standings"><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div></div>
+  </div>
+
+  <div class="sec">Monthly Champions</div>
+  <span class="sec-line"></span>
+  <div class="card" id="ov-champions">
+    <div class="month-row"><span class="m-label">May 2026</span><span style="color:var(--muted)">—</span><span class="m-champ" style="visibility:hidden">🏆</span></div>
+    <div class="month-row"><span class="m-label">June 2026</span><span style="color:var(--muted)">—</span><span class="m-champ" style="visibility:hidden">🏆</span></div>
+    <div class="month-row"><span class="m-label">July 2026</span><span style="color:var(--muted)">—</span><span class="m-champ" style="visibility:hidden">🏆</span></div>
+    <div class="month-row"><span class="m-label">August 2026</span><span style="color:var(--muted)">—</span><span class="m-champ" style="visibility:hidden">🏆</span></div>
+    <div class="month-row"><span class="m-label">September 2026</span><span style="color:var(--muted)">—</span><span class="m-champ" style="visibility:hidden">🏆</span></div>
+    <div class="month-row"><span class="m-label">October 2026</span><span style="color:var(--muted)">—</span><span class="m-champ" style="visibility:hidden">🏆</span></div>
+  </div>
+
+  <div class="sec">Teams</div>
+  <span class="sec-line"></span>
+  <div class="teams-grid" id="ov-teams"></div>
+
+  <div class="sec">Season 3 Overview</div>
+  <span class="sec-line"></span>
+  <div class="card">
+    <div class="ov-grid">
+      <div class="ov-cell"><div class="ov-lbl">Season</div><div class="ov-val" style="font-size:15px">May – Oct 2026</div></div>
+      <div class="ov-cell"><div class="ov-lbl">Teams</div><div class="ov-val">6</div></div>
+      <div class="ov-cell"><div class="ov-lbl">Players / team</div><div class="ov-val">7</div><div class="ov-sub">Cap + 6 players</div></div>
+      <div class="ov-cell"><div class="ov-lbl">Format</div><div class="ov-val" style="font-size:15px">Option A</div><div class="ov-sub">6 RR + Finals · 2:00–5:20 PM</div></div>
+      <div class="ov-cell"><div class="ov-lbl">Scoring</div><div class="ov-val" style="font-size:15px">Win = 2 pts</div><div class="ov-sub">21–25, win by 2</div></div>
+      <div class="ov-cell"><div class="ov-lbl">Rotation</div><div class="ov-val" style="font-size:15px">Shift-right</div><div class="ov-sub">New matchups each month</div></div>
+    </div>
+  </div>
+</div>
+
 <!-- TEAMS -->
-<div class="panel active" id="panel-teams">
+<div class="panel" id="panel-teams">
   <div class="teams-grid" id="teams-grid"></div>
 </div>
 
@@ -333,6 +387,7 @@ function switchTab(el) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('panel-'+el.dataset.panel).classList.add('active');
+  if(el.dataset.panel==='overview')  loadOverview();
   if(el.dataset.panel==='schedule')  loadSchedule();
   if(el.dataset.panel==='standings') loadStandings();
   if(el.dataset.panel==='rotation')  renderRotation();
@@ -696,8 +751,73 @@ function toast(msg,dur=3000){const e=document.getElementById('toast');e.textCont
 // ── KEYBOARD ──────────────────────────────────────────────────────────
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&_pendingModal)submitScore();});
 
+// ── OVERVIEW ─────────────────────────────────────────────────────────
+async function loadOverview() {
+  // Render team cards in overview (same as teams tab)
+  const tg = document.getElementById('ov-teams');
+  if (tg && !tg.children.length) {
+    tg.innerHTML = TEAMS.map(t => `
+      <div class="team-card">
+        <div class="team-hd" style="background:${t.color}">
+          <div>
+            <div class="team-name">${t.name}</div>
+            <div class="team-cap">⭐ ${t.captain}</div>
+          </div>
+          <div style="font-size:36px;font-weight:900;color:rgba(255,255,255,.15);line-height:1">${t.name[0]}</div>
+        </div>
+        <div class="team-players">
+          <span class="ptag" style="font-weight:700;color:${t.color};border-color:${t.color}55">${t.captain}</span>
+          ${(ROSTERS[t.name]||[]).map(p=>`<span class="ptag">${p}</span>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  // Standings
+  try {
+    const r = await fetch('/api/s3/standings');
+    const data = await r.json();
+    const el = document.getElementById('ov-standings');
+    if (!data.length) { el.innerHTML='<div class="empty">No results yet — season starting May 2026</div>'; }
+    else {
+      el.innerHTML = data.map((s,i) => {
+        const col = teamColor(s.team);
+        const cm = (s.months||[]).filter(m=>m.champion).map(m=>m.label?.split(' ')[0]).join(', ');
+        return `<div class="srow-ov ${i===0?'gold':''}">
+          <div class="spos" style="${i===0?'color:#b8860b':''}">${i+1}</div>
+          <div>
+            <div class="sname" style="display:flex;align-items:center;gap:6px">${dot(s.team,8)} ${s.team} ${'🏆'.repeat(s.championships||0)}</div>
+            <div class="ssub">${cm?'Won: '+cm:''}</div>
+          </div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${s.totalWins}W</div>
+          <div class="spts" style="color:${col}">${s.totalPoints} pts</div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {}
+
+  // Monthly champions from schedule
+  try {
+    if (!events.length) {
+      const r = await fetch('/api/s3/schedule');
+      events = await r.json();
+    }
+    const MONTH_NAMES = ['May 2026','June 2026','July 2026','August 2026','September 2026','October 2026'];
+    document.getElementById('ov-champions').innerHTML = MONTH_NAMES.map((lbl, mi) => {
+      const ev = events.find(e=>e.month===mi+1);
+      const champ = ev?.champion;
+      const col   = champ ? teamColor(champ) : null;
+      return `<div class="month-row">
+        <span class="m-label">${lbl}</span>
+        <span style="color:${col||'var(--muted)'};font-weight:${champ?'700':'400'}">${champ?`${dot(champ,7)} ${champ}`:'—'}</span>
+        ${champ?`<span class="m-champ">🏆 Champion</span>`:`<span style="font-size:11px;color:#ccc">${ev?.locked?'Locked':'Upcoming'}</span>`}
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
 // ── BOOT ──────────────────────────────────────────────────────────────
 renderTeams();
+loadOverview();
 </script>
 
 <div style="text-align:center;padding:20px;font-size:11px;color:#888">
