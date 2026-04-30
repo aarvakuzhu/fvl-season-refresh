@@ -138,22 +138,6 @@ const DraftSaveSchema = new mongoose.Schema({
 DraftSaveSchema.index({ user: 1, season: 1, opt: 1 }, { unique: true });
 
 // ── Exports ───────────────────────────────────────────────────────────
-module.exports = {
-  Team:         mongoose.model('Team',         TeamSchema),
-  Standing:     mongoose.model('Standing',     StandingSchema),
-  Season:       mongoose.model('Season',       SeasonSchema),
-  CoreMember:   mongoose.model('CoreMember',   CoreMemberSchema),
-  Decision:     mongoose.model('Decision',     DecisionSchema),
-  Comment:      mongoose.model('Comment',      CommentSchema),
-  Config:       mongoose.model('Config',       ConfigSchema),
-  Player:       mongoose.model('Player',       PlayerModelSchema),
-  PlayerSeason: mongoose.model('PlayerSeason', PlayerSeasonSchema),
-  DraftSave:    mongoose.model('DraftSave',    DraftSaveSchema),
-  S3Team:       mongoose.model('S3Team',       S3TeamSchema),
-  MonthlyEvent: mongoose.model('MonthlyEvent', MonthlyEventSchema),
-  S3Standing:   mongoose.model('S3Standing',   S3StandingSchema),
-};
-
 // ── Season 3 Teams (locked roster) ───────────────────────────────────
 const S3TeamSchema = new mongoose.Schema({
   name:     { type: String, required: true, unique: true },
@@ -208,4 +192,18 @@ const S3StandingSchema = new mongoose.Schema({
   championships:  { type: Number, default: 0 },
 }, { timestamps: true });
 
-
+module.exports = {
+  Team:         mongoose.model('Team',         TeamSchema),
+  Standing:     mongoose.model('Standing',     StandingSchema),
+  Season:       mongoose.model('Season',       SeasonSchema),
+  CoreMember:   mongoose.model('CoreMember',   CoreMemberSchema),
+  Decision:     mongoose.model('Decision',     DecisionSchema),
+  Comment:      mongoose.model('Comment',      CommentSchema),
+  Config:       mongoose.model('Config',       ConfigSchema),
+  Player:       mongoose.model('Player',       PlayerModelSchema),
+  PlayerSeason: mongoose.model('PlayerSeason', PlayerSeasonSchema),
+  DraftSave:    mongoose.model('DraftSave',    DraftSaveSchema),
+  S3Team:       mongoose.model('S3Team',       S3TeamSchema),
+  MonthlyEvent: mongoose.model('MonthlyEvent', MonthlyEventSchema),
+  S3Standing:   mongoose.model('S3Standing',   S3StandingSchema),
+};
