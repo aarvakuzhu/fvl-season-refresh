@@ -155,119 +155,7 @@ app.post('/api/admin/verify', async (req, res) => {
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 
-// ── Seed ──────────────────────────────────────────────────────────────
-app.post('/api/seed', async (req, res) => {
-  if (!dbConnected) return res.status(503).json({ error: 'Database not connected' });
-
-  const log = [];
-  const say = msg => { log.push(msg); console.log(msg); };
-
-  try {
-    const seedData = require('./seed-data');
-
-    say('Clearing existing data...');
-    await Promise.all([
-      Team.deleteMany({}),
-      Standing.deleteMany({}),
-      Season.deleteMany({}),
-      CoreMember.deleteMany({}),
-      Decision.deleteMany({}),
-      Config.deleteMany({}),
-    ]);
-
-    say('Inserting teams...');
-    const insertedTeams = await Team.insertMany(seedData.teams);
-    say(`✓ ${insertedTeams.length} teams inserted`);
-
-    say('Inserting standings...');
-    const teamMap = {};
-    insertedTeams.forEach(t => { teamMap[t.name] = t._id; });
-    const standingsWithIds = seedData.standings.map(s => ({ ...s, teamId: teamMap[s.teamName] }));
-    await Standing.insertMany(standingsWithIds);
-    say(`✓ ${standingsWithIds.length} standings inserted`);
-
-    say('Inserting season config...');
-    await Season.create(seedData.season);
-    say('✓ Season config inserted');
-
-    say('Inserting core members...');
-    await CoreMember.insertMany(seedData.coreMembers);
-    say(`✓ ${seedData.coreMembers.length} core members inserted`);
-
-    say('Inserting decisions...');
-    await Decision.insertMany(seedData.decisions);
-    say(`✓ ${seedData.decisions.length} decisions inserted`);
-
-    say('Inserting config...');
-    await Config.insertMany(seedData.config);
-    say(`✓ ${seedData.config.length} config entries inserted`);
-
-    say('✅ Seed complete');
-    res.json({ success: true, log });
-  } catch (e) {
-    say('❌ Error: ' + e.message);
-    res.status(500).json({ success: false, error: e.message, log });
-  }
-});
-
-// ── Update April 2026 final standings endpoint ───────────────────────
-app.post('/api/update-april-standings', async (req, res) => {
-  try {
-    const updates = [
-      { teamName: 'FVL Falcons',  totalPoints: 24, championships: 2, seasonChampion: true,  aprilPoints: 3,  aprilChampion: false },
-      { teamName: 'FVL Spartans', totalPoints: 19, championships: 2, seasonChampion: false, aprilPoints: 1,  aprilChampion: false },
-      { teamName: 'FVL Titans',   totalPoints: 19, championships: 0, seasonChampion: false, aprilPoints: 3,  aprilChampion: false },
-      { teamName: 'FVL Dragons',  totalPoints: 16, championships: 2, seasonChampion: false, aprilPoints: 6,  aprilChampion: true  },
-      { teamName: 'FVL Panthers', totalPoints: 12, championships: 0, seasonChampion: false, aprilPoints: 2,  aprilChampion: false },
-    ];
-    for (const u of updates) {
-      await Standing.findOneAndUpdate(
-        { season: 2, teamName: u.teamName },
-        {
-          $set: {
-            totalPoints: u.totalPoints,
-            championships: u.championships,
-            seasonChampion: u.seasonChampion,
-            relegated: false,
-          },
-          $push: {
-            monthlyResults: {
-              month: 'April 2026',
-              points: u.aprilPoints,
-              champion: u.aprilChampion,
-            },
-          },
-        },
-        { upsert: false }
-      );
-    }
-    res.json({ success: true, message: 'April 2026 standings updated. Falcons are Season 2 Champions!' });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-// ── Season migration endpoint (one-time: season 1 → 2) ──────────────
-app.post('/api/migrate-season', async (req, res) => {
-  try {
-    const results = await Promise.all([
-      Team.updateMany(       { season: 1 }, { $set: { season: 2 } }),
-      Standing.updateMany(   { season: 1 }, { $set: { season: 2 } }),
-      CoreMember.updateMany( { season: 1 }, { $set: { season: 2 } }),
-      Season.updateMany(     { number: 1 }, { $set: { number: 2, label: 'Season 2' } }),
-    ]);
-    res.json({
-      success: true,
-      teams:       results[0].modifiedCount,
-      standings:   results[1].modifiedCount,
-      coreMembers: results[2].modifiedCount,
-      season:      results[3].modifiedCount,
-      message: 'All season:1 records updated to season:2'
-    });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
+// /api/seed — retired
 
 // ── Player Registry API ──────────────────────────────────────────────
 
@@ -433,63 +321,8 @@ app.get('/api/draft-saves', async (req, res) => {
 });
 
 
-// ── Seed Naren Option 2 draft ────────────────────────────────────────
-app.post('/api/seed-naren-draft', async (req, res) => {
-  try {
-    const nameMap = {
-      'Venkat EZ Pass':'Venkat','Raja EZ Pass':'Raja Vasu','Pawan':'Pavan',
-      'Sarva':'Saravanan','Chandu':'Chandu','Mukesh':'Mukesh','Ahmed':'Ahmed',
-      'Krishna':'Krishna','Kiran':'Kiran','Ashok':'Ashok','Keshav':'Keshav',
-      'Amar':'Amrendra','Rajesh':'Rajeshbabu','Krupa':'Krupa','Jugal':'Jugal',
-      'Sachin':'Sachin','Rizwan':'Rizwan','Rajan':'Rajan','Vikas':'Vikas',
-      'Naveen':'Naveen','Rahul':'Rahul','Chandra':'Chandra','Gopal':'Gopal',
-      'Surendra Konga':'Surendra Kings','Naren':'Naren','Sunil Ji':'Sunil',
-      'Uday B':'Uday K','Uday D':'Uday Dragon','Santosh':'Santosh','Raja':'Raja S',
-      'Ishant':'Ishant','Suri':'Suri','Divyanshu':'Divyanshu','Rakesh':'Rakesh',
-      'Gupta Ji':'Ritesh','Ronak':'Ronak',
-    };
-    const rawPicks = [
-      [1,'Anil','Venkat EZ Pass'],[2,'Pratik','Raja EZ Pass'],[3,'Harsha','Pawan'],
-      [4,'Anil','Sarva'],[5,'Pratik','Chandu'],[6,'Harsha','Mukesh'],
-      [7,'Shanthan','Ahmed'],[8,'Koti','Krishna'],[9,'Karthik S','Kiran'],
-      [10,'Karthik S','Ashok'],[11,'Koti','Keshav'],[12,'Shanthan','Amar'],
-      [13,'Pratik','Rajesh'],[14,'Anil','Krupa'],[15,'Anil','Jugal'],
-      [16,'Harsha','Sachin'],[17,'Shanthan','Rizwan'],[18,'Koti','Rajan'],
-      [19,'Karthik S','Vikas'],[20,'Karthik S','Naveen'],[21,'Koti','Rahul'],
-      [22,'Shanthan','Chandra'],[23,'Harsha','Gopal'],[24,'Pratik','Surendra Konga'],
-      [25,'Anil','Naren'],[26,'Pratik','Sunil Ji'],[27,'Harsha','Uday B'],
-      [28,'Shanthan','Uday D'],[29,'Koti','Santosh'],[30,'Karthik S','Raja'],
-      [31,'Karthik S','Ishant'],[32,'Koti','Suri'],[33,'Shanthan','Divyanshu'],
-      [34,'Harsha','Rakesh'],[35,'Pratik','Gupta Ji'],[36,'Anil','Ronak'],
-    ];
-    const caps = [{name:'Anil',po:1,er:4},{name:'Pratik',po:2,er:3},{name:'Harsha',po:3,er:2},
-                  {name:'Shanthan',po:4,er:1},{name:'Koti',po:5,er:1},{name:'Karthik S',po:6,er:1}];
-    const seq=[]; let n=1;
-    caps.filter(c=>c.er>1).sort((a,b)=>a.po-b.po).forEach(c=>seq.push({rk:0,captain:c.name,pickNum:n++}));
-    for(let r=1;r<=6;r++){
-      const active=caps.filter(c=>!(c.er===r&&c.er>1)).sort((a,b)=>a.po-b.po);
-      const ordered=r%2===1?[...active]:[...active].reverse();
-      ordered.forEach(c=>seq.push({rk:r,captain:c.name,pickNum:n++}));
-    }
-    const picks = rawPicks.map(([pickNum,captain,display])=>({
-      round: seq.find(s=>s.pickNum===pickNum)?.rk,
-      pickNum, captain,
-      player: nameMap[display]||display,
-      label: display, s2team:'—', ts: new Date(),
-    }));
-    const teamsMap = {};
-    caps.forEach(c=>teamsMap[c.name]={captain:c.name,col:'#333',players:[]});
-    picks.forEach(p=>teamsMap[p.captain].players.push(p.player));
-    await DraftSave.deleteMany({ user:'Naren', season:3 });
-    const doc = await DraftSave.create({
-      user:'Naren', season:3, opt:2, picks,
-      teams:Object.values(teamsMap), pickCount:36, complete:true
-    });
-    res.json({ success:true, message:"Naren Option 2 draft saved", pickCount:doc.pickCount });
-  } catch(e) { res.status(500).json({ error: e.message }); }
-});
+// /api/seed-naren-draft — retired
 
-// Compare two saves: GET /api/draft-compare?user1=Ashok&opt1=2&user2=Sachin&opt2=1
 app.get('/api/draft-compare', async (req, res) => {
   try {
     const season = Number(req.query.season) || 3;
@@ -557,63 +390,7 @@ app.get('/api/draft-compare', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ── Seed Ashok Option 2 draft (one-time) ────────────────────────────
-app.post('/api/seed-ashok-draft', async (req, res) => {
-  try {
-    const nameMap = {
-      'Venkat EZ Pass':'Venkat','Raja EZ Pass':'Raja Vasu','Sarva':'Saravanan',
-      'Chandu':'Chandu','Pawan':'Pavan','Amar':'Amrendra','Ahmed':'Ahmed',
-      'Mukesh':'Mukesh','Krishna':'Krishna','Kiran':'Kiran','Keshav':'Keshav',
-      'Rahul':'Rahul','Rajesh':'Rajeshbabu','Krupa':'Krupa','Naren':'Naren',
-      'Rajan':'Rajan','Chandra':'Chandra','Jugal':'Jugal','Ashok':'Ashok',
-      'Rizwan':'Rizwan','Sachin':'Sachin','Vikas':'Vikas','Gopal':'Gopal',
-      'Surendra Konga':'Surendra Kings','Suri':'Suri','Sunil Ji':'Sunil',
-      'Uday B':'Uday K','Uday D':'Uday Dragon','Santosh':'Santosh',
-      'Naveen':'Naveen','Divyanshu':'Divyanshu','Raja':'Raja S','Ronak':'Ronak',
-      'Rakesh':'Rakesh','Gupta Ji':'Ritesh','Ishant':'Ishant',
-    };
-    const rawPicks = [
-      [1,'Anil','Venkat EZ Pass'],[2,'Pratik','Raja EZ Pass'],[3,'Harsha','Sarva'],
-      [4,'Anil','Chandu'],[5,'Pratik','Pawan'],[6,'Harsha','Amar'],
-      [7,'Shanthan','Ahmed'],[8,'Koti','Mukesh'],[9,'Karthik S','Krishna'],
-      [10,'Karthik S','Kiran'],[11,'Koti','Keshav'],[12,'Shanthan','Rahul'],
-      [13,'Pratik','Rajesh'],[14,'Anil','Krupa'],[15,'Anil','Naren'],
-      [16,'Harsha','Rajan'],[17,'Shanthan','Chandra'],[18,'Koti','Jugal'],
-      [19,'Karthik S','Ashok'],[20,'Karthik S','Rizwan'],[21,'Koti','Sachin'],
-      [22,'Shanthan','Vikas'],[23,'Harsha','Gopal'],[24,'Pratik','Surendra Konga'],
-      [25,'Anil','Suri'],[26,'Pratik','Sunil Ji'],[27,'Harsha','Uday B'],
-      [28,'Shanthan','Uday D'],[29,'Koti','Santosh'],[30,'Karthik S','Naveen'],
-      [31,'Karthik S','Divyanshu'],[32,'Koti','Raja'],[33,'Shanthan','Ronak'],
-      [34,'Harsha','Rakesh'],[35,'Pratik','Gupta Ji'],[36,'Anil','Ishant'],
-    ];
-    // Build Option 2 sequence for round labels
-    const caps = [{name:'Anil',po:1,er:4},{name:'Pratik',po:2,er:3},{name:'Harsha',po:3,er:2},
-                  {name:'Shanthan',po:4,er:1},{name:'Koti',po:5,er:1},{name:'Karthik S',po:6,er:1}];
-    const seq=[]; let n=1;
-    caps.filter(c=>c.er>1).sort((a,b)=>a.po-b.po).forEach(c=>seq.push({rk:0,captain:c.name,pickNum:n++}));
-    for(let r=1;r<=6;r++){
-      const active=caps.filter(c=>!(c.er===r&&c.er>1)).sort((a,b)=>a.po-b.po);
-      const ordered=r%2===1?[...active]:[...active].reverse();
-      ordered.forEach(c=>seq.push({rk:r,captain:c.name,pickNum:n++}));
-    }
-    const picks = rawPicks.map(([pickNum,captain,display])=>({
-      round: seq.find(s=>s.pickNum===pickNum)?.rk,
-      pickNum, captain,
-      player: nameMap[display]||display,
-      label: display, s2team:'—', ts: new Date(),
-    }));
-    const teamsMap = {};
-    caps.forEach(c=>teamsMap[c.name]={captain:c.name,col:'#333',players:[]});
-    picks.forEach(p=>teamsMap[p.captain].players.push(p.player));
-    // Drop any existing save for Ashok S3 to avoid index conflicts
-    await DraftSave.deleteMany({ user:'Ashok', season:3 });
-    const doc = await DraftSave.create({
-      user:'Ashok', season:3, opt:2, picks,
-      teams:Object.values(teamsMap), pickCount:36, complete:true
-    });
-    res.json({ success:true, message:'Ashok Option 2 draft saved', pickCount:doc.pickCount });
-  } catch(e) { res.status(500).json({ error: e.message }); }
-});
+// /api/seed-ashok-draft — retired
 
 // ── Compare page ─────────────────────────────────────────────────────
 app.get('/compare', (req, res) => {
@@ -664,7 +441,7 @@ app.post('/api/draft-clone', async (req, res) => {
 // SEASON 3 — TEAMS, SCHEDULE, RESULTS, STANDINGS
 // ═══════════════════════════════════════════════════════════════════════
 
-const S3_PASSWORD = process.env.S3_ADMIN_PASS || 'fvl2026';
+const S3_PASSWORD = process.env.S3_ADMIN_PASS || 'fvl2026'; // default: fvl2026
 
 // Season 3 team data
 const S3_TEAMS = [

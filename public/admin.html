@@ -4,366 +4,148 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>FVL Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root{--n:#0f1e3d;--n2:#1a3566;--go:#c9a84c;--wh:#fff;--gr:#8892a4;--tx:#cdd5e0;--rd:#c62828;--gn:#2e7d32}
+    :root{--n:#0d1b2a;--go:#f5c842;--err:#cc0000;--ok:#1b7a1b;--border:rgba(255,255,255,.12)}
     *{box-sizing:border-box;margin:0;padding:0}
-    body{background:var(--n);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
-    .panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:40px;max-width:560px;width:100%}
-    .logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--go);margin-bottom:6px;text-align:center}
-    .title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--wh);text-align:center;margin-bottom:6px}
-    .subtitle{font-size:13px;color:var(--gr);text-align:center;margin-bottom:32px;line-height:1.5}
-    .warning{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:28px;line-height:1.6}
-    .warning strong{color:var(--go)}
-    .btn{width:100%;padding:14px;border-radius:9px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px}
-    .btn-seed{background:var(--go);color:var(--n)}
-    .btn-seed:hover:not(:disabled){background:#f0c040;transform:translateY(-1px)}
-    .btn-seed:disabled{opacity:.5;cursor:not-allowed}
-    .log{margin-top:24px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;min-height:60px;display:none}
+    body{background:var(--n);color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:32px 16px}
+    .card{width:100%;max-width:480px}
+    .logo{font-size:28px;font-weight:900;letter-spacing:1px;color:var(--go);margin-bottom:4px}
+    .sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:32px}
+    .divider{height:1px;background:var(--border);margin:24px 0}
+    .title{font-size:16px;font-weight:700;margin-bottom:6px}
+    .subtitle{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:14px;line-height:1.5}
+    .btn{width:100%;padding:12px;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;margin-bottom:8px}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn:hover:not(:disabled){transform:translateY(-1px)}
+    .log{background:rgba(0,0,0,.3);border-radius:4px;padding:10px;font-size:12px;font-family:monospace;max-height:120px;overflow-y:auto;margin-bottom:8px;display:none}
     .log.show{display:block}
-    .log-line{display:flex;gap:8px}
-    .log-line.ok{color:#81c784}
-    .log-line.err{color:#ff8a80}
-    .log-line.info{color:var(--tx)}
-    .status{margin-top:16px;text-align:center;font-size:14px;font-weight:600;display:none}
-    .status.success{color:#81c784;display:block}
-    .status.error{color:#ff8a80;display:block}
-    .spin{display:inline-block;animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .divider{height:1px;background:rgba(255,255,255,.08);margin:24px 0}
-    .db-status{display:flex;align-items:center;gap:8px;font-size:13px;justify-content:center;margin-bottom:20px}
-    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-    .dot.green{background:#81c784}
-    .dot.red{background:#ff8a80}
-    .dot.gray{background:var(--gr)}
-    .back{display:block;text-align:center;margin-top:20px;color:var(--gr);font-size:13px;text-decoration:none;transition:color .2s}
-    .back:hover{color:var(--go)}
+    .log-line{padding:2px 0;line-height:1.4}
+    .log-line.ok{color:#4caf50}.log-line.err{color:#f44336}.log-line.info{color:rgba(255,255,255,.6)}
+    .status{font-size:13px;font-weight:700;min-height:20px;margin-bottom:4px}
+    .status.success{color:#4caf50}.status.error{color:#f44336}
+    .back{display:block;text-align:center;color:rgba(255,255,255,.4);font-size:13px;text-decoration:none;margin-top:8px}
+    .back:hover{color:rgba(255,255,255,.7)}
+    .health{font-size:12px;padding:8px 12px;border-radius:4px;background:rgba(255,255,255,.06);margin-bottom:24px;display:flex;align-items:center;gap:8px}
+    .health-dot{width:8px;height:8px;border-radius:50%;background:#666;flex-shrink:0}
+    .health-dot.ok{background:#4caf50}.health-dot.err{background:#f44336}
+    .inp{width:100%;padding:9px 12px;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:4px;color:#fff;font-size:13px;font-family:inherit;margin-bottom:8px}
+    .inp::placeholder{color:rgba(255,255,255,.3)}
+    .inp-row{display:flex;gap:8px}
+    .inp-row .inp{flex:1;margin-bottom:0}
+    select.inp{cursor:pointer}
   </style>
 </head>
 <body>
-  <div class="panel">
-    <div class="logo">🏐 FVL</div>
-    <div class="title">Database Admin</div>
-    <p class="subtitle">Seed the database with Season 1 data —<br>teams, standings, core members, and decisions.</p>
+<div class="card">
+  <div class="logo">FVL Admin</div>
+  <div class="sub">Season 3 · Fowler Volleyball League</div>
 
-    <div class="db-status">
-      <div class="dot gray" id="db-dot"></div>
-      <span id="db-label">Checking database...</span>
-    </div>
-
-    <div class="warning">
-      <strong>⚠️ This will clear and re-seed all data.</strong><br>
-      Safe to run multiple times — always resets to the canonical Season 1 state.
-    </div>
-
-    <button class="btn btn-seed" id="seed-btn" onclick="runSeed()">
-      🌱 Seed Database
-    </button>
-
-    <div class="log" id="log"></div>
-    <div class="status" id="status"></div>
-
-    <div class="divider"></div>
-
-    <div class="title" style="font-size:16px;margin-bottom:6px">April 2026 Final Standings</div>
-    <p class="subtitle" style="margin-bottom:16px">Update Season 2 final results — Dragons win April, Falcons are Season Champions.</p>
-
-    <button class="btn" id="april-btn" onclick="runApril()" style="background:#1b5e20;color:#fff;margin-bottom:8px">
-      🏆 Update April Standings
-    </button>
-    <div class="log" id="april-log"></div>
-    <div class="status" id="april-status"></div>
-
-    <div class="divider"></div>
-    <p class="subtitle" style="margin-bottom:16px">One-time: bump all Season 2 records in DB<br>from <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">season:1</code> → <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">season:2</code></p>
-
-    <button class="btn" id="migrate-btn" onclick="runMigrate()" style="background:#1a3566;color:#fff;margin-bottom:8px">
-      🔄 Migrate Season 1 → 2
-    </button>
-    <div class="log" id="migrate-log"></div>
-    <div class="status" id="migrate-status"></div>
-
-    <div class="divider"></div>
-    <div class="title" style="font-size:16px;margin-bottom:6px">Seed Season 3</div>
-    <p class="subtitle" style="margin-bottom:12px">Creates all 6 teams, 6 monthly events with schedules, and empty standings.</p>
-    <button class="btn" id="s3-btn" onclick="runS3Seed()" style="background:#c62828;color:#fff;margin-bottom:8px">🏐 Seed Season 3</button>
-    <div class="log" id="s3-log"></div>
-    <div class="status" id="s3-status"></div>
-    <div class="divider"></div>
-    <a class="back" href="/">← Back to FVL Site</a>
-
-    <div class="divider"></div>
-    <div class="title" style="font-size:16px;margin-bottom:6px">Seed Ashok's Option 2 Draft</div>
-    <p class="subtitle" style="margin-bottom:16px">Saves the 36-pick Option 2 draft (from offline spreadsheet) as Ashok's Season 3 save.</p>
-    <button class="btn" id="ashok-btn" onclick="runAshokSeed()" style="background:#311b92;color:#fff;margin-bottom:8px">
-      🏐 Save Ashok's Option 2 Draft
-    </button>
-    <div class="log" id="ashok-log"></div>
-    <div class="status" id="ashok-status"></div>
-
-    <div class="divider"></div>
-    <div class="title" style="font-size:16px;margin-bottom:6px">Seed Naren's Option 2 Draft</div>
-    <p class="subtitle" style="margin-bottom:16px">Saves the 36-pick Option 2 draft (from offline spreadsheet) as Naren's Season 3 save.</p>
-    <button class="btn" id="naren-btn" onclick="runNarenSeed()" style="background:#1b5e20;color:#fff;margin-bottom:8px">
-      🏐 Save Naren's Option 2 Draft
-    </button>
-    <div class="log" id="naren-log"></div>
-    <div class="status" id="naren-status"></div>
-
-    <div class="divider"></div>
-    <div class="title" style="font-size:16px;margin-bottom:6px">Clone Draft Save</div>
-    <p class="subtitle" style="margin-bottom:12px">Copy one user's draft to another.</p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
-      <input id="clone-from" value="Ashok" placeholder="From" style="padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:13px;width:120px">
-      <span style="color:rgba(255,255,255,.5)">→</span>
-      <input id="clone-to" value="Amrendra" placeholder="To" style="padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:13px;width:120px">
-      <select id="clone-opt" style="padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:13px">
-        <option value="1">Option 1</option>
-        <option value="2" selected>Option 2</option>
-      </select>
-    </div>
-    <button class="btn" id="clone-btn" onclick="runClone()" style="background:#1a5fb4;color:#fff;margin-bottom:8px">📋 Clone Draft</button>
-    <div class="log" id="clone-log"></div>
-    <div class="status" id="clone-status"></div>
+  <div class="health" id="health">
+    <span class="health-dot" id="hdot"></span>
+    <span id="htext">Checking database…</span>
   </div>
 
-  <script>
-    // ── Check DB status on load ────────────────────────────────────
-    async function checkHealth() {
-      try {
-        const r = await fetch('/api/health');
-        const d = await r.json();
-        const dot   = document.getElementById('db-dot');
-        const label = document.getElementById('db-label');
-        if (d.db === 'connected') {
-          dot.className = 'dot green';
-          label.textContent = 'MongoDB connected';
-        } else {
-          dot.className = 'dot red';
-          label.textContent = 'Database not connected';
-          document.getElementById('seed-btn').disabled = true;
-        }
-      } catch (e) {
-        document.getElementById('db-label').textContent = 'Could not reach server';
+  <!-- SEED SEASON 3 -->
+  <div class="title">🏐 Seed Season 3</div>
+  <div class="subtitle">Creates all 6 teams, 6 monthly events (May–Oct 2026) with shift-right rotation schedule, and empty standings. Safe to re-run — will upsert without deleting results.</div>
+  <button class="btn" id="s3-btn" onclick="runS3Seed()" style="background:#c62828">🏐 Seed Season 3</button>
+  <div class="log" id="s3-log"></div>
+  <div class="status" id="s3-status"></div>
+
+  <div class="divider"></div>
+
+  <!-- CLONE DRAFT SAVE -->
+  <div class="title">📋 Clone Draft Save</div>
+  <div class="subtitle">Copy one user's draft simulation to another user. Useful for seeding multiple perspectives.</div>
+  <div class="inp-row" style="margin-bottom:8px">
+    <input class="inp" id="clone-from" value="Ashok"    placeholder="From user">
+    <input class="inp" id="clone-to"   value="Amrendra" placeholder="To user">
+    <select class="inp" id="clone-opt">
+      <option value="1">Option 1</option>
+      <option value="2" selected>Option 2</option>
+    </select>
+  </div>
+  <button class="btn" id="clone-btn" onclick="runClone()" style="background:#1a5fb4">📋 Clone Draft</button>
+  <div class="log" id="clone-log"></div>
+  <div class="status" id="clone-status"></div>
+
+  <div class="divider"></div>
+  <a class="back" href="/">← Back to FVL Site</a>
+</div>
+
+<script>
+  async function checkHealth() {
+    try {
+      const r = await fetch('/api/health');
+      const d = await r.json();
+      document.getElementById('hdot').className  = 'health-dot ok';
+      document.getElementById('htext').textContent = `DB connected · ${d.teams||0} teams · ${d.standings||0} standings`;
+    } catch(e) {
+      document.getElementById('hdot').className  = 'health-dot err';
+      document.getElementById('htext').textContent = 'DB not reachable';
+    }
+  }
+
+  async function runS3Seed() {
+    const btn=document.getElementById('s3-btn'), log=document.getElementById('s3-log'), status=document.getElementById('s3-status');
+    btn.disabled=true; btn.textContent='⏳ Seeding…';
+    log.className='log show'; log.innerHTML=''; status.className='status';
+    try {
+      const r = await fetch('/api/s3/seed', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({password:'fvl2026'})
+      });
+      const d = await r.json();
+      if (d.success) {
+        log.innerHTML = [
+          `<div class="log-line ok">✅ ${d.teams} teams seeded</div>`,
+          `<div class="log-line ok">✅ ${d.events} monthly events created (May–Oct 2026)</div>`,
+          `<div class="log-line ok">✅ Empty standings initialised for all 6 teams</div>`,
+          `<div class="log-line info">Visit /season3 to view the schedule</div>`,
+        ].join('');
+        status.textContent='✅ Season 3 ready!'; status.className='status success';
+        btn.textContent='✅ Done';
+        checkHealth();
+      } else {
+        log.innerHTML=`<div class="log-line err">❌ ${d.error}</div>`;
+        status.textContent='❌ Failed'; status.className='status error';
+        btn.disabled=false; btn.textContent='🏐 Retry';
       }
+    } catch(e) {
+      log.innerHTML=`<div class="log-line err">Network error: ${e.message}</div>`;
+      status.className='status error'; btn.disabled=false; btn.textContent='🏐 Retry';
     }
+  }
 
-    // ── Run seed ───────────────────────────────────────────────────
-    async function runSeed() {
-      const btn    = document.getElementById('seed-btn');
-      const log    = document.getElementById('log');
-      const status = document.getElementById('status');
-
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spin">⏳</span> Seeding...';
-      log.className = 'log show';
-      log.innerHTML = '';
-      status.className = 'status';
-      status.textContent = '';
-
-      try {
-        const r = await fetch('/api/seed', { method: 'POST' });
-        const d = await r.json();
-
-        log.innerHTML = (d.log || []).map(line => {
-          const cls = line.startsWith('✅') ? 'ok' : line.startsWith('❌') ? 'err' : 'info';
-          return `<div class="log-line ${cls}">${line}</div>`;
-        }).join('');
-
-        if (d.success) {
-          status.textContent = '✅ Database seeded successfully!';
-          status.className = 'status success';
-          btn.innerHTML = '✅ Done';
-          setTimeout(() => {
-            btn.disabled = false;
-            btn.innerHTML = '🌱 Seed Again';
-          }, 2000);
-        } else {
-          status.textContent = '❌ Seed failed — ' + (d.error || 'unknown error');
-          status.className = 'status error';
-          btn.disabled = false;
-          btn.innerHTML = '🌱 Try Again';
-        }
-      } catch (e) {
-        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
-        status.textContent = '❌ Could not reach server';
-        status.className = 'status error';
-        btn.disabled = false;
-        btn.innerHTML = '🌱 Try Again';
+  async function runClone() {
+    const btn=document.getElementById('clone-btn'), log=document.getElementById('clone-log'), status=document.getElementById('clone-status');
+    const from=document.getElementById('clone-from').value.trim();
+    const to=document.getElementById('clone-to').value.trim();
+    const opt=document.getElementById('clone-opt').value;
+    if (!from||!to) { status.textContent='Fill in both users'; status.className='status error'; return; }
+    btn.disabled=true; btn.textContent='⏳ Cloning…';
+    log.className='log show'; log.innerHTML=''; status.className='status';
+    try {
+      const r = await fetch('/api/draft-clone', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({fromUser:from, toUser:to, opt:Number(opt), season:3})
+      });
+      const d = await r.json();
+      if (d.success) {
+        log.innerHTML=`<div class="log-line ok">✅ ${d.message}</div><div class="log-line ok">✅ ${d.pickCount} picks · Option ${opt}</div>`;
+        status.textContent='✅ Done'; status.className='status success'; btn.textContent='✅ Done';
+      } else {
+        log.innerHTML=`<div class="log-line err">❌ ${d.error}</div>`;
+        status.textContent='❌ Failed'; status.className='status error';
+        btn.disabled=false; btn.textContent='📋 Retry';
       }
+    } catch(e) {
+      log.innerHTML=`<div class="log-line err">Network error: ${e.message}</div>`;
+      status.className='status error'; btn.disabled=false; btn.textContent='📋 Retry';
     }
+  }
 
-    // ── Run migration ──────────────────────────────────────────────
-    async function runMigrate() {
-      const btn    = document.getElementById('migrate-btn');
-      const log    = document.getElementById('migrate-log');
-      const status = document.getElementById('migrate-status');
-
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spin">⏳</span> Migrating...';
-      log.className = 'log show';
-      log.innerHTML = '';
-      status.className = 'status';
-
-      try {
-        const r = await fetch('/api/migrate-season', { method: 'POST' });
-        const d = await r.json();
-
-        if (d.success) {
-          log.innerHTML = [
-            `<div class="log-line ok">✅ Teams updated: ${d.teams}</div>`,
-            `<div class="log-line ok">✅ Standings updated: ${d.standings}</div>`,
-            `<div class="log-line ok">✅ Core members updated: ${d.coreMembers}</div>`,
-            `<div class="log-line ok">✅ Season record updated: ${d.season}</div>`,
-            `<div class="log-line info">${d.message}</div>`,
-          ].join('');
-          status.textContent = '✅ Migration complete!';
-          status.className = 'status success';
-          btn.innerHTML = '✅ Done';
-        } else {
-          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
-          status.textContent = '❌ Migration failed';
-          status.className = 'status error';
-          btn.disabled = false;
-          btn.innerHTML = '🔄 Try Again';
-        }
-      } catch (e) {
-        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
-        status.className = 'status error';
-        status.textContent = '❌ Could not reach server';
-        btn.disabled = false;
-        btn.innerHTML = '🔄 Try Again';
-      }
-    }
-
-    async function runApril() {
-      const btn = document.getElementById('april-btn');
-      const log = document.getElementById('april-log');
-      const status = document.getElementById('april-status');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spin">⏳</span> Updating...';
-      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
-      try {
-        const r = await fetch('/api/update-april-standings', { method: 'POST' });
-        const d = await r.json();
-        if (d.success) {
-          log.innerHTML = [
-            '<div class="log-line ok">✅ Dragons — April champion (6 pts)</div>',
-            '<div class="log-line ok">✅ Falcons — 3 pts · Season Champions 🏆</div>',
-            '<div class="log-line ok">✅ Titans — 3 pts</div>',
-            '<div class="log-line ok">✅ Panthers — 2 pts</div>',
-            '<div class="log-line ok">✅ Spartans — 1 pt</div>',
-            `<div class="log-line info">${d.message}</div>`,
-          ].join('');
-          status.textContent = '✅ April standings updated!';
-          status.className = 'status success';
-          btn.innerHTML = '✅ Done';
-        } else {
-          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
-          status.textContent = '❌ Update failed'; status.className = 'status error';
-          btn.disabled = false; btn.innerHTML = '🏆 Try Again';
-        }
-      } catch(e) {
-        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
-        status.textContent = '❌ Could not reach server'; status.className = 'status error';
-        btn.disabled = false; btn.innerHTML = '🏆 Try Again';
-      }
-    }
-
-    async function runNarenSeed() {
-      const btn = document.getElementById('naren-btn');
-      const log = document.getElementById('naren-log');
-      const status = document.getElementById('naren-status');
-      btn.disabled = true; btn.innerHTML = '⏳ Saving...';
-      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
-      try {
-        const r = await fetch('/api/seed-naren-draft', { method: 'POST' });
-        const d = await r.json();
-        if (d.success) {
-          log.innerHTML = `<div class="log-line ok">✅ ${d.message}</div><div class="log-line ok">✅ ${d.pickCount} picks saved · Season 3 · Option 2 · User: Naren</div>`;
-          status.textContent = '✅ Saved!'; status.className = 'status success';
-          btn.innerHTML = '✅ Done';
-        } else {
-          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
-          status.textContent = '❌ Failed'; status.className = 'status error';
-          btn.disabled = false; btn.innerHTML = '🏐 Try Again';
-        }
-      } catch(e) {
-        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
-        status.className = 'status error'; btn.disabled = false; btn.innerHTML = '🏐 Try Again';
-      }
-    }
-
-    async function runS3Seed() {
-      const btn=document.getElementById('s3-btn'), log=document.getElementById('s3-log'), status=document.getElementById('s3-status');
-      btn.disabled=true; btn.innerHTML='⏳ Seeding...';
-      log.className='log show'; log.innerHTML=''; status.className='status';
-      try {
-        const r = await fetch('/api/s3/seed', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:'fvl2026'})});
-        const d = await r.json();
-        if(d.success){
-          log.innerHTML=`<div class="log-line ok">✅ ${d.teams} teams seeded</div><div class="log-line ok">✅ ${d.events} monthly events created</div>`;
-          status.textContent='✅ Season 3 ready!'; status.className='status success'; btn.innerHTML='✅ Done';
-        } else { log.innerHTML=`<div class="log-line err">❌ ${d.error}</div>`; status.textContent='❌ Failed'; status.className='status error'; btn.disabled=false; btn.innerHTML='🏐 Try Again'; }
-      } catch(e) { log.innerHTML=`<div class="log-line err">Network error: ${e.message}</div>`; status.className='status error'; btn.disabled=false; btn.innerHTML='🏐 Retry'; }
-    }
-
-    async function runClone() {
-      const btn    = document.getElementById('clone-btn');
-      const log    = document.getElementById('clone-log');
-      const status = document.getElementById('clone-status');
-      const from   = document.getElementById('clone-from').value.trim();
-      const to     = document.getElementById('clone-to').value.trim();
-      const opt    = document.getElementById('clone-opt').value;
-      if (!from || !to) { status.textContent = '✗ Fill in both users'; status.className = 'status error'; return; }
-      btn.disabled = true; btn.innerHTML = '⏳ Cloning…';
-      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
-      try {
-        const r = await fetch('/api/draft-clone', {
-          method: 'POST', headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ fromUser: from, toUser: to, opt: Number(opt), season: 3 }),
-        });
-        const d = await r.json();
-        if (d.success) {
-          log.innerHTML = `<div class="log-line ok">✅ ${d.message}</div><div class="log-line ok">✅ ${d.pickCount} picks cloned · Option ${opt}</div>`;
-          status.textContent = '✅ Done'; status.className = 'status success';
-          btn.innerHTML = '✅ Done';
-        } else {
-          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
-          status.textContent = '❌ Failed'; status.className = 'status error';
-          btn.disabled = false; btn.innerHTML = '📋 Clone Draft';
-        }
-      } catch(e) {
-        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
-        status.className = 'status error'; btn.disabled = false; btn.innerHTML = '📋 Clone Draft';
-      }
-    }
-
-    checkHealth();
-
-    async function runAshokSeed() {
-      const btn = document.getElementById('ashok-btn');
-      const log = document.getElementById('ashok-log');
-      const status = document.getElementById('ashok-status');
-      btn.disabled = true; btn.innerHTML = '⏳ Saving...';
-      log.className = 'log show'; log.innerHTML = ''; status.className = 'status';
-      try {
-        const r = await fetch('/api/seed-ashok-draft', { method: 'POST' });
-        const d = await r.json();
-        if (d.success) {
-          log.innerHTML = `<div class="log-line ok">✅ ${d.message}</div><div class="log-line ok">✅ ${d.pickCount} picks saved · Season 3 · Option 2 · User: Ashok</div>`;
-          status.textContent = '✅ Saved!'; status.className = 'status success';
-          btn.innerHTML = '✅ Done';
-        } else {
-          log.innerHTML = `<div class="log-line err">❌ ${d.error}</div>`;
-          status.textContent = '❌ Failed'; status.className = 'status error';
-          btn.disabled = false; btn.innerHTML = '🏐 Try Again';
-        }
-      } catch(e) {
-        log.innerHTML = `<div class="log-line err">Network error: ${e.message}</div>`;
-        status.className = 'status error'; btn.disabled = false; btn.innerHTML = '🏐 Try Again';
-      }
-    }
-  </script>
+  checkHealth();
+</script>
 </body>
 </html>
