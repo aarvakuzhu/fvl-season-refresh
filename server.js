@@ -392,11 +392,6 @@ app.get('/api/draft-compare', async (req, res) => {
 
 // /api/seed-ashok-draft — retired
 
-// ── Compare page ─────────────────────────────────────────────────────
-app.get('/compare', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'compare.html'));
-});
-
 // ── Roster page ──────────────────────────────────────────────────────
 app.get('/roster', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'roster.html'));
