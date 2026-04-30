@@ -258,4 +258,51 @@ function renderChecklists() {
 _loaded['overview'] = true;
 // Run overview renderers immediately
 renderStandings();
-renderDecisionsSidebar();
+renderCurrentMonthWidget();
+
+// ── Current Month Schedule Widget (Overview sidebar) ─────────────────
+async function renderCurrentMonthWidget() {
+  const el = document.getElementById('current-month-widget');
+  if (!el) return;
+  try {
+    // Find current month (first unlocked, or last locked)
+    const r = await fetch('/api/s3/schedule');
+    const events = await r.json();
+    if (!events || !events.length) {
+      el.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--muted)">Season not yet seeded.</div>';
+      return;
+    }
+    const ev = events.find(e => !e.locked) || events[events.length - 1];
+    const TIMES = ['2:00','2:25','2:50','3:15','3:40','4:05','4:30','4:55'];
+    const TCOLORS = {Dragons:'#ef4444',Predators:'#22c55e',Falcons:'#3b82f6',Spartans:'#8b5cf6',Titans:'#f97316',Raptors:'#14b8a6'};
+    const dot = n => `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${TCOLORS[n]||'#888'};flex-shrink:0"></span>`;
+    const played = ev.games.filter(g=>g.played).length;
+    const total  = ev.games.length;
+    // RR slots only for widget
+    const rrGames = ev.games.filter(g=>g.type==='rr');
+    const slots = {};
+    rrGames.forEach(g=>{ if(!slots[g.slot])slots[g.slot]=[]; slots[g.slot].push(g); });
+    const rows = Object.values(slots).map(games => `
+      <div style="display:grid;grid-template-columns:38px 1fr;gap:0;border-bottom:1px solid var(--border2);font-size:11px">
+        <div style="padding:5px 6px;background:var(--light);color:var(--muted);font-family:'Roboto Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border2)">${TIMES[games[0].slot]||''}</div>
+        <div style="padding:4px 8px;display:flex;flex-direction:column;gap:3px">
+          ${games.map(g => `<div style="display:flex;align-items:center;gap:4px">
+            ${dot(g.teamA)}<span style="flex:1;font-weight:600">${g.teamA}</span>
+            <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:${g.played?'#1565c0':'#ccc'}">${g.played?`${g.scoreA}–${g.scoreB}`:'vs'}</span>
+            <span style="flex:1;text-align:right;font-weight:600">${g.teamB}</span>${dot(g.teamB)}
+          </div>`).join('')}
+        </div>
+      </div>`).join('');
+    el.innerHTML = `
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:7px 10px;background:var(--ci-blue);color:#fff;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;font-weight:700">${ev.label}</span>
+          <span style="font-size:10px;opacity:.8">${played}/${total} played${ev.champion?' · 🏆 '+ev.champion:''}</span>
+        </div>
+        ${rows}
+        <div style="padding:6px 10px;text-align:center;background:var(--light)"><a href="/season3" style="font-size:11px;color:var(--ci-blue);font-weight:700;text-decoration:none">Full schedule &amp; standings →</a></div>
+      </div>`;
+  } catch(e) {
+    el.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--muted)">Schedule unavailable.</div>';
+  }
+}

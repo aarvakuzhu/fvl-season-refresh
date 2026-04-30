@@ -689,6 +689,11 @@ function computeFullStandings(ev) {
   return result;
 }
 
+// ── Season 2 history page ────────────────────────────────────────────────
+app.get('/season2', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'season2.html'));
+});
+
 // ── Season 3 page ─────────────────────────────────────────────────────
 app.get('/season3', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'season3.html'));

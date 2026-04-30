@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FVL Season 2 — History</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1b2a;--blue:#1a5fb4;--blue2:#e8eef8;--red:#c62828;--green:#1b7a1b;--green2:#e8f5e9;--amber:#d35400;--gold:#b8860b;--bg:#f0f2f5;--white:#fff;--border:#dde3ed;--border2:#eaeef5;--text:#1a1a2e;--muted:#64748b;--light:#f8fafc}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-height:100vh}
+#hdr{background:var(--navy);height:50px;display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.hbadge{background:var(--red);color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:2px;letter-spacing:1px}
+.htitle{font-size:16px;font-weight:700;color:#fff}
+.htitle span{color:#f5c842}
+.hright{margin-left:auto;display:flex;gap:8px}
+.hbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:2px;text-decoration:none;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);cursor:pointer}
+.hbtn:hover{color:#fff;border-color:#fff}
+.page{max-width:960px;margin:0 auto;padding:20px 16px}
+.sec{font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:16px 0 6px}
+.sec:first-child{padding-top:0}
+.sec-line{display:block;height:2px;background:var(--border);margin-bottom:12px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:3px;margin-bottom:12px}
+.card-hd{padding:9px 13px;font-size:12px;font-weight:700;border-bottom:1px solid var(--border2);background:var(--light)}
+.card-body{padding:12px 13px}
+
+/* standings */
+.srow{display:grid;grid-template-columns:36px 1fr auto auto;align-items:center;padding:9px 13px;border-bottom:1px solid var(--border2);gap:8px}
+.srow:last-child{border:none}
+.spos{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:var(--muted);text-align:center}
+.srow.gold .spos{color:#b8860b}
+.sname{font-size:13px;font-weight:700}
+.ssub{font-size:11px;color:var(--muted)}
+.spts{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:var(--blue)}
+.champ-badge{font-size:10px;padding:1px 6px;border-radius:2px;background:#fff3cd;color:#856404;border:1px solid #ffc107;font-family:'Roboto Mono',monospace;font-weight:700;white-space:nowrap}
+
+/* teams */
+.teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:12px}
+.team-card{background:var(--white);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.team-hd{padding:10px 13px;display:flex;justify-content:space-between;align-items:center}
+.team-name{font-size:16px;font-weight:900;color:#fff}
+.team-cap{font-size:11px;color:rgba(255,255,255,.8)}
+.team-players{padding:8px 13px;display:flex;flex-wrap:wrap;gap:4px}
+.ptag{font-size:11px;padding:2px 7px;background:var(--light);border:1px solid var(--border2);border-radius:2px;color:var(--text)}
+
+/* monthly results */
+.month-row{display:grid;grid-template-columns:120px 1fr auto;align-items:center;padding:8px 13px;border-bottom:1px solid var(--border2);gap:8px;font-size:12px}
+.month-row:last-child{border:none}
+.m-label{font-family:'Roboto Mono',monospace;font-weight:700;color:var(--muted)}
+.m-champ{font-size:11px;background:#fff3cd;color:#856404;padding:1px 7px;border-radius:2px;font-weight:700}
+</style>
+</head>
+<body>
+<div id="hdr">
+  <span class="hbadge">FVL</span>
+  <span class="htitle">Season <span>2</span> — Historical Record</span>
+  <div class="hright">
+    <a href="/season3" class="hbtn">🏐 Season 3 →</a>
+    <a href="/" class="hbtn">← Home</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="sec">Season 2 Final Standings</div>
+  <span class="sec-line"></span>
+  <div class="card">
+    <div class="card-hd">Season 2 · Nov 2025 – Apr 2026 · 5 teams</div>
+    <div id="s2-standings">
+      <div style="padding:20px;text-align:center;color:var(--muted)">Loading…</div>
+    </div>
+    <div style="padding:7px 13px;font-size:11px;color:var(--muted);font-style:italic;border-top:1px solid var(--border2)">Season 2 Final — Falcons 🏆 Season Champions. Dragons 🏆 April Monthly Champions.</div>
+  </div>
+
+  <div class="sec">Monthly Champions</div>
+  <span class="sec-line"></span>
+  <div class="card">
+    <div class="month-row"><span class="m-label">November 2025</span><span style="color:var(--muted)">FVL Falcons</span><span class="m-champ">🏆 Champions</span></div>
+    <div class="month-row"><span class="m-label">December 2025</span><span style="color:var(--muted)">FVL Spartans</span><span class="m-champ">🏆 Champions</span></div>
+    <div class="month-row"><span class="m-label">January 2026</span><span style="color:var(--muted)">FVL Spartans</span><span class="m-champ">🏆 Champions</span></div>
+    <div class="month-row"><span class="m-label">February 2026</span><span style="color:var(--muted)">FVL Falcons</span><span class="m-champ">🏆 Champions</span></div>
+    <div class="month-row"><span class="m-label">March 2026</span><span style="color:var(--muted)">FVL Dragons</span><span class="m-champ">🏆 Champions</span></div>
+    <div class="month-row"><span class="m-label">April 2026</span><span style="color:var(--muted)">FVL Dragons</span><span class="m-champ">🏆 Champions</span></div>
+  </div>
+
+  <div class="sec">Season 2 Teams</div>
+  <span class="sec-line"></span>
+  <div class="teams-grid" id="s2-teams">
+    <div style="padding:20px;color:var(--muted);grid-column:1/-1">Loading…</div>
+  </div>
+
+  <div class="sec">Season 2 Overview</div>
+  <span class="sec-line"></span>
+  <div class="card">
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+        <div style="padding:10px 13px;border-right:1px solid var(--border2);border-bottom:1px solid var(--border2)"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:'Roboto Mono',monospace;margin-bottom:3px">Season</div><div style="font-size:18px;font-weight:900;color:var(--blue)">Nov 2025 – Apr 2026</div></div>
+        <div style="padding:10px 13px;border-bottom:1px solid var(--border2)"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:'Roboto Mono',monospace;margin-bottom:3px">Teams</div><div style="font-size:18px;font-weight:900;color:var(--blue)">5</div></div>
+        <div style="padding:10px 13px;border-right:1px solid var(--border2)"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:'Roboto Mono',monospace;margin-bottom:3px">Season Champion</div><div style="font-size:16px;font-weight:900;color:var(--gold)">🏆 FVL Falcons</div><div style="font-size:11px;color:var(--muted)">24 pts · Nov + Feb monthly wins</div></div>
+        <div style="padding:10px 13px"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:'Roboto Mono',monospace;margin-bottom:3px">Monthly Champions</div><div style="font-size:14px;font-weight:700;color:var(--blue)">Falcons (2) · Spartans (2) · Dragons (2)</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+async function load() {
+  // Load standings
+  try {
+    const r = await fetch('/api/standings?season=2');
+    const data = await r.json();
+    const troph = n => '🏆'.repeat(n)||'';
+    document.getElementById('s2-standings').innerHTML = data.map((d,i) => {
+      const cm = (d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)).join(', ');
+      return `<div class="srow ${i===0?'gold':''}">
+        <div class="spos">${i+1}</div>
+        <div><div class="sname">${d.teamName} ${d.seasonChampion?'<span class="champ-badge">SEASON CHAMP</span>':''}</div><div class="ssub">${cm?'Won: '+cm:''}</div></div>
+        <div style="font-size:13px;color:var(--muted)">${troph(d.championships||0)}</div>
+        <div class="spts">${d.totalPoints} pts</div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+
+  // Load teams
+  try {
+    const r = await fetch('/api/teams?season=2');
+    const teams = await r.json();
+    const colors = {'FVL Falcons':'#1a3566','FVL Spartans':'#311b92','FVL Titans':'#0f1e3d','FVL Dragons':'#7f0000','FVL Panthers':'#1b5e20'};
+    document.getElementById('s2-teams').innerHTML = teams.map(t => {
+      const cap = (t.players||[]).find(p=>p.role==='Captain');
+      const players = (t.players||[]).filter(p=>p.role!=='Captain');
+      const col = colors[t.name]||'#333';
+      return `<div class="team-card">
+        <div class="team-hd" style="background:${col}">
+          <div><div class="team-name">${t.name.replace('FVL ','')}</div><div class="team-cap">⭐ ${cap?.name||'—'}</div></div>
+        </div>
+        <div class="team-players">${players.map(p=>`<span class="ptag">${p.name}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+load();
+</script>
+</body>
+</html>
