@@ -116,6 +116,26 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
 .month-pos.p3{color:#cd7f32;font-weight:700}
 .month-pos.champ::before{content:'🏆 '}
 
+/* MONTHLY STANDINGS */
+.m-sel-btn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.m-sel-btn:hover{border-color:var(--accent);color:var(--accent)}
+.m-sel-btn.active{border-color:var(--accent);background:var(--accent);color:#fff}
+.monthly-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.monthly-table th{background:#0d1b2a;color:#fff;padding:9px 12px;text-align:left;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:.8px;white-space:nowrap}
+.monthly-table th.num{text-align:center}
+.monthly-table td{padding:9px 12px;border-bottom:1px solid var(--border2);font-size:13px;vertical-align:middle}
+.monthly-table td.num{text-align:center;font-family:'Source Code Pro',monospace;font-size:13px;font-weight:600}
+.monthly-table tr:last-child td{border:none}
+.monthly-table tr:hover td{background:#f8fafc}
+.monthly-table tr.rank-1 td{background:#fffbeb}
+.m-pts{font-family:'Source Code Pro',monospace;font-weight:700;font-size:15px;color:var(--accent)}
+.m-diff-pos{color:#1b5e20;font-weight:700}
+.m-diff-neg{color:#c62828;font-weight:700}
+.m-diff-zero{color:var(--muted)}
+.game-detail{font-size:11px;color:var(--muted);margin-top:2px}
+.prog-bar{width:100%;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-top:3px}
+.prog-fill{height:100%;border-radius:3px;transition:width .3s}
+
 /* ROTATION */
 .rot-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
 .rot-table th{background:#0d1b2a;color:#fff!important;padding:8px 12px;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);text-align:center}
@@ -174,7 +194,8 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
 <div class="tabs">
   <button class="tab-btn active" data-panel="teams"    onclick="switchTab(this)">🏐 Teams</button>
   <button class="tab-btn"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</button>
-  <button class="tab-btn"        data-panel="standings"onclick="switchTab(this)">🏆 Standings</button>
+  <button class="tab-btn"        data-panel="standings" onclick="switchTab(this)">🏆 Season</button>
+  <button class="tab-btn"        data-panel="monthly"   onclick="switchTab(this)">📊 Monthly</button>
   <button class="tab-btn"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</button>
 </div>
 
@@ -250,6 +271,15 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
   </div>
 </div>
 
+<!-- MONTHLY STANDINGS -->
+<div class="panel" id="panel-monthly">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+    <span style="font-size:12px;color:var(--muted);font-weight:600">Month:</span>
+    <div id="month-selector" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+  </div>
+  <div id="monthly-standings-wrap"></div>
+</div>
+
 <!-- ROTATION -->
 <div class="panel" id="panel-rotation">
   <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Each team shifts right by one position every month. T1–T6 positions determine matchups — opponents change naturally each month.</p>
@@ -298,6 +328,14 @@ function switchTab(btn) {
   if (btn.dataset.panel === 'schedule')  loadSchedule();
   if (btn.dataset.panel === 'standings') loadStandings();
   if (btn.dataset.panel === 'rotation')  renderRotation();
+  if (btn.dataset.panel === 'monthly') {
+    if (!events.length) {
+      loadSchedule().then(() => { initMonthlySelector(); showMonthlyStandings(_curMonth); });
+    } else {
+      initMonthlySelector();
+      showMonthlyStandings(_curMonth);
+    }
+  }
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────
@@ -616,6 +654,127 @@ document.addEventListener('keydown', e => {
   if (e.key==='Escape') closeModal();
   if (e.key==='Enter' && pendingModal) submitScore();
 });
+
+// ── MONTHLY STANDINGS ────────────────────────────────────────────────
+let _curMonth = 1;
+
+function initMonthlySelector() {
+  const sel = document.getElementById('month-selector');
+  if (!sel || sel.children.length) return;
+  events.forEach(ev => {
+    const b = document.createElement('button');
+    b.className = 'm-sel-btn' + (ev.month===_curMonth?' active':'');
+    b.textContent = ev.label.split(' ')[0]; // "May", "June" etc
+    b.onclick = () => showMonthlyStandings(ev.month, b);
+    sel.appendChild(b);
+  });
+}
+
+function showMonthlyStandings(month, btn) {
+  _curMonth = month;
+  document.querySelectorAll('.m-sel-btn').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const ev = events.find(e=>e.month===month);
+  if (!ev) return;
+  renderMonthlyStandings(ev);
+}
+
+function renderMonthlyStandings(ev) {
+  const wrap = document.getElementById('monthly-standings-wrap');
+  const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+  const allTeams = [...new Set(ev.positions||TEAMS.map(t=>t.name))];
+  const maxGames = 4; // each team plays 4 RR games
+
+  // Build per-team stats from played RR games
+  const stats = {};
+  allTeams.forEach(t => {
+    stats[t] = { wins:0, losses:0, pts:0, scored:0, conceded:0, diff:0, games:[] };
+  });
+
+  rrGames.forEach(g => {
+    const a=g.teamA, b=g.teamB, sa=g.scoreA, sb=g.scoreB;
+    if (!stats[a]||!stats[b]) return;
+    stats[a].scored   += sa; stats[a].conceded += sb; stats[a].diff += sa-sb;
+    stats[b].scored   += sb; stats[b].conceded += sa; stats[b].diff += sb-sa;
+    if (sa>sb) { stats[a].wins++; stats[a].pts+=2; stats[b].losses++; }
+    else       { stats[b].wins++; stats[b].pts+=2; stats[a].losses++; }
+    stats[a].games.push({opp:b, scored:sa, conceded:sb, won:sa>sb});
+    stats[b].games.push({opp:a, scored:sb, conceded:sa, won:sb>sa});
+  });
+
+  // Get finals results for ranking
+  const finalGame = ev.games.find(g=>g.type==='final'&&g.played);
+  const thirdGame  = ev.games.find(g=>g.type==='third'&&g.played);
+  const fifthGame  = ev.games.find(g=>g.type==='fifth'&&g.played);
+
+  // Sort: pts desc → diff desc → scored desc
+  const ranked = Object.entries(stats)
+    .sort(([,a],[,b])=>b.pts-a.pts||b.diff-a.diff||b.scored-a.scored)
+    .map(([t,s],i)=>({team:t,...s,rrPos:i+1}));
+
+  const played  = rrGames.length;
+  const total   = 12; // 6 slots × 2 courts
+  const progress = Math.round(played/total*100);
+
+  const diffClass = d => d>0?'m-diff-pos':d<0?'m-diff-neg':'m-diff-zero';
+  const diffFmt   = d => d>0?'+'+d:String(d);
+
+  // Game log per team
+  const gameLog = (row) => row.games.map(g=>
+    `<span style="display:inline-flex;align-items:center;gap:3px;margin-right:6px;font-size:10px;padding:1px 5px;border-radius:2px;background:${g.won?'#e8f5e9':'#ffebee'};color:${g.won?'#1b5e20':'#c62828'}">${g.won?'W':'L'} ${g.scored}–${g.conceded} vs ${g.opp}</span>`
+  ).join('');
+
+  wrap.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700">${ev.label} · Round Robin Standings</div>
+        <div style="font-size:11px;color:var(--muted)">${ev.date} · ${played} of ${total} RR games played</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-family:'Source Code Pro',monospace">${progress}% complete</div>
+    </div>
+    <div style="height:4px;background:#e5e7eb;border-radius:2px;margin-bottom:14px;overflow:hidden">
+      <div style="height:100%;width:${progress}%;background:var(--accent);border-radius:2px;transition:width .4s"></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="monthly-table">
+      <thead><tr>
+        <th class="num" style="width:32px">#</th>
+        <th>Team</th>
+        <th class="num">W</th>
+        <th class="num">L</th>
+        <th class="num">Pts</th>
+        <th class="num">+Scored</th>
+        <th class="num">–Conceded</th>
+        <th class="num">Diff</th>
+        <th class="num">Played</th>
+        <th>Results</th>
+      </tr></thead>
+      <tbody>
+        ${ranked.map((row,i)=>{
+          const col = teamColor(row.team);
+          return `<tr class="${i===0?'rank-1':''}">
+            <td class="num" style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':row.team==='--'?'#ccc':'var(--muted)'}">${i+1}</td>
+            <td><div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></span><span style="font-weight:700">${row.team}</span></div></td>
+            <td class="num" style="color:#1b5e20;font-weight:700">${row.wins}</td>
+            <td class="num" style="color:#c62828">${row.losses}</td>
+            <td class="num"><span class="m-pts">${row.pts}</span></td>
+            <td class="num">${row.scored||0}</td>
+            <td class="num">${row.conceded||0}</td>
+            <td class="num"><span class="${diffClass(row.diff)}">${diffFmt(row.diff)}</span></td>
+            <td class="num"><span style="font-size:11px;color:var(--muted)">${row.wins+row.losses}/${maxGames}</span></td>
+            <td style="font-size:11px">${gameLog(row)||'<span style="color:#ccc">No games yet</span>'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+    ${finalGame?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:10px 14px;margin-top:8px;font-size:13px">
+      🏆 <strong>Champion: ${finalGame.scoreA>finalGame.scoreB?finalGame.teamA:finalGame.teamB}</strong>
+      &nbsp;·&nbsp; Final: ${finalGame.teamA} ${finalGame.scoreA}–${finalGame.scoreB} ${finalGame.teamB}
+      ${thirdGame&&thirdGame.played?`&nbsp;·&nbsp; 3rd: ${thirdGame.scoreA>thirdGame.scoreB?thirdGame.teamA:thirdGame.teamB}`:''}
+    </div>`:''}
+  `;
+}
 
 // ── BOOT ─────────────────────────────────────────────────────────────
 renderTeams();

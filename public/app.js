@@ -273,6 +273,9 @@ async function renderCurrentMonthWidget() {
       return;
     }
     const ev = events.find(e => !e.locked) || events[events.length - 1];
+    // Update heading label
+    const lbl = document.getElementById('cur-month-label');
+    if (lbl) lbl.textContent = ev.label;
     const TIMES = ['2:00','2:25','2:50','3:15','3:40','4:05','4:30','4:55'];
     const TCOLORS = {Dragons:'#ef4444',Predators:'#22c55e',Falcons:'#3b82f6',Spartans:'#8b5cf6',Titans:'#f97316',Raptors:'#14b8a6'};
     const dot = n => `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${TCOLORS[n]||'#888'};flex-shrink:0"></span>`;
