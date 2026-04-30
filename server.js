@@ -476,14 +476,15 @@ const S3_MONTHS = [
 ];
 
 // Fixed RR matchup pairs (positions T1-T6, not real teams)
+// Optimised to eliminate 3-in-a-row: every team has max 2 consecutive games
 // Each slot: [[posA, posB, court], [posA, posB, court]]
 const RR_SLOTS = [
   [[1,2,1],[3,5,2]],
   [[1,3,1],[4,6,2]],
-  [[2,4,1],[1,5,2]],
-  [[2,6,1],[3,4,2]],
-  [[1,6,1],[4,5,2]],
-  [[2,3,1],[5,6,2]],
+  [[2,4,1],[5,6,2]],
+  [[1,5,1],[2,3,2]],
+  [[3,4,1],[1,6,2]],
+  [[2,6,1],[4,5,2]],
 ];
 
 // Shift-right rotation: month 0 = base order, each month shifts all teams right by 1

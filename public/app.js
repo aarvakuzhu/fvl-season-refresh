@@ -121,10 +121,10 @@ function renderSchedule() {
   const rrA = [
     [0,'rr1','T1 vs T2  |  T3 vs T5'],
     [1,'rr1','T1 vs T3  |  T4 vs T6'],
-    [2,'rr1','T2 vs T4  |  T1 vs T5'],
-    [3,'rr2','T2 vs T6  |  T3 vs T4'],
-    [4,'rr2','T1 vs T6  |  T4 vs T5'],
-    [5,'rr2','T2 vs T3  |  T5 vs T6'],
+    [2,'rr1','T2 vs T4  |  T5 vs T6'],
+    [3,'rr2','T1 vs T5  |  T2 vs T3'],
+    [4,'rr2','T3 vs T4  |  T1 vs T6'],
+    [5,'rr2','T2 vs T6  |  T4 vs T5'],
   ];
   const finA = [
     [6,'po','5th Place · #5 vs #6  |  3rd Place · #3 vs #4'],
