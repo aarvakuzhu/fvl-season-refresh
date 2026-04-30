@@ -423,11 +423,7 @@ app.get('/season3', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'season3.html'));
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
 
-app.listen(PORT, () => console.log(`FVL running on port ${PORT}`));
 
 // ── Clone draft save ─────────────────────────────────────────────────
 app.post('/api/draft-clone', async (req, res) => {
@@ -699,3 +695,10 @@ function computeFullStandings(ev) {
   return result;
 }
 
+
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.listen(PORT, () => console.log(`FVL running on port ${PORT}`));
