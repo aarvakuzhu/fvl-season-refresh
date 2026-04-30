@@ -317,6 +317,12 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
         <span class="filter-label">Team</span>
         <div class="filter-chips" id="team-chips">
           <button class="chip chip-all active" onclick="setTeamFilter(null,this)">All</button>
+          <button class="chip" onclick="setTeamFilter('Dragons',this)" style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#c62828;display:inline-block"></span>Dragons</button>
+          <button class="chip" onclick="setTeamFilter('Predators',this)" style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#1b5e20;display:inline-block"></span>Predators</button>
+          <button class="chip" onclick="setTeamFilter('Falcons',this)" style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#1a3566;display:inline-block"></span>Falcons</button>
+          <button class="chip" onclick="setTeamFilter('Spartans',this)" style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#311b92;display:inline-block"></span>Spartans</button>
+          <button class="chip" onclick="setTeamFilter('Titans',this)" style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#e65100;display:inline-block"></span>Titans</button>
+          <button class="chip" onclick="setTeamFilter('Raptors',this)" style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#004d40;display:inline-block"></span>Raptors</button>
         </div>
       </div>
       <div class="filter-row">
@@ -427,7 +433,7 @@ function renderTeams() {
 // ── SCHEDULE ──────────────────────────────────────────────────────────
 async function loadSchedule() {
   const el = document.getElementById('schedule-list');
-  if (events.length) { buildTeamChips(); renderSchedule(); return; }
+  if (events.length) { renderSchedule(); return; }
   el.innerHTML = '<div class="empty">Loading…</div>';
   try {
     const r = await fetch('/api/s3/schedule');
@@ -435,7 +441,6 @@ async function loadSchedule() {
     try { events = JSON.parse(text); } catch { throw new Error('Server error: '+text.slice(0,80)); }
     if (!r.ok) throw new Error(events?.error||'API error');
     if (!events.length) throw new Error('No events — seed via /admin');
-    buildTeamChips();
     renderSchedule();
     if(_schedView==='standings') { buildSVMonthChips(); renderSVMonth(_svMonth); }
   } catch(e) {
