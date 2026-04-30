@@ -467,7 +467,7 @@ function monthCard(ev, mi) {
     const tB = isP ? `<span style="color:var(--muted)">${g.teamB}</span>` : `<span class="g-name">${g.teamB}</span> ${dot(g.teamB)}`;
     const wA = g.played&&g.scoreA>g.scoreB, wB = g.played&&g.scoreB>g.scoreA;
     const scoreD = g.played
-      ? `<span class="g-score" style="color:${wA?teamColor(g.teamA):wB?teamColor(g.teamB):'var(--blue)'}">${g.scoreA}–${g.scoreB}</span>`
+      ? `<span class="g-score" style="color:${wA?teamColor(g.teamA):wB?teamColor(g.teamB):'var(--blue)'}">${g.scoreA}–${g.scoreB}</span>${isAdmin&&!ev.locked?`<button class="score-btn" style="font-size:10px;padding:1px 6px;margin-left:4px;border-color:var(--muted);color:var(--muted)" onclick="openModal(${ev.month},${ev.games.indexOf(g)})">✎</button>`:''}`
       : (isAdmin&&!ev.locked&&!isP)
         ? `<button class="score-btn" onclick="openModal(${ev.month},${ev.games.indexOf(g)})">+ Score</button>`
         : `<span class="g-vs">vs</span>`;
@@ -680,8 +680,8 @@ function toggleSVTeam(uid){
 function openModal(month,idx){
   const ev=events.find(e=>e.month===month); const g=ev?.games[idx]; if(!g) return;
   _pendingModal={month,idx};
-  document.getElementById('m-title').textContent=`${g.teamA} vs ${g.teamB}`;
-  document.getElementById('m-sub').textContent=`${ev.label} · ${TIMES[g.slot]||''}`;
+  document.getElementById('m-title').textContent = g.played ? `Edit Result` : `Enter Result`;
+  document.getElementById('m-sub').textContent=`${ev.label} · ${TIMES[g.slot]||''}${g.played?' · Overwrite existing score':''}`;
   document.getElementById('m-name-a').textContent=g.teamA;
   document.getElementById('m-name-b').textContent=g.teamB;
   document.getElementById('m-dot-a').style.background=teamColor(g.teamA);
