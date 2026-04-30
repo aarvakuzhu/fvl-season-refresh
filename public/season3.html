@@ -4,255 +4,224 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FVL Season 3</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#f0f2f5; --surface:#ffffff; --surface2:#f8fafc; --border:#dde3ed;
-  --text:#1a1a2e; --muted:#64748b; --accent:#1a5fb4;
-  --dragons:#c62828; --predators:#1b5e20; --falcons:#1a3566;
-  --spartans:#311b92; --titans:#e65100; --raptors:#004d40;
-  --gold:#b8860b;
+:root{
+  --navy:#0d1b2a;--blue:#1a5fb4;--blue2:#e8eef8;--red:#c62828;
+  --green:#1b7a1b;--green2:#e8f5e9;--amber:#d35400;--gold:#b8860b;
+  --bg:#f0f2f5;--white:#fff;--border:#dde3ed;--border2:#eaeef5;
+  --text:#1a1a2e;--muted:#64748b;--light:#f8fafc;
+  --c1:#3b82f6;--c2:#6366f1;
+  --dragons:#c62828;--predators:#1b5e20;--falcons:#1a3566;
+  --spartans:#311b92;--titans:#e65100;--raptors:#004d40;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:14px;scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Source Sans 3',sans-serif;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-height:100vh}
 
-/* NAV */
-nav{background:#0d1b2a;border-bottom:1px solid #1a2f4a;height:50px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
-.nav-badge{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;background:var(--accent);color:#fff;padding:3px 8px;border-radius:2px}
-.nav-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:#fff;letter-spacing:.5px}
-.nav-title span{color:var(--gold)}
-.nav-right{margin-left:auto;display:flex;gap:8px;align-items:center}
-.nav-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:3px;border:1px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;font-family:inherit;text-decoration:none;transition:all .15s}
-.nav-btn:hover{border-color:#fff;color:#fff}
-.nav-btn.admin-active{border-color:#f5c842;color:#f5c842}
+/* ── HEADER ── */
+#hdr{background:var(--navy);height:50px;display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.hbadge{background:var(--red);color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:2px;letter-spacing:1px}
+.htitle{font-size:16px;font-weight:700;color:#fff}.htitle span{color:#f5c842}
+.hright{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:2px;text-decoration:none;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;font-family:inherit}
+.hbtn:hover{color:#fff;border-color:#fff}
+.hbtn-admin{border-color:rgba(245,200,66,.4);color:rgba(245,200,66,.9)}
+.hbtn-admin.on{background:#f5c842;color:var(--navy);border-color:#f5c842;font-weight:700}
+.admin-bar{background:#fffbeb;border-bottom:1px solid #fde68a;padding:5px 16px;font-size:12px;color:#92400e;display:none;align-items:center;gap:10px}
+.admin-bar button{font-size:11px;padding:2px 8px;border:1px solid #d97706;background:transparent;color:#92400e;border-radius:2px;cursor:pointer;font-family:inherit}
 
-/* TABS */
-.tabs{display:flex;border-bottom:1px solid var(--border);background:#fff;padding:0 20px;gap:0;overflow-x:auto;position:sticky;top:50px;z-index:99}
-.tab-btn{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;letter-spacing:.5px;padding:12px 20px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
-.tab-btn:hover{color:var(--text)}
-.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+/* ── TABS ── */
+.tabs{background:var(--white);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;position:sticky;top:50px;z-index:99}
+.tab{padding:11px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;font-family:'Roboto',sans-serif}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab:hover{color:var(--text)}
 
-/* PANELS */
-.page{max-width:1320px;margin:0 auto;padding:20px}
-.panel{display:none}
-.panel.active{display:block}
+/* ── LAYOUT ── */
+.page{max-width:1100px;margin:0 auto;padding:16px}
+.panel{display:none}.panel.active{display:block}
+.sec{font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:14px 0 6px}
+.sec:first-child{padding-top:0}
+.sec-line{display:block;height:2px;background:var(--border);margin-bottom:12px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:3px;margin-bottom:12px}
+.card-hd{padding:9px 13px;font-size:12px;font-weight:700;border-bottom:1px solid var(--border2);background:var(--light)}
 
-/* TEAM CARDS */
-.teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.team-card{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.team-stripe{height:5px}
-.team-body{padding:12px 14px 8px}
-.team-name{font-family:'Oswald',sans-serif;font-size:21px;font-weight:700;letter-spacing:.5px;margin-bottom:1px}
-.team-captain{font-size:11px;font-family:'Source Code Pro',monospace;color:var(--muted);margin-bottom:8px}
-.team-roster{padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:4px;border-top:1px solid var(--border2);padding-top:8px}
-.player-tag{font-size:11px;padding:2px 8px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);color:var(--text)}
-.player-tag.captain{font-weight:700;background:#fff}
+/* ── TEAMS ── */
+.teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:12px}
+.team-card{background:var(--white);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.team-hd{padding:10px 13px;display:flex;justify-content:space-between;align-items:center}
+.team-name{font-size:17px;font-weight:900;color:#fff}
+.team-cap{font-size:11px;color:rgba(255,255,255,.8);margin-top:1px}
+.team-players{padding:8px 13px;display:flex;flex-wrap:wrap;gap:4px}
+.ptag{font-size:11px;padding:2px 7px;background:var(--light);border:1px solid var(--border2);border-radius:2px;color:var(--text)}
+.ptag.cap{font-weight:700;background:var(--white);border-color:currentColor}
 
-/* SCHEDULE */
-.month-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px}
-.month-header{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;background:#0d1b2a}
-.month-header:hover{background:#1a2f4a}
-.month-num{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:2px;flex-shrink:0}
-.month-label{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#fff}
-.month-date{font-size:11px;color:rgba(255,255,255,.6);font-family:'Source Code Pro',monospace}
-.month-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.month-progress{font-size:11px;color:rgba(255,255,255,.6);font-family:'Source Code Pro',monospace}
-.champion-tag{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px;background:var(--gold);color:#000}
-.locked-tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;background:var(--predators);color:#000;font-family:'Source Code Pro',monospace}
-.chevron{color:rgba(255,255,255,.5);font-size:12px;transition:transform .2s}
+/* ── SCHEDULE ── */
+.view-toggle-bar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--white)}
+.vt-btn{font-size:12px;font-weight:700;padding:6px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.vt-btn.active{background:var(--blue);color:#fff}
+.vt-btn:hover:not(.active){background:var(--blue2);color:var(--blue)}
+
+/* filter bar */
+.filter-bar{background:var(--white);border:1px solid var(--border);border-radius:3px;padding:9px 13px;margin-bottom:12px;display:flex;flex-direction:column;gap:7px}
+.filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.filter-label{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;min-width:36px;flex-shrink:0}
+.chip{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.chip.active{border-color:var(--blue);background:var(--blue);color:#fff}
+.chip.chip-all.active{border-color:var(--muted);background:var(--muted);color:#fff}
+
+/* schedule rows */
+.month-card{background:var(--white);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.month-hd{padding:9px 13px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;cursor:pointer}
+.month-hd:hover{background:#1a2f4a}
+.month-num{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;background:var(--blue);color:#fff;padding:2px 6px;border-radius:2px;flex-shrink:0}
+.month-label{font-size:14px;font-weight:700}
+.month-date{font-size:11px;color:rgba(255,255,255,.55);font-family:'Roboto Mono',monospace}
+.month-right{margin-left:auto;display:flex;align-items:center;gap:7px}
+.month-prog{font-size:11px;color:rgba(255,255,255,.5);font-family:'Roboto Mono',monospace}
+.champ-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:2px;background:#f5c842;color:#000}
+.locked-tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;background:var(--green);color:#fff;font-family:'Roboto Mono',monospace}
+.lock-btn{font-size:11px;padding:3px 9px;border:none;background:var(--green);color:#fff;border-radius:2px;cursor:pointer;font-weight:700;font-family:inherit}
+.chevron{color:rgba(255,255,255,.4);font-size:11px;transition:transform .2s}
 .chevron.open{transform:rotate(180deg)}
 .month-body{display:none;border-top:1px solid var(--border)}
 .month-body.open{display:block}
-.section-label{font-family:'Oswald',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);padding:10px 16px 6px;background:#f8fafc;border-bottom:1px solid var(--border)}
-/* VIEW TOGGLE */
-.view-toggle-bar{margin-bottom:12px;display:flex;align-items:center;gap:10px}
-.view-toggle{display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;background:#fff}
-.vt-btn{font-size:12px;font-weight:700;padding:7px 18px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
-.vt-btn.active{background:var(--accent);color:#fff}
-.vt-btn:hover:not(.active){background:#f0f4ff;color:var(--accent)}
-.view-month-bar{background:#fff;border:1px solid var(--border);border-radius:4px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.section-lbl{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);padding:7px 13px 5px;background:var(--light);border-bottom:1px solid var(--border2)}
+.game-row{display:grid;grid-template-columns:60px 60px 1fr;border-bottom:1px solid var(--border2);min-height:40px;align-items:center}
+.game-row:last-child{border-bottom:none}
+.game-row.hidden{display:none}
+.time-cell{padding:5px 7px;font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);font-weight:600;background:var(--light);border-right:1px solid var(--border2);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.3}
+.court-cell{padding:5px 6px;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#fff;background:var(--c1);border-right:1px solid var(--border2);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;text-transform:uppercase;letter-spacing:.3px;line-height:1.3}
+.game-row[data-court="2"] .court-cell{background:var(--c2)}
+.game-row[data-type="final"] .court-cell,.game-row[data-type="third"] .court-cell,.game-row[data-type="fifth"] .court-cell{background:var(--amber)}
+.game-cell{display:flex;align-items:center;gap:7px;padding:7px 12px}
+.g-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.g-name{font-size:12px;font-weight:700;flex:1}
+.g-vs{font-size:11px;color:var(--muted);padding:0 3px}
+.g-score{font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;min-width:48px;text-align:center;background:var(--blue2);border-radius:2px;padding:1px 7px;color:var(--blue)}
+.g-type{font-family:'Roboto Mono',monospace;font-size:9px;padding:1px 5px;border-radius:2px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;flex-shrink:0;font-weight:700}
+.g-type.final{border-color:var(--gold);color:var(--gold);background:#fffbeb}
+.g-type.third{border-color:var(--blue);color:var(--blue)}
+.g-type.fifth{border-color:var(--muted)}
+.score-btn{font-size:11px;padding:2px 9px;border:1px solid var(--blue);background:transparent;color:var(--blue);border-radius:2px;cursor:pointer;font-family:inherit;transition:all .15s;font-weight:600}
+.score-btn:hover{background:var(--blue);color:#fff}
+.games-list{background:var(--white)}
 
-/* STANDINGS VIEW CARDS */
-.sv-month{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px}
-.sv-month-hd{padding:10px 14px;background:#0d1b2a;color:#fff;display:flex;align-items:center;gap:10px}
-.sv-month-title{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700}
-.sv-month-meta{font-size:11px;color:rgba(255,255,255,.6);font-family:'Source Code Pro',monospace}
-.sv-prog{flex:1;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;max-width:100px}
-.sv-prog-fill{height:100%;background:#f5c842;border-radius:2px;transition:width .3s}
+/* ── STANDINGS VIEW (toggle) ── */
+.sv-month-bar{background:var(--white);border:1px solid var(--border);border-radius:3px;padding:9px 13px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sv-month{background:var(--white);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.sv-month-hd{padding:9px 13px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px}
+.sv-month-title{font-size:14px;font-weight:700}
+.sv-month-meta{font-size:11px;color:rgba(255,255,255,.55);font-family:'Roboto Mono',monospace}
+.sv-prog{flex:1;height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;max-width:80px}
+.sv-prog-fill{height:100%;background:#f5c842;transition:width .3s}
 .sv-table{width:100%;border-collapse:collapse}
-.sv-table th{background:#f8fafc;padding:7px 12px;text-align:left;font-family:'Source Code Pro',monospace;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border2)}
-.sv-table th.r{text-align:right}
+.sv-table th{background:var(--light);padding:7px 12px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border2)}
 .sv-table th.c{text-align:center}
-.sv-team-row{cursor:pointer;transition:background .1s}
-.sv-team-row:hover td{background:#f0f4ff}
+.sv-team-row{cursor:pointer}
+.sv-team-row:hover td{background:var(--blue2)}
 .sv-team-row td{padding:9px 12px;border-bottom:1px solid var(--border2);font-size:13px;vertical-align:middle}
 .sv-team-row.rank-1 td{background:#fffbeb}
 .sv-team-row.rank-1:hover td{background:#fef9e0}
 .sv-games-row{display:none}
 .sv-games-row.open{display:table-row}
-.sv-games-row td{padding:0;background:#f8fafc;border-bottom:1px solid var(--border)}
-.sv-games-inner{padding:6px 12px 10px 40px;display:flex;flex-direction:column;gap:4px}
-.sv-game-line{display:grid;grid-template-columns:64px 72px 1fr;gap:0;align-items:center;font-size:12px;padding:4px 8px;border-radius:3px;background:#fff;border:1px solid var(--border2)}
-.sv-game-time{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--muted);font-weight:600}
-.sv-court-tag{font-family:'Source Code Pro',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;color:#fff;text-align:center}
-.sv-game-matchup{display:flex;align-items:center;gap:8px;padding-left:8px}
-.sv-opp{font-weight:600}
-.sv-result{font-family:'Source Code Pro',monospace;font-size:12px;font-weight:700;padding:2px 8px;border-radius:3px}
-.sv-result.win{background:#e8f5e9;color:#1b5e20}
-.sv-result.loss{background:#ffebee;color:#c62828}
-.sv-result.sched{background:#f5f5f5;color:#bbb}
-.sv-result.final-tag{background:#fff3cd;color:#856404;font-size:10px}
-.sv-expand{font-size:10px;color:var(--muted);transition:transform .2s;display:inline-block;margin-left:4px}
+.sv-games-row td{padding:0;background:var(--light);border-bottom:1px solid var(--border)}
+.sv-games-inner{padding:6px 12px 10px 36px;display:flex;flex-direction:column;gap:4px}
+.sv-game-line{display:grid;grid-template-columns:58px 58px 1fr;gap:0;align-items:center;font-size:12px;padding:4px 0;border-radius:2px}
+.sv-game-time{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);font-weight:600}
+.sv-court-tag{font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;color:#fff;text-align:center;display:inline-block}
+.sv-game-matchup{display:flex;align-items:center;gap:7px;padding-left:6px}
+.sv-result{font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;padding:1px 6px;border-radius:2px}
+.sv-result.win{background:var(--green2);color:var(--green)}
+.sv-result.loss{background:#ffebee;color:var(--red)}
+.sv-result.sched{background:var(--light);color:#bbb;border:1px solid var(--border2)}
+.sv-result.fin{background:#fffbeb;color:var(--gold);font-size:10px}
+.sv-expand{font-size:10px;color:var(--muted);transition:transform .2s;display:inline-block;margin-left:3px}
 .sv-expand.open{transform:rotate(180deg)}
-.m-pts-cell{font-family:'Source Code Pro',monospace;font-weight:700;font-size:15px;color:var(--accent);text-align:center}
-.m-num{font-family:'Source Code Pro',monospace;font-size:12px;text-align:center}
-.m-diff-pos{color:#1b5e20;font-weight:700}
-.m-diff-neg{color:#c62828;font-weight:700}
-.m-diff-0{color:var(--muted)}
+.m-pts{font-family:'Roboto Mono',monospace;font-weight:700;font-size:14px;color:var(--blue);text-align:center}
+.m-num{font-family:'Roboto Mono',monospace;font-size:12px;text-align:center}
+.diff-pos{color:var(--green);font-weight:700}
+.diff-neg{color:var(--red);font-weight:700}
+.diff-0{color:var(--muted)}
 
-.filter-bar{background:#fff;border:1px solid var(--border);border-radius:4px;padding:10px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
-.filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.filter-label{font-family:'Source Code Pro',monospace;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;min-width:36px;flex-shrink:0}
-.filter-chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
-.chip:hover{border-color:var(--accent);color:var(--accent)}
-.chip.active{border-color:var(--accent);background:var(--accent);color:#fff}
-.chip.chip-all.active{border-color:#64748b;background:#64748b;color:#fff}
-.no-results{text-align:center;padding:20px;color:var(--muted);font-size:13px;font-style:italic}
+/* ── STANDINGS TAB ── */
+.srow{display:grid;grid-template-columns:36px 1fr auto auto;align-items:center;padding:9px 13px;border-bottom:1px solid var(--border2);gap:8px}
+.srow:last-child{border:none}
+.spos{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:var(--muted);text-align:center}
+.srow.gold .spos{color:var(--gold)}
+.sname{font-size:13px;font-weight:700}
+.ssub{font-size:11px;color:var(--muted);margin-top:1px}
+.spts{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:var(--blue)}
+.schamp{font-size:10px;padding:1px 6px;border-radius:2px;background:#fff3cd;color:#856404;border:1px solid #ffc107;font-family:'Roboto Mono',monospace;font-weight:700}
 
-/* GAME ROWS */
-.game-row{display:grid;grid-template-columns:68px 70px 1fr;border-bottom:1px solid var(--border2);min-height:44px;align-items:center}
-.game-row:last-child{border-bottom:none}
-.game-row.hidden{display:none}
-.time-cell{padding:6px 8px;font-family:'Source Code Pro',monospace;font-size:10px;color:var(--muted);font-weight:600;background:#f8fafc;border-right:1px solid var(--border2);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.3}
-.court-cell{padding:6px 8px;font-family:'Source Code Pro',monospace;font-size:9px;font-weight:700;color:#fff;background:var(--accent);border-right:1px solid var(--border2);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;text-transform:uppercase;letter-spacing:.3px;line-height:1.3}
-.game-row[data-court="2"] .court-cell{background:#6366f1}
-.game-row[data-type="final"] .court-cell,.game-row[data-type="third"] .court-cell,.game-row[data-type="fifth"] .court-cell{background:#92400e}
-.game-cell{display:flex;align-items:center;gap:8px;padding:8px 14px}
-.games-list{background:#fff}
-.g-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.g-name{font-size:13px;font-weight:700;flex:1}
-.g-vs{font-size:11px;color:var(--muted);font-weight:500;padding:0 4px}
-.g-score{font-family:'Source Code Pro',monospace;font-size:14px;font-weight:700;min-width:52px;text-align:center;background:#f0f4ff;border-radius:3px;padding:2px 8px}
-.g-type{font-family:'Source Code Pro',monospace;font-size:9px;padding:2px 6px;border-radius:2px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;flex-shrink:0;font-weight:700}
-.g-type.final{border-color:var(--gold);color:var(--gold);background:#fffbeb}
-.g-type.third{border-color:var(--accent);color:var(--accent);background:#eff6ff}
-.g-type.fifth{border-color:var(--muted);color:var(--muted)}
-.score-btn{font-size:11px;padding:3px 10px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:3px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0;font-weight:600}
-.score-btn:hover{background:var(--accent);color:#fff}
-.lock-btn{font-size:11px;padding:4px 10px;border:none;background:#1b5e20;color:#fff;border-radius:3px;cursor:pointer;font-weight:700;font-family:inherit}
-
-/* STANDINGS */
-.standings-wrap{overflow-x:auto}
-table.s-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
-.s-table th{background:#0d1b2a;color:#fff!important;padding:10px 14px;text-align:left;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);white-space:nowrap}
-.s-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
-.s-table tr:last-child td{border:none}
-.s-table tr:hover td{background:var(--surface2)}
-.rank-num{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--muted)}
-.rank-1 .rank-num{color:var(--gold)}
-.rank-2 .rank-num{color:#9ca3af}
-.rank-3 .rank-num{color:#cd7f32}
-.team-cell{display:flex;align-items:center;gap:8px;font-weight:600}
-.pts{font-family:'Source Code Pro',monospace;font-weight:700;font-size:16px}
-.month-pos{font-family:'Source Code Pro',monospace;font-size:12px;text-align:center;color:var(--muted)}
-.month-pos.p1{color:var(--gold);font-weight:700}
-.month-pos.p2{color:#9ca3af;font-weight:700}
-.month-pos.p3{color:#cd7f32;font-weight:700}
-.month-pos.champ::before{content:'🏆 '}
-
-/* MONTHLY STANDINGS */
-.m-sel-btn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
-.m-sel-btn:hover{border-color:var(--accent);color:var(--accent)}
-.m-sel-btn.active{border-color:var(--accent);background:var(--accent);color:#fff}
-.monthly-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px}
-.monthly-table th{background:#0d1b2a;color:#fff;padding:9px 12px;text-align:left;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:.8px;white-space:nowrap}
-.monthly-table th.num{text-align:center}
-.monthly-table td{padding:9px 12px;border-bottom:1px solid var(--border2);font-size:13px;vertical-align:middle}
-.monthly-table td.num{text-align:center;font-family:'Source Code Pro',monospace;font-size:13px;font-weight:600}
-.monthly-table tr:last-child td{border:none}
-.monthly-table tr:hover td{background:#f8fafc}
-.monthly-table tr.rank-1 td{background:#fffbeb}
-.m-pts{font-family:'Source Code Pro',monospace;font-weight:700;font-size:15px;color:var(--accent)}
-.m-diff-pos{color:#1b5e20;font-weight:700}
-.m-diff-neg{color:#c62828;font-weight:700}
-.m-diff-zero{color:var(--muted)}
-.game-detail{font-size:11px;color:var(--muted);margin-top:2px}
-.prog-bar{width:100%;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-top:3px}
-.prog-fill{height:100%;border-radius:3px;transition:width .3s}
-
-/* ROTATION */
-.rot-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
-.rot-table th{background:#0d1b2a;color:#fff!important;padding:8px 12px;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);text-align:center}
+/* ── ROTATION ── */
+.rot-table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.rot-table th{background:var(--navy);color:#fff;padding:8px 12px;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-align:center}
 .rot-table th:first-child{text-align:left}
-.rot-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;text-align:center}
+.rot-table td{padding:8px 12px;border-bottom:1px solid var(--border2);font-size:12px;text-align:center}
 .rot-table tr:last-child td{border:none}
-.rot-table td:first-child{font-family:'Oswald',sans-serif;font-weight:600;text-align:left;color:var(--muted)}
+.rot-table td:first-child{font-family:'Roboto Mono',monospace;font-weight:700;text-align:left;color:var(--muted)}
 .rot-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:2px}
 
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal{background:#fff;border:1px solid var(--border);border-radius:8px;padding:24px;width:90%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.15)}
-.modal-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:600;margin-bottom:4px}
-.modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
-.score-inputs{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.score-team{flex:1;text-align:center;font-weight:600;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.score-field{width:64px;padding:10px;background:#f8fafc;border:2px solid var(--border);border-radius:4px;font-size:22px;font-weight:700;font-family:'Source Code Pro',monospace;text-align:center;color:#1a1a2e;outline:none}
-.score-field:focus{border-color:var(--accent)}
-.score-vs{font-family:'Oswald',sans-serif;font-weight:600;color:var(--muted)}
-.modal-pw{width:100%;padding:9px 12px;background:#f8fafc;border:1px solid var(--border);border-radius:4px;color:#1a1a2e;font-size:13px;font-family:inherit;margin-bottom:6px;outline:none}
-.modal-pw:focus{border-color:var(--accent)}
-.modal-err{font-size:12px;color:var(--dragons);margin-bottom:12px;min-height:16px}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:22px;width:90%;max-width:360px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:3px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.score-inputs{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.score-team{flex:1;text-align:center;font-weight:600;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:5px}
+.score-field{width:60px;padding:8px;background:var(--light);border:2px solid var(--border);border-radius:3px;font-size:20px;font-weight:700;font-family:'Roboto Mono',monospace;text-align:center;color:var(--text);outline:none}
+.score-field:focus{border-color:var(--blue)}
+.score-vs{font-weight:700;color:var(--muted)}
+.modal-pw{width:100%;padding:8px 10px;background:var(--light);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:6px;outline:none}
+.modal-pw:focus{border-color:var(--blue)}
+.modal-err{font-size:12px;color:var(--red);margin-bottom:8px;min-height:16px}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
-.btn-primary{padding:8px 18px;border:none;background:var(--accent);color:#fff;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
-.btn-secondary{padding:8px 14px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit}
+.btn-primary{padding:7px 16px;border:none;background:var(--blue);color:#fff;border-radius:3px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .btn-primary:hover{opacity:.9}
+.btn-secondary{padding:7px 12px;border:1px solid var(--border);background:var(--white);color:var(--muted);border-radius:3px;font-size:13px;cursor:pointer;font-family:inherit}
 
-/* ADMIN BAR */
-.admin-notice{background:#fff9e6;border-bottom:1px solid #fde68a;padding:6px 20px;font-size:12px;color:#92400e;display:none;align-items:center;gap:12px}
-.admin-notice button{font-size:11px;padding:2px 8px;border:1px solid #d97706;background:transparent;color:#92400e;border-radius:2px;cursor:pointer}
-
-/* MISC */
-.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0d1b2a;border:1px solid #1a2f4a;color:#fff;padding:10px 18px;border-radius:4px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+/* misc */
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:8px 16px;border-radius:3px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .toast.hide{opacity:0}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.skel{background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200%;animation:sk 1.3s infinite;border-radius:3px}
+@keyframes sk{0%{background-position:200%}100%{background-position:-200%}}
 </style>
 </head>
 <body>
 
-<nav>
-  <span class="nav-badge">FVL</span>
-  <span class="nav-title">Season <span>3</span> · Mini League</span>
-  <div class="nav-right">
-    <button class="nav-btn" id="admin-btn" onclick="toggleAdmin()">🔐 Admin</button>
-    <a href="/" class="nav-btn">← Home</a>
+<div id="hdr">
+  <span class="hbadge">FVL</span>
+  <span class="htitle">Season <span>3</span> · Mini League</span>
+  <div class="hright">
+    <button class="hbtn hbtn-admin" id="admin-btn" onclick="toggleAdmin()">🔐 Admin</button>
+    <a href="/" class="hbtn">← Home</a>
   </div>
-</nav>
+</div>
 
-<div class="admin-notice" id="admin-notice">
-  🔐 Admin mode active — you can enter scores and lock months
+<div class="admin-bar" id="admin-bar">
+  🔐 Admin mode active — score entry and locking enabled
   <button onclick="toggleAdmin()">Exit</button>
 </div>
 
-<div class="tabs">
-  <button class="tab-btn active" data-panel="teams"    onclick="switchTab(this)">🏐 Teams</button>
-  <button class="tab-btn"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</button>
-  <button class="tab-btn"        data-panel="standings" onclick="switchTab(this)">🏆 Season</button>
-  <button class="tab-btn"        data-panel="monthly"   onclick="switchTab(this)">📊 Monthly</button>
-  <button class="tab-btn"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</button>
+<div class="tabs" id="tabs">
+  <div class="tab active" data-panel="teams"    onclick="switchTab(this)">🏐 Teams</div>
+  <div class="tab"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</div>
+  <div class="tab"        data-panel="standings"onclick="switchTab(this)">🏆 Standings</div>
+  <div class="tab"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</div>
 </div>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-title" id="m-title">Enter Result</div>
-    <div class="modal-sub"  id="m-sub"></div>
+    <div class="modal-sub"   id="m-sub"></div>
     <div class="score-inputs">
       <div class="score-team">
-        <span class="dot" id="m-dot-a"></span>
+        <span id="m-dot-a" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
         <span id="m-name-a">Team A</span>
         <input class="score-field" type="number" id="m-score-a" min="0" max="30">
       </div>
@@ -260,10 +229,10 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
       <div class="score-team">
         <input class="score-field" type="number" id="m-score-b" min="0" max="30">
         <span id="m-name-b">Team B</span>
-        <span class="dot" id="m-dot-b"></span>
+        <span id="m-dot-b" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
       </div>
     </div>
-    <input class="modal-pw" type="password" id="m-pw" placeholder="Admin password" autocomplete="current-password">
+    <input class="modal-pw" type="password" id="m-pw" placeholder="Admin password">
     <div class="modal-err" id="m-err"></div>
     <div class="modal-btns">
       <button class="btn-secondary" onclick="closeModal()">Cancel</button>
@@ -281,15 +250,13 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
 
 <!-- SCHEDULE -->
 <div class="panel" id="panel-schedule">
-  <!-- View toggle -->
   <div class="view-toggle-bar">
     <div class="view-toggle">
       <button id="vt-schedule" class="vt-btn active" onclick="setScheduleView('schedule')">📅 Schedule</button>
       <button id="vt-standings" class="vt-btn" onclick="setScheduleView('standings')">📊 Standings</button>
     </div>
   </div>
-
-  <!-- SCHEDULE VIEW -->
+  <!-- Schedule view -->
   <div id="view-schedule">
     <div class="filter-bar" id="filter-bar">
       <div class="filter-row">
@@ -309,45 +276,25 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
     </div>
     <div id="schedule-list"></div>
   </div>
-
-  <!-- STANDINGS VIEW (per-month team standings with expandable game rows) -->
+  <!-- Standings view -->
   <div id="view-standings" style="display:none">
-    <div class="view-month-bar">
-      <div id="sv-month-chips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
-    </div>
+    <div class="sv-month-bar" id="sv-month-chips"></div>
     <div id="sv-content"></div>
   </div>
 </div>
 
-<!-- STANDINGS -->
+<!-- STANDINGS (season) -->
 <div class="panel" id="panel-standings">
-  <div class="standings-wrap">
-    <table class="s-table">
-      <thead><tr>
-        <th style="width:40px">#</th>
-        <th>Team</th>
-        <th>Pts</th><th>W</th><th>🏆</th>
-        <th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th>
-      </tr></thead>
-      <tbody id="standings-body">
-        <tr><td colspan="11" class="empty">No results yet — season starting May 2026</td></tr>
-      </tbody>
-    </table>
+  <div class="card">
+    <div class="card-hd">Season 3 · May – Oct 2026 · Cumulative</div>
+    <div id="standings-list"><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div></div>
   </div>
-</div>
-
-<!-- MONTHLY STANDINGS -->
-<div class="panel" id="panel-monthly">
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
-    <span style="font-size:12px;color:var(--muted);font-weight:600">Month:</span>
-    <div id="month-selector" style="display:flex;gap:5px;flex-wrap:wrap"></div>
-  </div>
-  <div id="monthly-standings-wrap"></div>
 </div>
 
 <!-- ROTATION -->
 <div class="panel" id="panel-rotation">
-  <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Each team shifts right by one position every month. T1–T6 positions determine matchups — opponents change naturally each month.</p>
+  <div class="sec" style="padding-top:0">Shift-right rotation — each team moves +1 position every month</div>
+  <span class="sec-line"></span>
   <div style="overflow-x:auto"><table class="rot-table" id="rot-table"></table></div>
 </div>
 
@@ -357,12 +304,12 @@ table.s-table{width:100%;border-collapse:collapse;background:var(--surface);bord
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────
 const TEAMS = [
-  {name:'Dragons',   captain:'Anil',     color:'#ef4444'},
-  {name:'Predators', captain:'Harsha',   color:'#22c55e'},
-  {name:'Falcons',   captain:'Karthik',  color:'#3b82f6'},
-  {name:'Spartans',  captain:'Koti',     color:'#8b5cf6'},
-  {name:'Titans',    captain:'Pratik',   color:'#f97316'},
-  {name:'Raptors',   captain:'Shanthan', color:'#14b8a6'},
+  {name:'Dragons',   captain:'Anil',     color:'#c62828'},
+  {name:'Predators', captain:'Harsha',   color:'#1b5e20'},
+  {name:'Falcons',   captain:'Karthik',  color:'#1a3566'},
+  {name:'Spartans',  captain:'Koti',     color:'#311b92'},
+  {name:'Titans',    captain:'Pratik',   color:'#e65100'},
+  {name:'Raptors',   captain:'Shanthan', color:'#004d40'},
 ];
 const ROSTERS = {
   Dragons:   ['Ishant','Jugal','Krupa','Naren','Saravanan','Venkat'],
@@ -373,63 +320,51 @@ const ROSTERS = {
   Raptors:   ['Ahmed','Amrendra','Chandra','Rizwan','Ronak','Uday K'],
 };
 const MONTH_LABELS = ['May 2026','June 2026','July 2026','August 2026','September 2026','October 2026'];
-const MONTH_DATES  = ['Sun 3 May','Sun 7 Jun','Sun 5 Jul','Sun 2 Aug','Sun 6 Sep','Sun 4 Oct'];
 const TIMES = ['2:00 PM','2:25 PM','2:50 PM','3:15 PM','3:40 PM','4:05 PM','4:30 PM','4:55 PM'];
 
-let isAdmin = false;
-let events = [];
-let pendingModal = null;
+let isAdmin = false, events = [], _teamF = null, _courtF = null, _svMonth = 1, _schedView = 'schedule';
 
 function teamColor(n){ return TEAMS.find(t=>t.name===n)?.color||'#888'; }
-function dot(n,sz=6){ return `<span class="dot" style="width:${sz}px;height:${sz}px;background:${teamColor(n)}"></span>`; }
+function dot(n,sz=7){ return `<span style="display:inline-block;width:${sz}px;height:${sz}px;border-radius:50%;background:${teamColor(n)};flex-shrink:0"></span>`; }
 
-// ── TAB SWITCHING ─────────────────────────────────────────────────────
-function switchTab(btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  const panel = document.getElementById('panel-' + btn.dataset.panel);
-  if (panel) panel.classList.add('active');
-  if (btn.dataset.panel === 'schedule')  loadSchedule();
-  if (btn.dataset.panel === 'standings') loadStandings();
-  if (btn.dataset.panel === 'rotation')  renderRotation();
-  if (btn.dataset.panel === 'monthly') {
-    if (!events.length) {
-      loadSchedule().then(() => { initMonthlySelector(); showMonthlyStandings(_curMonth); });
-    } else {
-      initMonthlySelector();
-      showMonthlyStandings(_curMonth);
-    }
-  }
+// ── TABS ──────────────────────────────────────────────────────────────
+function switchTab(el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+el.dataset.panel).classList.add('active');
+  if(el.dataset.panel==='schedule')  loadSchedule();
+  if(el.dataset.panel==='standings') loadStandings();
+  if(el.dataset.panel==='rotation')  renderRotation();
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────
 function toggleAdmin() {
-  if (isAdmin) {
-    isAdmin = false;
-  } else {
+  if (!isAdmin) {
     const pw = prompt('Admin password:');
     if (!pw) return;
-    if (pw !== 'fvl2026') { alert('Wrong password'); return; }
+    if (pw!=='fvl2026') { alert('Wrong password'); return; }
     isAdmin = true;
-  }
-  document.getElementById('admin-btn').classList.toggle('admin-active', isAdmin);
-  document.getElementById('admin-notice').style.display = isAdmin ? 'flex' : 'none';
-  if (events.length) renderSchedule();
+  } else isAdmin = false;
+  document.getElementById('admin-btn').classList.toggle('on', isAdmin);
+  document.getElementById('admin-bar').style.display = isAdmin?'flex':'none';
+  if(events.length) renderSchedule();
 }
 
 // ── TEAMS ─────────────────────────────────────────────────────────────
 function renderTeams() {
   document.getElementById('teams-grid').innerHTML = TEAMS.map(t => `
     <div class="team-card">
-      <div class="team-stripe" style="background:${t.color}"></div>
-      <div class="team-body">
-        <div class="team-name" style="color:${t.color}">${t.name}</div>
-        <div class="team-captain">⭐ ${t.captain} &nbsp;·&nbsp; <span style="color:var(--muted)">${(ROSTERS[t.name]||[]).length+1} players</span></div>
+      <div class="team-hd" style="background:${t.color}">
+        <div>
+          <div class="team-name">${t.name}</div>
+          <div class="team-cap">⭐ ${t.captain}</div>
+        </div>
+        <div style="font-size:36px;font-weight:900;color:rgba(255,255,255,.15);line-height:1">${t.name[0]}</div>
       </div>
-      <div class="team-roster">
-        <span class="player-tag captain" style="color:${t.color};border-color:${t.color}66">${t.captain}</span>
-        ${(ROSTERS[t.name]||[]).map(p=>`<span class="player-tag">${p}</span>`).join('')}
+      <div class="team-players">
+        <span class="ptag cap" style="color:${t.color};border-color:${t.color}55">${t.captain}</span>
+        ${(ROSTERS[t.name]||[]).map(p=>`<span class="ptag">${p}</span>`).join('')}
       </div>
     </div>`).join('');
 }
@@ -438,179 +373,135 @@ function renderTeams() {
 async function loadSchedule() {
   const el = document.getElementById('schedule-list');
   if (events.length) { renderSchedule(); return; }
-  el.innerHTML = '<div class="empty">Loading schedule…</div>';
+  el.innerHTML = '<div class="empty">Loading…</div>';
   try {
     const r = await fetch('/api/s3/schedule');
     const text = await r.text();
-    try { events = JSON.parse(text); } catch(je) {
-      throw new Error('Server error: ' + text.slice(0,120));
-    }
-    if (!r.ok) throw new Error(events?.error || 'API error ' + r.status);
-    if (!events.length) throw new Error('No events found — try seeding via /admin');
-    renderSchedule();
+    try { events = JSON.parse(text); } catch { throw new Error('Server error: '+text.slice(0,80)); }
+    if (!r.ok) throw new Error(events?.error||'API error');
+    if (!events.length) throw new Error('No events — seed via /admin');
     buildTeamChips();
+    renderSchedule();
+    if(_schedView==='standings') { buildSVMonthChips(); renderSVMonth(_svMonth); }
   } catch(e) {
-    el.innerHTML = `<div class="empty" style="color:var(--muted);padding:30px;text-align:center">
-      Could not load schedule.<br><small>${e.message}</small><br>
-      <a href="/admin" style="color:var(--accent);font-size:12px;margin-top:8px;display:inline-block">Go to Admin →</a>
-    </div>`;
+    el.innerHTML = `<div class="empty">${e.message}<br><a href="/admin" style="color:var(--blue);font-size:12px">Go to Admin →</a></div>`;
   }
 }
 
 function renderSchedule() {
-  document.getElementById('schedule-list').innerHTML = events.map((ev,mi) => monthCard(ev, mi)).join('');
-  // Open first month by default
+  document.getElementById('schedule-list').innerHTML = events.map((ev,mi) => monthCard(ev,mi)).join('');
   const first = document.getElementById('mb-1');
-  if (first) { first.classList.add('open'); document.querySelector('.chevron')?.classList.add('open'); }
+  if(first){ first.classList.add('open'); first.previousElementSibling?.querySelector('.chevron')?.classList.add('open'); }
 }
 
 function monthCard(ev, mi) {
-  const rrGames  = ev.games.filter(g => g.type === 'rr');
-  const finGames = ev.games.filter(g => g.type !== 'rr');
-  const played   = ev.games.filter(g => g.played).length;
-  const total    = ev.games.length;
-
-  // Each game is its own row — time + court + matchup
-  const allGames = [...rrGames, ...finGames].sort((a,b)=>a.slot-b.slot||(a.court||1)-(b.court||1));
-  const gameRows = allGames.map(g => {
-    const courtLabel = g.type!=='rr'
-      ? ({final:'Final',third:'Court 2',fifth:'Court 1'}[g.type]||'')
-      : `Court ${g.court||1}`;
-    const teamNames = [g.teamA,g.teamB].filter(t=>t&&!t.startsWith('#'));
-    return `<div class="game-row" data-teams="${teamNames.join(',').toLowerCase()}" data-court="${g.court||1}" data-type="${g.type}">
+  const allG = [...ev.games].sort((a,b)=>a.slot-b.slot||(a.court||1)-(b.court||1));
+  const played = ev.games.filter(g=>g.played).length;
+  const total  = ev.games.length;
+  const rows = allG.map(g => {
+    const names = [g.teamA,g.teamB].filter(t=>t&&!t.startsWith('#'));
+    const court = g.court||1;
+    const courtLbl = g.type!=='rr' ? ({final:'Final',third:'3rd',fifth:'5th'}[g.type]||'') : `C${court}`;
+    const isP = g.teamA?.startsWith('#')||g.teamB?.startsWith('#');
+    const tA = isP ? `<span style="color:var(--muted)">${g.teamA}</span>` : `${dot(g.teamA)} <span class="g-name">${g.teamA}</span>`;
+    const tB = isP ? `<span style="color:var(--muted)">${g.teamB}</span>` : `<span class="g-name">${g.teamB}</span> ${dot(g.teamB)}`;
+    const wA = g.played&&g.scoreA>g.scoreB, wB = g.played&&g.scoreB>g.scoreA;
+    const scoreD = g.played
+      ? `<span class="g-score" style="color:${wA?teamColor(g.teamA):wB?teamColor(g.teamB):'var(--blue)'}">${g.scoreA}–${g.scoreB}</span>`
+      : (isAdmin&&!ev.locked&&!isP)
+        ? `<button class="score-btn" onclick="openModal(${ev.month},${ev.games.indexOf(g)})">+ Score</button>`
+        : `<span class="g-vs">vs</span>`;
+    return `<div class="game-row" data-teams="${names.join(',').toLowerCase()}" data-court="${court}" data-type="${g.type}">
       <div class="time-cell">${TIMES[g.slot]||''}</div>
-      <div class="court-cell">${courtLabel}</div>
-      ${gameCell(g, ev.month, ev.games.indexOf(g))}
+      <div class="court-cell">${courtLbl}</div>
+      <div class="game-cell">${g.type!=='rr'?`<span class="g-type ${g.type}">${{final:'FINAL',third:'3RD',fifth:'5TH'}[g.type]}</span>`:''}${tA}${scoreD}${tB}</div>
     </div>`;
   }).join('');
-  const rrRows = gameRows;
-  const finRows = '';
-
-  const isOpen = mi === 0;
-  return `
-  <div class="month-card">
-    <div class="month-header" onclick="toggleMonth(${ev.month})">
+  const isOpen = mi===0;
+  return `<div class="month-card">
+    <div class="month-hd" onclick="toggleMonth(${ev.month})">
       <span class="month-num">M${ev.month}</span>
-      <div>
-        <div class="month-label">${ev.label}</div>
-        <div class="month-date">${ev.date} · 2:00–5:20 PM</div>
-      </div>
+      <div><div class="month-label">${ev.label}</div><div class="month-date">${ev.date}</div></div>
       <div class="month-right">
-        ${ev.champion ? `<span class="champion-tag">🏆 ${ev.champion}</span>` : ''}
-        ${ev.locked   ? `<span class="locked-tag">LOCKED</span>` : ''}
-        <span class="month-progress">${played}/${total}</span>
-        ${isAdmin && !ev.locked ? `<button class="lock-btn" onclick="event.stopPropagation();lockMonth(${ev.month})">🔒 Lock</button>` : ''}
+        ${ev.champion?`<span class="champ-tag">🏆 ${ev.champion}</span>`:''}
+        ${ev.locked?`<span class="locked-tag">LOCKED</span>`:''}
+        <span class="month-prog">${played}/${total}</span>
+        ${isAdmin&&!ev.locked?`<button class="lock-btn" onclick="event.stopPropagation();lockMonth(${ev.month})">🔒 Lock</button>`:''}
         <span class="chevron ${isOpen?'open':''}">▾</span>
       </div>
     </div>
     <div class="month-body ${isOpen?'open':''}" id="mb-${ev.month}">
-      <div class="section-label">ROUND ROBIN &amp; FINALS · 2 COURTS</div>
-      <div class="games-list">${rrRows}</div>
+      <div class="section-lbl">ROUND ROBIN &amp; FINALS · COURT 1 (BLUE) &amp; COURT 2 (INDIGO)</div>
+      <div class="games-list">${rows}</div>
     </div>
   </div>`;
 }
 
-function gameCell(g, month, idx) {
-  const typeLabel = {rr:'RR',final:'FINAL',third:'3RD',fifth:'5TH'}[g.type];
-  const isPlaceholder = g.teamA?.startsWith('#') || g.teamB?.startsWith('#');
-  const winnerA = g.played && g.scoreA > g.scoreB;
-  const winnerB = g.played && g.scoreB > g.scoreA;
-  const teamA = isPlaceholder
-    ? `<span style="color:var(--muted);font-weight:500">${g.teamA}</span>`
-    : `<span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0"><span class="g-dot" style="background:${teamColor(g.teamA)}"></span><span class="g-name" style="${winnerA?'color:'+teamColor(g.teamA)+';':'color:var(--text);'}">${g.teamA}</span></span>`;
-  const teamB = isPlaceholder
-    ? `<span style="color:var(--muted);font-weight:500">${g.teamB}</span>`
-    : `<span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;justify-content:flex-end"><span class="g-name" style="${winnerB?'color:'+teamColor(g.teamB)+';':'color:var(--text);'}">${g.teamB}</span><span class="g-dot" style="background:${teamColor(g.teamB)}"></span></span>`;
-  const score = g.played
-    ? `<span class="g-score" style="background:#f0f4ff;color:var(--accent)">${g.scoreA}–${g.scoreB}</span>`
-    : (isAdmin && !events.find(e=>e.month===month)?.locked && !isPlaceholder)
-      ? `<button class="score-btn" onclick="openModal(${month},${idx})">+ Score</button>`
-      : `<span class="g-score" style="background:transparent;color:#ccc">vs</span>`;
-  return `<div class="game-cell" style="flex:1">
-    ${g.type!=='rr'?`<span class="g-type ${g.type}">${typeLabel}</span>`:''}
-    ${teamA}
-    ${score}
-    ${teamB}
-  </div>`;
+function toggleMonth(m){
+  const body=document.getElementById('mb-'+m);
+  const chev=body.previousElementSibling.querySelector('.chevron');
+  const open=body.classList.toggle('open');
+  chev?.classList.toggle('open',open);
 }
 
-let _teamFilter = null;
-let _courtFilter = null;
-
-function buildTeamChips() {
-  const chips = document.getElementById('team-chips');
-  if (!chips || chips.children.length > 1) return; // already built
-  TEAMS.forEach(t => {
-    const b = document.createElement('button');
-    b.className = 'chip';
-    b.style.borderColor = t.color+'88';
-    b.innerHTML = `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${t.color};margin-right:4px;vertical-align:middle"></span>${t.name}`;
-    b.onclick = () => setTeamFilter(t.name, b);
-    chips.appendChild(b);
+// ── FILTER ────────────────────────────────────────────────────────────
+function buildTeamChips(){
+  const el=document.getElementById('team-chips');
+  if(!el||el.children.length>1) return;
+  TEAMS.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='chip';
+    b.innerHTML=`${dot(t.name,6)} ${t.name}`;
+    b.style.gap='4px'; b.style.display='inline-flex'; b.style.alignItems='center';
+    b.onclick=()=>setTeamFilter(t.name,b);
+    el.appendChild(b);
   });
 }
-
-function setTeamFilter(team, btn) {
-  _teamFilter = team;
-  document.querySelectorAll('#team-chips .chip').forEach(b => b.classList.remove('active'));
+function setTeamFilter(team,btn){
+  _teamF=team;
+  document.querySelectorAll('#team-chips .chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  applyScheduleFilters();
+  applyFilters();
 }
-
-function setCourtFilter(court, btn) {
-  _courtFilter = court;
-  document.querySelectorAll('#court-chips .chip').forEach(b => b.classList.remove('active'));
+function setCourtFilter(court,btn){
+  _courtF=court;
+  document.querySelectorAll('#court-chips .chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  applyScheduleFilters();
+  applyFilters();
 }
-
-function applyScheduleFilters() {
-  document.querySelectorAll('.game-row').forEach(row => {
-    const teams  = row.dataset.teams || '';
-    const court  = parseInt(row.dataset.court) || 1;
-    const type   = row.dataset.type;
-    const teamOk  = !_teamFilter || teams.includes(_teamFilter.toLowerCase());
-    const courtOk = !_courtFilter || (type==='rr' ? court===_courtFilter : true);
-    row.classList.toggle('hidden', !teamOk || !courtOk);
+function applyFilters(){
+  document.querySelectorAll('.game-row').forEach(row=>{
+    const teamOk  = !_teamF  || (row.dataset.teams||'').includes(_teamF.toLowerCase());
+    const courtOk = !_courtF || (row.dataset.type!=='rr')||parseInt(row.dataset.court)===_courtF;
+    row.classList.toggle('hidden',!teamOk||!courtOk);
   });
-  // Show/hide month cards based on whether they have visible rows
-  document.querySelectorAll('.month-card').forEach(card => {
-    const visRows = card.querySelectorAll('.game-row:not(.hidden)');
-    const body = card.querySelector('.month-body');
-    // If filtering, open months that have matches
-    if ((_teamFilter || _courtFilter) && visRows.length > 0) {
-      body?.classList.add('open');
-      card.querySelector('.chevron')?.classList.add('open');
+  document.querySelectorAll('.month-card').forEach(card=>{
+    if(_teamF||_courtF){
+      const vis=card.querySelectorAll('.game-row:not(.hidden)');
+      if(vis.length){card.querySelector('.month-body')?.classList.add('open');card.querySelector('.chevron')?.classList.add('open');}
     }
-    card.style.display = '';  // always show card; hidden rows handle it
   });
 }
 
-// ── SCHEDULE/STANDINGS TOGGLE ─────────────────────────────────────
-let _schedView = 'schedule';
-let _svMonth = 1;
-
-function setScheduleView(view) {
-  _schedView = view;
-  document.getElementById('vt-schedule').classList.toggle('active', view==='schedule');
-  document.getElementById('vt-standings').classList.toggle('active', view==='standings');
-  document.getElementById('view-schedule').style.display  = view==='schedule' ? '' : 'none';
-  document.getElementById('view-standings').style.display = view==='standings' ? '' : 'none';
-  if (view==='standings') {
-    buildSVMonthChips();
-    renderSVMonth(_svMonth);
-  }
+// ── SCHEDULE/STANDINGS TOGGLE ─────────────────────────────────────────
+function setScheduleView(v){
+  _schedView=v;
+  document.getElementById('vt-schedule').classList.toggle('active',v==='schedule');
+  document.getElementById('vt-standings').classList.toggle('active',v==='standings');
+  document.getElementById('view-schedule').style.display  = v==='schedule'?'':'none';
+  document.getElementById('view-standings').style.display = v==='standings'?'':'none';
+  if(v==='standings'){ buildSVMonthChips(); renderSVMonth(_svMonth); }
 }
 
-function buildSVMonthChips() {
-  const bar = document.getElementById('sv-month-chips');
-  if (!bar || bar.children.length) return;
-  events.forEach(ev => {
-    const b = document.createElement('button');
-    b.className = 'chip' + (ev.month===_svMonth?' active':'');
-    b.textContent = ev.label.split(' ')[0];
-    b.onclick = () => {
-      _svMonth = ev.month;
+function buildSVMonthChips(){
+  const bar=document.getElementById('sv-month-chips');
+  if(!bar||bar.children.length) return;
+  events.forEach(ev=>{
+    const b=document.createElement('button');
+    b.className='chip'+(ev.month===_svMonth?' active':'');
+    b.textContent=ev.label.split(' ')[0];
+    b.onclick=()=>{
+      _svMonth=ev.month;
       document.querySelectorAll('#sv-month-chips .chip').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
       renderSVMonth(ev.month);
@@ -619,381 +510,193 @@ function buildSVMonthChips() {
   });
 }
 
-function renderSVMonth(month) {
-  const ev = events.find(e=>e.month===month);
-  if (!ev) return;
-  const wrap = document.getElementById('sv-content');
-
-  const rrGames  = ev.games.filter(g=>g.type==='rr');
-  const finGames = ev.games.filter(g=>g.type!=='rr');
-  const played   = rrGames.filter(g=>g.played).length;
-  const total    = rrGames.length;
-  const progress = total ? Math.round(played/total*100) : 0;
-
-  // Build team stats from RR
-  const teamNames = [...new Set(ev.positions||TEAMS.map(t=>t.name))];
-  const stats = {};
-  teamNames.forEach(t=>{ stats[t]={wins:0,losses:0,pts:0,scored:0,conceded:0,diff:0}; });
-  rrGames.filter(g=>g.played).forEach(g=>{
+function renderSVMonth(month){
+  const ev=events.find(e=>e.month===month); if(!ev) return;
+  const wrap=document.getElementById('sv-content');
+  const rrG=ev.games.filter(g=>g.type==='rr');
+  const finG=ev.games.filter(g=>g.type!=='rr');
+  const played=rrG.filter(g=>g.played).length, total=rrG.length;
+  const prog=total?Math.round(played/total*100):0;
+  const allTeams=[...new Set(ev.positions||TEAMS.map(t=>t.name))];
+  const stats={};
+  allTeams.forEach(t=>{stats[t]={wins:0,losses:0,pts:0,scored:0,conceded:0,diff:0};});
+  rrG.filter(g=>g.played).forEach(g=>{
     if(!stats[g.teamA]||!stats[g.teamB]) return;
     stats[g.teamA].scored+=g.scoreA; stats[g.teamA].conceded+=g.scoreB; stats[g.teamA].diff+=g.scoreA-g.scoreB;
     stats[g.teamB].scored+=g.scoreB; stats[g.teamB].conceded+=g.scoreA; stats[g.teamB].diff+=g.scoreB-g.scoreA;
-    if(g.scoreA>g.scoreB){ stats[g.teamA].wins++; stats[g.teamA].pts+=2; stats[g.teamB].losses++; }
-    else { stats[g.teamB].wins++; stats[g.teamB].pts+=2; stats[g.teamA].losses++; }
+    if(g.scoreA>g.scoreB){stats[g.teamA].wins++;stats[g.teamA].pts+=2;stats[g.teamB].losses++;}
+    else{stats[g.teamB].wins++;stats[g.teamB].pts+=2;stats[g.teamA].losses++;}
   });
+  const ranked=allTeams.map(t=>({team:t,...stats[t]})).sort((a,b)=>b.pts-a.pts||b.diff-a.diff||b.scored-a.scored);
+  const diffH=d=>d>0?`<span class="diff-pos">+${d}</span>`:d<0?`<span class="diff-neg">${d}</span>`:`<span class="diff-0">0</span>`;
 
-  const ranked = teamNames
-    .map(t=>({team:t,...stats[t]}))
-    .sort((a,b)=>b.pts-a.pts||b.diff-a.diff||b.scored-a.scored);
-
-  const diff = d => d>0?`<span class="m-diff-pos">+${d}</span>`:d<0?`<span class="m-diff-neg">${d}</span>`:`<span class="m-diff-0">0</span>`;
-
-  // Per-team game list (all games including finals)
-  const teamGames = (team) => {
-    const rr  = rrGames.filter(g=>g.teamA===team||g.teamB===team).sort((a,b)=>a.slot-b.slot||(a.court||1)-(b.court||1));
-    const fin = finGames.filter(g=>g.teamA===team||g.teamB===team||g.teamA?.startsWith('#')||g.teamB?.startsWith('#'));
-    return [...rr, ...fin].map(g => {
-      const isMe = g.teamA===team;
-      const opp  = isMe ? g.teamB : g.teamA;
-      const myScore  = isMe ? g.scoreA : g.scoreB;
-      const oppScore = isMe ? g.scoreB : g.scoreA;
-      const won  = g.played && myScore > oppScore;
-      const lost = g.played && myScore < oppScore;
-      const courtColor = (g.court||1)===1 ? 'var(--accent)' : '#6366f1';
-      const isFinal = g.type!=='rr';
-      const courtLabel = isFinal ? {final:'Final',third:'3rd',fifth:'5th'}[g.type] : `C${g.court||1}`;
-      const resultHtml = isFinal
-        ? `<span class="sv-result final-tag">${g.played?(won?'W':'L')+' '+myScore+'–'+oppScore:'Final'}</span>`
-        : g.played
-          ? `<span class="sv-result ${won?'win':'loss'}">${won?'W':'L'} ${myScore}–${oppScore}</span>`
-          : `<span class="sv-result sched">—</span>`;
-      const oppDisp = opp?.startsWith('#') ? `<span style="color:#bbb">${opp}</span>` : `${dot(opp,6)} <span class="sv-opp">${opp}</span>`;
+  const teamGameLines=(team)=>{
+    const myG=[...rrG,...finG].filter(g=>g.teamA===team||g.teamB===team||g.teamA?.startsWith('#')).sort((a,b)=>a.slot-b.slot);
+    return myG.map(g=>{
+      const isMe=g.teamA===team, opp=isMe?g.teamB:g.teamA;
+      const ms=isMe?g.scoreA:g.scoreB, os=isMe?g.scoreB:g.scoreA;
+      const won=g.played&&ms>os, lost=g.played&&ms<os;
+      const isFin=g.type!=='rr';
+      const cLbl=isFin?{final:'Final',third:'3rd',fifth:'5th'}[g.type]:`C${g.court||1}`;
+      const cCol=isFin?'var(--amber)':(g.court||1)===1?'var(--c1)':'var(--c2)';
+      const resHtml=g.played
+        ?(won?`<span class="sv-result win">W ${ms}–${os}</span>`:`<span class="sv-result loss">L ${ms}–${os}</span>`)
+        :isFin?`<span class="sv-result fin">Final</span>`:`<span class="sv-result sched">—</span>`;
+      const oppDisp=opp?.startsWith('#')?`<span style="color:var(--muted)">${opp}</span>`:`${dot(opp,6)} <span style="font-weight:600">${opp}</span>`;
       return `<div class="sv-game-line">
         <span class="sv-game-time">${TIMES[g.slot]||''}</span>
-        <span class="sv-court-tag" style="background:${isFinal?'#92400e':courtColor}">${courtLabel}</span>
-        <div class="sv-game-matchup">${oppDisp}&nbsp;&nbsp;${resultHtml}</div>
+        <span class="sv-court-tag" style="background:${cCol}">${cLbl}</span>
+        <div class="sv-game-matchup">${oppDisp}&nbsp;&nbsp;${resHtml}</div>
       </div>`;
     }).join('');
   };
 
-  const rows = ranked.map((row,i) => {
-    const uid = `sv-${month}-${row.team.replace(/\s+/g,'_')}`;
-    const gamesPlayed = row.wins+row.losses;
-    const progressW = gamesPlayed ? Math.round(gamesPlayed/4*100) : 0;
-    const col = teamColor(row.team);
+  const rows=ranked.map((row,i)=>{
+    const uid=`sv-${month}-${row.team.replace(/\s+/g,'_')}`;
+    const col=teamColor(row.team);
+    const gp=row.wins+row.losses;
     return `
-      <tr class="sv-team-row ${i===0?'rank-1':''}" onclick="toggleSVTeam('${uid}')">
-        <td style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'}">${i+1}</td>
+      <tr class="sv-team-row${i===0?' rank-1':''}" onclick="toggleSVTeam('${uid}')">
+        <td style="font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'}">${i+1}</td>
         <td>
-          <div style="display:flex;align-items:center;gap:7px">
-            ${dot(row.team,8)}
-            <span style="font-weight:700">${row.team}</span>
-            <span class="sv-expand" id="${uid}-chev">▾</span>
-          </div>
-          <div style="margin-top:4px;height:3px;width:80px;background:#e5e7eb;border-radius:2px;overflow:hidden">
-            <div style="height:100%;width:${progressW}%;background:${col};border-radius:2px"></div>
-          </div>
+          <div style="display:flex;align-items:center;gap:7px">${dot(row.team,8)}<span style="font-weight:700">${row.team}</span><span class="sv-expand" id="${uid}-chev">▾</span></div>
+          <div style="margin-top:4px;height:3px;width:72px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="height:100%;width:${gp?Math.round(gp/4*100):0}%;background:${col}"></div></div>
         </td>
-        <td class="m-num" style="color:#1b5e20;font-weight:700">${row.wins}</td>
-        <td class="m-num" style="color:#c62828">${row.losses}</td>
-        <td class="m-pts-cell">${row.pts}</td>
-        <td class="m-num">${diff(row.diff)}</td>
-        <td class="m-num" style="color:var(--muted);font-size:11px">${gamesPlayed}/4</td>
+        <td class="m-num" style="color:var(--green);font-weight:700">${row.wins}</td>
+        <td class="m-num" style="color:var(--red)">${row.losses}</td>
+        <td class="m-pts">${row.pts}</td>
+        <td class="m-num">${diffH(row.diff)}</td>
+        <td class="m-num" style="color:var(--muted);font-size:11px">${gp}/4</td>
       </tr>
       <tr class="sv-games-row" id="${uid}">
-        <td colspan="7">
-          <div class="sv-games-inner">${teamGames(row.team)}</div>
-        </td>
+        <td colspan="7"><div class="sv-games-inner">${teamGameLines(row.team)}</div></td>
       </tr>`;
   }).join('');
 
-  const champEv = ev.games.find(g=>g.type==='final'&&g.played);
-  wrap.innerHTML = `
-    <div class="sv-month">
-      <div class="sv-month-hd">
-        <div class="sv-month-title">${ev.label}</div>
-        <div class="sv-month-meta">${ev.date} · ${played}/${total} RR played</div>
-        <div class="sv-prog" style="margin-left:auto"><div class="sv-prog-fill" style="width:${progress}%"></div></div>
-        ${ev.champion?`<span style="background:#f5c842;color:#000;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px;margin-left:8px">🏆 ${ev.champion}</span>`:''}
-      </div>
-      <table class="sv-table">
-        <thead><tr>
-          <th style="width:32px">#</th>
-          <th>Team</th>
-          <th class="c" style="width:36px">W</th>
-          <th class="c" style="width:36px">L</th>
-          <th class="c" style="width:48px">Pts</th>
-          <th class="c" style="width:56px">Diff</th>
-          <th class="c" style="width:56px">Games</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
+  wrap.innerHTML=`<div class="sv-month">
+    <div class="sv-month-hd">
+      <span class="month-num">M${ev.month}</span>
+      <div class="sv-month-title">${ev.label}</div>
+      <div class="sv-month-meta">${ev.date} · ${played}/${total} RR played</div>
+      <div class="sv-prog" style="margin-left:auto"><div class="sv-prog-fill" style="width:${prog}%"></div></div>
+      ${ev.champion?`<span class="champ-tag" style="margin-left:8px">🏆 ${ev.champion}</span>`:''}
+    </div>
+    <table class="sv-table">
+      <thead><tr>
+        <th style="width:28px">#</th><th>Team</th>
+        <th class="c" style="width:36px">W</th><th class="c" style="width:36px">L</th>
+        <th class="c" style="width:44px">Pts</th><th class="c" style="width:52px">Diff</th>
+        <th class="c" style="width:52px">Games</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
 }
 
-function toggleSVTeam(uid) {
-  const row  = document.getElementById(uid);
-  const chev = document.getElementById(uid+'-chev');
-  const open = row.classList.toggle('open');
-  chev.classList.toggle('open', open);
-}
-
-function toggleMonth(month) {
-  const body = document.getElementById('mb-'+month);
-  const card = body.previousElementSibling;
-  const chevron = card.querySelector('.chevron');
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  chevron?.classList.toggle('open', !isOpen);
+function toggleSVTeam(uid){
+  document.getElementById(uid)?.classList.toggle('open');
+  document.getElementById(uid+'-chev')?.classList.toggle('open');
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────────
-function openModal(month, idx) {
-  const ev = events.find(e=>e.month===month);
-  const g  = ev?.games[idx];
-  if (!g) return;
-  pendingModal = {month, idx};
-  document.getElementById('m-title').textContent = `${g.teamA} vs ${g.teamB}`;
-  document.getElementById('m-sub').textContent   = `${ev.label} · ${g.type.toUpperCase()} · ${TIMES[g.slot]||''}`;
-  document.getElementById('m-name-a').textContent = g.teamA;
-  document.getElementById('m-name-b').textContent = g.teamB;
-  document.getElementById('m-dot-a').style.background = teamColor(g.teamA);
-  document.getElementById('m-dot-b').style.background = teamColor(g.teamB);
-  document.getElementById('m-score-a').value = g.scoreA ?? '';
-  document.getElementById('m-score-b').value = g.scoreB ?? '';
-  document.getElementById('m-pw').value = '';
-  document.getElementById('m-err').textContent = '';
+function openModal(month,idx){
+  const ev=events.find(e=>e.month===month); const g=ev?.games[idx]; if(!g) return;
+  _pendingModal={month,idx};
+  document.getElementById('m-title').textContent=`${g.teamA} vs ${g.teamB}`;
+  document.getElementById('m-sub').textContent=`${ev.label} · ${TIMES[g.slot]||''}`;
+  document.getElementById('m-name-a').textContent=g.teamA;
+  document.getElementById('m-name-b').textContent=g.teamB;
+  document.getElementById('m-dot-a').style.background=teamColor(g.teamA);
+  document.getElementById('m-dot-b').style.background=teamColor(g.teamB);
+  document.getElementById('m-score-a').value=g.scoreA??'';
+  document.getElementById('m-score-b').value=g.scoreB??'';
+  document.getElementById('m-pw').value='';
+  document.getElementById('m-err').textContent='';
   document.getElementById('modal').classList.add('open');
   document.getElementById('m-score-a').focus();
 }
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  pendingModal = null;
-}
-
-async function submitScore() {
-  if (!pendingModal) return;
-  const sa  = parseInt(document.getElementById('m-score-a').value);
-  const sb  = parseInt(document.getElementById('m-score-b').value);
-  const pw  = document.getElementById('m-pw').value || 'fvl2026';
-  const err = document.getElementById('m-err');
-  err.textContent = '';
-  if (isNaN(sa)||isNaN(sb))        { err.textContent='Enter both scores'; return; }
-  if (sa === sb)                    { err.textContent='No draws allowed'; return; }
-  if (Math.abs(sa-sb) < 2)         { err.textContent='Must win by at least 2 points'; return; }
-  if (Math.max(sa,sb) < 21)        { err.textContent='Winning score must be at least 21'; return; }
-  if (Math.max(sa,sb) > 25)        { err.textContent='Maximum score is 25'; return; }
-  try {
-    const r = await fetch('/api/s3/result', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({password:pw, month:pendingModal.month, gameIndex:pendingModal.idx, scoreA:sa, scoreB:sb}),
-    });
-    const d = await r.json();
-    if (!d.success) { err.textContent = d.error||'Error saving'; return; }
-    closeModal();
-    // Refresh this event
-    const ev = await fetch(`/api/s3/event/${pendingModal?.month||d.month}`).then(r=>r.json()).catch(()=>null);
-    if (ev) { const i=events.findIndex(e=>e.month===ev.month); if(i>=0) events[i]=ev; }
+let _pendingModal=null;
+function closeModal(){ document.getElementById('modal').classList.remove('open'); _pendingModal=null; }
+async function submitScore(){
+  if(!_pendingModal) return;
+  const sa=parseInt(document.getElementById('m-score-a').value);
+  const sb=parseInt(document.getElementById('m-score-b').value);
+  const pw=document.getElementById('m-pw').value||'fvl2026';
+  const err=document.getElementById('m-err');
+  err.textContent='';
+  if(isNaN(sa)||isNaN(sb)){err.textContent='Enter both scores';return;}
+  if(sa===sb){err.textContent='No draws allowed';return;}
+  if(Math.abs(sa-sb)<2){err.textContent='Must win by at least 2';return;}
+  if(Math.max(sa,sb)<21){err.textContent='Winning score must be ≥ 21';return;}
+  if(Math.max(sa,sb)>25){err.textContent='Maximum score is 25';return;}
+  try{
+    const r=await fetch('/api/s3/result',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,month:_pendingModal.month,gameIndex:_pendingModal.idx,scoreA:sa,scoreB:sb})});
+    const d=await r.json();
+    if(!d.success){err.textContent=d.error||'Error';return;}
+    const pm=_pendingModal.month; closeModal();
+    const ev=await fetch(`/api/s3/event/${pm}`).then(r=>r.json()).catch(()=>null);
+    if(ev){const i=events.findIndex(e=>e.month===pm);if(i>=0)events[i]=ev;}
     renderSchedule();
+    if(_schedView==='standings'&&pm===_svMonth) renderSVMonth(_svMonth);
     toast('✓ Result saved');
-  } catch(e) { err.textContent = 'Network error'; }
+  }catch(e){err.textContent='Network error';}
 }
 
 // ── LOCK MONTH ────────────────────────────────────────────────────────
-async function lockMonth(month) {
-  if (!confirm(`Lock Month ${month} and record the champion?`)) return;
-  const r = await fetch(`/api/s3/lock/${month}`, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({password:'fvl2026'}),
-  });
-  const d = await r.json();
-  if (d.success) {
-    toast(`🏆 Month ${month} locked · Champion: ${d.champion}`);
-    events = [];
-    loadSchedule();
-    loadStandings();
-  } else toast('Error: '+d.error);
+async function lockMonth(month){
+  if(!confirm(`Lock Month ${month} and record the champion?`)) return;
+  const r=await fetch(`/api/s3/lock/${month}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:'fvl2026'})});
+  const d=await r.json();
+  if(d.success){toast(`🏆 Month ${month} locked · Champion: ${d.champion}`);events=[];loadSchedule();loadStandings();}
+  else toast('Error: '+d.error);
 }
 
-// ── STANDINGS ─────────────────────────────────────────────────────────
-async function loadStandings() {
-  try {
-    const r = await fetch('/api/s3/standings');
-    const data = await r.json();
-    if (!data.length) return;
-    document.getElementById('standings-body').innerHTML = data.map((s,i) => {
-      const col = teamColor(s.team);
-      const monthCells = [1,2,3,4,5,6].map(m => {
-        const md = s.months?.find(x=>x.month===m);
-        if (!md) return '<td class="month-pos">–</td>';
-        const cls = md.champion?'month-pos champ p1':md.position===2?'month-pos p2':md.position===3?'month-pos p3':'month-pos';
-        const label = md.champion ? '' : md.position;
-        return `<td class="${cls}">${md.champion?'🏆':label}</td>`;
-      }).join('');
-      return `<tr class="rank-${i+1<=3?i+1:''}">
-        <td><span class="rank-num">${i+1}</span></td>
-        <td><div class="team-cell">${dot(s.team,8)} ${s.team}</div></td>
-        <td><span class="pts" style="color:${col}">${s.totalPoints}</span></td>
-        <td style="font-family:'Source Code Pro',monospace">${s.totalWins}</td>
-        <td style="text-align:center">${'🏆'.repeat(s.championships)||'–'}</td>
-        ${monthCells}
-      </tr>`;
+// ── STANDINGS (season) ────────────────────────────────────────────────
+async function loadStandings(){
+  try{
+    const r=await fetch('/api/s3/standings'); const data=await r.json();
+    if(!data.length){document.getElementById('standings-list').innerHTML='<div class="empty">No results yet</div>';return;}
+    document.getElementById('standings-list').innerHTML=data.map((s,i)=>{
+      const col=teamColor(s.team);
+      const cm=(s.months||[]).filter(m=>m.champion).map(m=>m.label?.split(' ')[0]).join(', ');
+      return `<div class="srow ${i===0?'gold':''}">
+        <div class="spos">${i+1}</div>
+        <div>
+          <div class="sname" style="display:flex;align-items:center;gap:6px">${dot(s.team,8)} ${s.team} ${'🏆'.repeat(s.championships||0)}</div>
+          <div class="ssub">${cm?'Won: '+cm:''}</div>
+        </div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${s.totalWins}W</div>
+        <div class="spts" style="color:${col}">${s.totalPoints} pts</div>
+      </div>`;
     }).join('');
-  } catch(e) { /* standings load silently fails */ }
+  }catch(e){}
 }
 
-// ── ROTATION ─────────────────────────────────────────────────────────
-function renderRotation() {
-  const n = TEAMS.length;
-  let html = '<thead><tr><th>Month</th>';
-  for(let i=1;i<=6;i++) html += `<th>T${i}</th>`;
-  html += '</tr></thead><tbody>';
-  MONTH_LABELS.forEach((label, mi) => {
-    const positions = new Array(n);
-    TEAMS.forEach((t,i) => { positions[(i+mi)%n] = t; });
-    html += `<tr><td>${label.split(' ')[0]}</td>`;
-    positions.forEach(t => {
-      html += `<td><span class="rot-chip" style="background:${t.color}18;color:${t.color};border:1px solid ${t.color}44">${dot(t.name,6)} ${t.name}</span></td>`;
-    });
-    html += '</tr>';
+// ── ROTATION ──────────────────────────────────────────────────────────
+function renderRotation(){
+  const n=TEAMS.length;
+  let h='<thead><tr><th>Month</th>';
+  for(let i=1;i<=6;i++) h+=`<th>T${i}</th>`;
+  h+='</tr></thead><tbody>';
+  MONTH_LABELS.forEach((lbl,mi)=>{
+    const pos=new Array(n);
+    TEAMS.forEach((t,i)=>{pos[(i+mi)%n]=t;});
+    h+=`<tr><td>${lbl.split(' ')[0]}</td>`;
+    pos.forEach(t=>{h+=`<td><span class="rot-chip" style="background:${t.color}18;color:${t.color};border:1px solid ${t.color}44">${dot(t.name,6)} ${t.name}</span></td>`;});
+    h+='</tr>';
   });
-  html += '</tbody>';
-  document.getElementById('rot-table').innerHTML = html;
+  h+='</tbody>';
+  document.getElementById('rot-table').innerHTML=h;
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────
 let _tt;
 function toast(msg,dur=3000){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
 
-// ── KEYBOARD ─────────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key==='Escape') closeModal();
-  if (e.key==='Enter' && pendingModal) submitScore();
-});
+// ── KEYBOARD ──────────────────────────────────────────────────────────
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&_pendingModal)submitScore();});
 
-// ── MONTHLY STANDINGS ────────────────────────────────────────────────
-let _curMonth = 1;
-
-function initMonthlySelector() {
-  const sel = document.getElementById('month-selector');
-  if (!sel || sel.children.length) return;
-  events.forEach(ev => {
-    const b = document.createElement('button');
-    b.className = 'm-sel-btn' + (ev.month===_curMonth?' active':'');
-    b.textContent = ev.label.split(' ')[0]; // "May", "June" etc
-    b.onclick = () => showMonthlyStandings(ev.month, b);
-    sel.appendChild(b);
-  });
-}
-
-function showMonthlyStandings(month, btn) {
-  _curMonth = month;
-  document.querySelectorAll('.m-sel-btn').forEach(b=>b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  const ev = events.find(e=>e.month===month);
-  if (!ev) return;
-  renderMonthlyStandings(ev);
-}
-
-function renderMonthlyStandings(ev) {
-  const wrap = document.getElementById('monthly-standings-wrap');
-  const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
-  const allTeams = [...new Set(ev.positions||TEAMS.map(t=>t.name))];
-  const maxGames = 4; // each team plays 4 RR games
-
-  // Build per-team stats from played RR games
-  const stats = {};
-  allTeams.forEach(t => {
-    stats[t] = { wins:0, losses:0, pts:0, scored:0, conceded:0, diff:0, games:[] };
-  });
-
-  rrGames.forEach(g => {
-    const a=g.teamA, b=g.teamB, sa=g.scoreA, sb=g.scoreB;
-    if (!stats[a]||!stats[b]) return;
-    stats[a].scored   += sa; stats[a].conceded += sb; stats[a].diff += sa-sb;
-    stats[b].scored   += sb; stats[b].conceded += sa; stats[b].diff += sb-sa;
-    if (sa>sb) { stats[a].wins++; stats[a].pts+=2; stats[b].losses++; }
-    else       { stats[b].wins++; stats[b].pts+=2; stats[a].losses++; }
-    stats[a].games.push({opp:b, scored:sa, conceded:sb, won:sa>sb});
-    stats[b].games.push({opp:a, scored:sb, conceded:sa, won:sb>sa});
-  });
-
-  // Get finals results for ranking
-  const finalGame = ev.games.find(g=>g.type==='final'&&g.played);
-  const thirdGame  = ev.games.find(g=>g.type==='third'&&g.played);
-  const fifthGame  = ev.games.find(g=>g.type==='fifth'&&g.played);
-
-  // Sort: pts desc → diff desc → scored desc
-  const ranked = Object.entries(stats)
-    .sort(([,a],[,b])=>b.pts-a.pts||b.diff-a.diff||b.scored-a.scored)
-    .map(([t,s],i)=>({team:t,...s,rrPos:i+1}));
-
-  const played  = rrGames.length;
-  const total   = 12; // 6 slots × 2 courts
-  const progress = Math.round(played/total*100);
-
-  const diffClass = d => d>0?'m-diff-pos':d<0?'m-diff-neg':'m-diff-zero';
-  const diffFmt   = d => d>0?'+'+d:String(d);
-
-  // Game log per team
-  const gameLog = (row) => row.games.map(g=>
-    `<span style="display:inline-flex;align-items:center;gap:3px;margin-right:6px;font-size:10px;padding:1px 5px;border-radius:2px;background:${g.won?'#e8f5e9':'#ffebee'};color:${g.won?'#1b5e20':'#c62828'}">${g.won?'W':'L'} ${g.scored}–${g.conceded} vs ${g.opp}</span>`
-  ).join('');
-
-  wrap.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-      <div>
-        <div style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700">${ev.label} · Round Robin Standings</div>
-        <div style="font-size:11px;color:var(--muted)">${ev.date} · ${played} of ${total} RR games played</div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);font-family:'Source Code Pro',monospace">${progress}% complete</div>
-    </div>
-    <div style="height:4px;background:#e5e7eb;border-radius:2px;margin-bottom:14px;overflow:hidden">
-      <div style="height:100%;width:${progress}%;background:var(--accent);border-radius:2px;transition:width .4s"></div>
-    </div>
-    <div style="overflow-x:auto">
-    <table class="monthly-table">
-      <thead><tr>
-        <th class="num" style="width:32px">#</th>
-        <th>Team</th>
-        <th class="num">W</th>
-        <th class="num">L</th>
-        <th class="num">Pts</th>
-        <th class="num">+Scored</th>
-        <th class="num">–Conceded</th>
-        <th class="num">Diff</th>
-        <th class="num">Played</th>
-        <th>Results</th>
-      </tr></thead>
-      <tbody>
-        ${ranked.map((row,i)=>{
-          const col = teamColor(row.team);
-          return `<tr class="${i===0?'rank-1':''}">
-            <td class="num" style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':row.team==='--'?'#ccc':'var(--muted)'}">${i+1}</td>
-            <td><div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></span><span style="font-weight:700">${row.team}</span></div></td>
-            <td class="num" style="color:#1b5e20;font-weight:700">${row.wins}</td>
-            <td class="num" style="color:#c62828">${row.losses}</td>
-            <td class="num"><span class="m-pts">${row.pts}</span></td>
-            <td class="num">${row.scored||0}</td>
-            <td class="num">${row.conceded||0}</td>
-            <td class="num"><span class="${diffClass(row.diff)}">${diffFmt(row.diff)}</span></td>
-            <td class="num"><span style="font-size:11px;color:var(--muted)">${row.wins+row.losses}/${maxGames}</span></td>
-            <td style="font-size:11px">${gameLog(row)||'<span style="color:#ccc">No games yet</span>'}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-    </div>
-    ${finalGame?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:10px 14px;margin-top:8px;font-size:13px">
-      🏆 <strong>Champion: ${finalGame.scoreA>finalGame.scoreB?finalGame.teamA:finalGame.teamB}</strong>
-      &nbsp;·&nbsp; Final: ${finalGame.teamA} ${finalGame.scoreA}–${finalGame.scoreB} ${finalGame.teamB}
-      ${thirdGame&&thirdGame.played?`&nbsp;·&nbsp; 3rd: ${thirdGame.scoreA>thirdGame.scoreB?thirdGame.teamA:thirdGame.teamB}`:''}
-    </div>`:''}
-  `;
-}
-
-// ── BOOT ─────────────────────────────────────────────────────────────
+// ── BOOT ──────────────────────────────────────────────────────────────
 renderTeams();
 </script>
 
