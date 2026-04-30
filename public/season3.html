@@ -427,7 +427,7 @@ function renderTeams() {
 // ── SCHEDULE ──────────────────────────────────────────────────────────
 async function loadSchedule() {
   const el = document.getElementById('schedule-list');
-  if (events.length) { renderSchedule(); return; }
+  if (events.length) { buildTeamChips(); renderSchedule(); return; }
   el.innerHTML = '<div class="empty">Loading…</div>';
   try {
     const r = await fetch('/api/s3/schedule');
