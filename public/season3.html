@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FVL Season 3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#0d1b2a;--navy2:#1a2f4a;--blue:#1a5fb4;--blue2:#e8eef8;
+      --red:#c62828;--green:#1b7a1b;--green2:#e8f5e9;--amber:#d35400;--gold:#b8860b;
+      --bg:#f0f2f5;--white:#fff;--border:#dde3ed;--border2:#eaeef5;
+      --text:#1a1a2e;--muted:#64748b;--light:#f8fafc;
+      --dragons:#c62828;--predators:#1b5e20;--falcons:#1a3566;
+      --spartans:#311b92;--titans:#e65100;--raptors:#004d40;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+    #hdr{background:var(--navy);height:52px;display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+    .hbadge{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;padding:2px 8px;border-radius:2px}
+    .htitle{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#fff}
+    .htitle em{color:#f5c842;font-style:normal}
+    .hright{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .hbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:2px;text-decoration:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+    .hbtn-ghost{background:transparent;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.25)}.hbtn-ghost:hover{color:#fff}
+    .hbtn-amber{background:#f5c842;color:var(--navy);font-weight:700}
+
+    /* TABS */
+    #tabs{background:#fff;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 16px;gap:0;position:sticky;top:52px;z-index:99}
+    .tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+    .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+    .tab:hover{color:var(--text)}
+
+    .page{max-width:1400px;margin:0 auto;padding:14px 16px}
+    .panel{display:none}.panel.on{display:block}
+
+    /* TEAMS GRID */
+    .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px}
+    .team-card{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+    .team-hd{padding:10px 14px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+    .team-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:.5px}
+    .team-captain{font-size:11px;opacity:.85;font-family:'DM Mono',monospace}
+    .team-players{padding:8px 14px;display:flex;flex-wrap:wrap;gap:5px}
+    .player-chip{font-size:11px;padding:2px 8px;border-radius:3px;background:var(--light);border:1px solid var(--border);color:var(--text)}
+
+    /* SCHEDULE */
+    .month-section{background:#fff;border:1px solid var(--border);border-radius:4px;margin-bottom:12px;overflow:hidden}
+    .month-hd{padding:10px 14px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;cursor:pointer;justify-content:space-between}
+    .month-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
+    .month-date{font-size:12px;color:rgba(255,255,255,.65);font-family:'DM Mono',monospace}
+    .month-champ{font-size:11px;background:#f5c842;color:var(--navy);padding:2px 8px;border-radius:2px;font-weight:700}
+    .month-locked{font-size:10px;background:var(--green);color:#fff;padding:2px 6px;border-radius:2px;font-weight:700}
+    .month-body{padding:12px 14px}
+    .slot-row{display:grid;grid-template-columns:80px 1fr 1fr;gap:0;border-bottom:1px solid var(--border2);font-size:13px}
+    .slot-row:last-child{border:none}
+    .slot-time{padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);font-weight:600;background:var(--light);border-right:1px solid var(--border2)}
+    .slot-game{padding:7px 10px;display:flex;align-items:center;gap:6px;border-right:1px solid var(--border2)}
+    .slot-game:last-child{border:none}
+    .g-team{font-size:12px;font-weight:600;flex:1}
+    .g-score{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;min-width:50px;text-align:center;color:var(--blue)}
+    .g-vs{font-size:11px;color:var(--muted);font-weight:600}
+    .g-type{font-size:9px;padding:1px 5px;border-radius:2px;font-weight:700;font-family:'DM Mono',monospace;background:var(--light);color:var(--muted);border:1px solid var(--border2)}
+    .g-type.final{background:#fff3cd;color:#856404;border-color:#ffc107}
+    .g-type.third{background:#e3f2fd;color:#1565c0;border-color:#90caf9}
+    .g-type.fifth{background:var(--light);color:var(--muted);border-color:var(--border)}
+    .g-played{color:var(--green);font-weight:700}
+    .team-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+    /* RESULTS ENTRY */
+    .result-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+    .result-modal.on{display:flex}
+    .result-box{background:#fff;border-radius:4px;padding:24px;max-width:400px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+    .result-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:14px}
+    .score-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .score-team{flex:1;font-size:13px;font-weight:700;text-align:center}
+    .score-inp{width:64px;padding:8px;border:2px solid var(--border);border-radius:3px;font-size:20px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;outline:none}
+    .score-inp:focus{border-color:var(--blue)}
+    .score-vs{font-size:14px;font-weight:700;color:var(--muted)}
+    .pw-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+    .pw-inp{padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none}
+    .pw-inp:focus{border-color:var(--blue)}
+    .modal-btns{display:flex;gap:8px;justify-content:flex-end}
+    .btn-save{padding:8px 16px;border:none;border-radius:3px;background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+    .btn-cancel{padding:8px 16px;border:1px solid var(--border);border-radius:3px;background:#fff;color:var(--muted);font-size:13px;cursor:pointer}
+    .err-msg{font-size:12px;color:var(--red);margin-bottom:8px;display:none}
+
+    /* STANDINGS */
+    .standings-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+    .standings-table th{background:var(--navy);color:#fff;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+    .standings-table td{padding:9px 12px;border-bottom:1px solid var(--border2);font-size:13px}
+    .standings-table tr:last-child td{border:none}
+    .standings-table tr:hover td{background:var(--light)}
+    .team-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700}
+    .team-dot-lg{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .champ-star{color:#f5c842;font-size:14px}
+    .month-cell{font-family:'DM Mono',monospace;font-size:11px;text-align:center;padding:4px 6px}
+    .pos-1{color:var(--gold);font-weight:700}
+    .pos-2{color:#888;font-weight:700}
+    .pos-3{color:#cd7f32;font-weight:700}
+
+    /* ROTATION VIEW */
+    .rotation-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;border:1px solid var(--border);background:#fff;border-radius:4px;overflow:hidden;font-size:12px}
+    .rg-hd{padding:8px 10px;background:var(--navy);color:#fff;font-weight:700;font-size:11px;text-align:center;font-family:'DM Mono',monospace}
+    .rg-cell{padding:7px 10px;border-bottom:1px solid var(--border2);border-right:1px solid var(--border2);text-align:center;font-size:11px;font-weight:600}
+    .rg-cell:last-child{border-right:none}
+    .rg-row:last-child .rg-cell{border-bottom:none}
+
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 18px;border-radius:3px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none}
+    .toast.hide{opacity:0}
+    .skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200%;animation:sk 1.3s infinite;border-radius:4px;height:100px;margin-bottom:12px}
+    @keyframes sk{0%{background-position:200%}100%{background-position:-200%}}
+    .admin-bar{background:var(--amber);color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600}
+    .admin-bar button{padding:4px 10px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:2px;cursor:pointer;font-size:11px;font-weight:700}
+    .entry-btn{font-size:11px;padding:3px 8px;border:1px solid var(--border);background:#fff;border-radius:2px;cursor:pointer;color:var(--blue);font-family:'DM Sans',sans-serif;transition:all .15s}
+    .entry-btn:hover{background:var(--blue);color:#fff}
+    .lock-btn{font-size:11px;padding:4px 10px;border:none;background:var(--green);color:#fff;border-radius:2px;cursor:pointer;font-weight:700}
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <span class="hbadge">FVL</span>
+  <span class="htitle">Season <em>3</em> — Mini League</span>
+  <div class="hright">
+    <button class="hbtn hbtn-amber" onclick="toggleAdmin()">🔐 Admin</button>
+    <a href="/" class="hbtn hbtn-ghost">← Home</a>
+  </div>
+</div>
+
+<div id="admin-bar" class="admin-bar" style="display:none">
+  🔐 Admin mode active
+  <button onclick="lockMonth()">🔒 Lock Month</button>
+  <button onclick="toggleAdmin()">Exit</button>
+</div>
+
+<div id="tabs">
+  <div class="tab on"  onclick="showTab('teams')">🏐 Teams</div>
+  <div class="tab"     onclick="showTab('schedule')">📅 Schedule</div>
+  <div class="tab"     onclick="showTab('standings')">🏆 Standings</div>
+  <div class="tab"     onclick="showTab('rotation')">🔄 Rotation</div>
+</div>
+
+<!-- RESULT ENTRY MODAL -->
+<div class="result-modal" id="result-modal">
+  <div class="result-box">
+    <div class="result-title" id="modal-title">Enter Result</div>
+    <div class="err-msg" id="modal-err"></div>
+    <div class="score-row">
+      <div class="score-team" id="modal-teamA">Team A</div>
+      <input class="score-inp" type="number" id="score-a" min="0" max="30" placeholder="0">
+      <span class="score-vs">vs</span>
+      <input class="score-inp" type="number" id="score-b" min="0" max="30" placeholder="0">
+      <div class="score-team" id="modal-teamB">Team B</div>
+    </div>
+    <div class="pw-row">
+      <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Admin Password</label>
+      <input class="pw-inp" type="password" id="modal-pw" placeholder="Password">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save"   onclick="submitResult()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- TEAMS TAB -->
+<div class="panel on" id="panel-teams">
+  <div class="teams-grid" id="teams-grid">
+    <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+    <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+  </div>
+</div>
+
+<!-- SCHEDULE TAB -->
+<div class="panel" id="panel-schedule">
+  <div id="schedule-list"></div>
+</div>
+
+<!-- STANDINGS TAB -->
+<div class="panel" id="panel-standings">
+  <div style="overflow-x:auto">
+    <table class="standings-table" id="standings-table">
+      <thead><tr>
+        <th>#</th><th>Team</th><th>Pts</th><th>W</th><th>🏆</th>
+        <th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th>
+      </tr></thead>
+      <tbody id="standings-body"><tr><td colspan="11" style="padding:20px;text-align:center;color:var(--muted)">No results yet</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ROTATION TAB -->
+<div class="panel" id="panel-rotation">
+  <div style="margin-bottom:10px;font-size:13px;color:var(--muted)">Each team shifts right by one position every month. Same matchup grid applies — opponents change naturally.</div>
+  <div class="rotation-grid" id="rotation-grid"></div>
+</div>
+
+</div>
+<div class="toast hide" id="toast"></div>
+
+<script>
+const TEAMS = [
+  {name:'Dragons',   captain:'Anil',     color:'#c62828', players:['Ishant','Jugal','Krupa','Naren','Saravanan','Venkat']},
+  {name:'Predators', captain:'Harsha',   color:'#1b5e20', players:['Gopal','Mukhesh','Pawan','Rakesh','Sachin','Uday B']},
+  {name:'Falcons',   captain:'Karthik',  color:'#1a3566', players:['Ashok','Divyanshu','Kiran','Naveen','Raja S','Vikas']},
+  {name:'Spartans',  captain:'Koti',     color:'#311b92', players:['Keshav','Krishna','Rahul','Rajan','Santosh','Suri']},
+  {name:'Titans',    captain:'Pratik',   color:'#e65100', players:['Chandu','Raja Vasu','Rajesh','Ritesh','Sunil','Surendra K']},
+  {name:'Raptors',   captain:'Shanthan', color:'#004d40', players:['Ahmed','Amrendra','Chandra','Rizwan','Ronak','Uday K']},
+];
+const MONTHS = ['May 2026','June 2026','July 2026','August 2026','September 2026','October 2026'];
+const TIMES  = ['2:00 PM','2:25 PM','2:50 PM','3:15 PM','3:40 PM','4:05 PM','4:30 PM','4:55 PM'];
+
+let isAdmin = false;
+let currentModal = null; // {month, gameIndex}
+let allEvents = [];
+
+function teamColor(name) { return TEAMS.find(t=>t.name===name)?.color||'#888'; }
+function dot(name,lg=false) { return `<span class="${lg?'team-dot-lg':'team-dot'}" style="background:${teamColor(name)}"></span>`; }
+
+// ── TABS ──────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',['teams','schedule','standings','rotation'][i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('panel-'+id).classList.add('on');
+  if(id==='schedule'&&!allEvents.length) loadSchedule();
+  if(id==='standings') loadStandings();
+  if(id==='rotation') renderRotation();
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────
+function toggleAdmin() {
+  if (!isAdmin) {
+    const pw = prompt('Admin password:');
+    if (!pw) return;
+    if (pw !== 'fvl2026') { alert('Wrong password'); return; }
+    isAdmin = true;
+  } else {
+    isAdmin = false;
+  }
+  document.getElementById('admin-bar').style.display = isAdmin ? 'flex' : 'none';
+  if(allEvents.length) renderSchedule();
+}
+
+// ── TEAMS ─────────────────────────────────────────────────────────
+function renderTeams() {
+  document.getElementById('teams-grid').innerHTML = TEAMS.map(t => `
+    <div class="team-card">
+      <div class="team-hd" style="background:${t.color}">
+        <div>
+          <div class="team-name">${t.name}</div>
+          <div class="team-captain">⭐ ${t.captain}</div>
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;opacity:.3">${t.name[0]}</div>
+      </div>
+      <div class="team-players">
+        ${[t.captain,...t.players].map(p=>`<span class="player-chip">${p}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── SCHEDULE ──────────────────────────────────────────────────────
+async function loadSchedule() {
+  const el = document.getElementById('schedule-list');
+  el.innerHTML = MONTHS.map(()=>'<div class="skel"></div>').join('');
+  try {
+    const r = await fetch('/api/s3/schedule');
+    allEvents = await r.json();
+    renderSchedule();
+  } catch(e) {
+    el.innerHTML = '<div style="padding:20px;color:var(--muted)">Could not load schedule. Make sure the season is seeded via Admin.</div>';
+  }
+}
+
+function renderSchedule() {
+  const el = document.getElementById('schedule-list');
+  if (!allEvents.length) { loadSchedule(); return; }
+  el.innerHTML = allEvents.map(ev => monthSection(ev)).join('');
+}
+
+function monthSection(ev) {
+  const rrGames  = ev.games.filter(g=>g.type==='rr');
+  const finGames = ev.games.filter(g=>g.type!=='rr');
+  const played   = ev.games.filter(g=>g.played).length;
+  const total    = ev.games.length;
+
+  // Group RR by slot
+  const slots = {};
+  rrGames.forEach(g=>{ if(!slots[g.slot]) slots[g.slot]=[]; slots[g.slot].push(g); });
+
+  const rrRows = Object.entries(slots).map(([slot,games]) => `
+    <div class="slot-row">
+      <div class="slot-time">${TIMES[slot]||''}</div>
+      ${games.map((g,gi) => gameCell(g, ev.month, ev.games.indexOf(g))).join('')}
+    </div>`).join('');
+
+  const finRows = finGames.map(g => `
+    <div class="slot-row">
+      <div class="slot-time">${TIMES[g.slot]||''}</div>
+      ${gameCell(g, ev.month, ev.games.indexOf(g))}
+      <div class="slot-game" style="background:var(--light);justify-content:center">
+        <span style="font-size:11px;color:var(--muted)">—</span>
+      </div>
+    </div>`).join('');
+
+  return `<div class="month-section">
+    <div class="month-hd" onclick="toggleMonth('m${ev.month}')">
+      <div>
+        <span class="month-title">${ev.label}</span>
+        <span class="month-date"> · ${ev.date}</span>
+        ${ev.champion?`<span class="month-champ">🏆 ${ev.champion}</span>`:''}
+        ${ev.locked?'<span class="month-locked">LOCKED</span>':''}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:rgba(255,255,255,.6)">${played}/${total} played</span>
+        ${isAdmin&&!ev.locked?`<button class="lock-btn" onclick="event.stopPropagation();lockMonth(${ev.month})">🔒 Lock</button>`:''}
+        <span style="color:rgba(255,255,255,.5)">▾</span>
+      </div>
+    </div>
+    <div id="m${ev.month}" class="month-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px">Round Robin</div>
+      ${rrRows}
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:10px 0 6px">Finals</div>
+      ${finRows}
+    </div>
+  </div>`;
+}
+
+function gameCell(g, month, gameIndex) {
+  const typeLabel = {rr:'RR',final:'FINAL',third:'3rd',fifth:'5th'}[g.type];
+  const typeCls   = g.type==='rr'?'':''+g.type;
+  const score = g.played
+    ? `<span class="g-score g-played">${g.scoreA}–${g.scoreB}</span>`
+    : isAdmin && !allEvents.find(e=>e.month===month)?.locked
+      ? `<button class="entry-btn" onclick="openModal(${month},${gameIndex})">+ Score</button>`
+      : `<span class="g-score" style="color:#ccc">–</span>`;
+  const teamA = g.teamA?.startsWith('#') ? `<span style="color:var(--muted)">${g.teamA}</span>` : `${dot(g.teamA)}<span class="g-team">${g.teamA}</span>`;
+  const teamB = g.teamB?.startsWith('#') ? `<span style="color:var(--muted)">${g.teamB}</span>` : `<span class="g-team">${g.teamB}</span>${dot(g.teamB)}`;
+  return `<div class="slot-game">
+    <span class="g-type ${typeCls}">${typeLabel}</span>
+    ${teamA}
+    ${score}
+    <span class="g-vs">vs</span>
+    ${teamB}
+  </div>`;
+}
+
+function toggleMonth(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display==='none' ? '' : 'none';
+}
+
+// ── RESULT MODAL ──────────────────────────────────────────────────
+function openModal(month, gameIndex) {
+  const ev = allEvents.find(e=>e.month===month);
+  const g  = ev?.games[gameIndex];
+  if (!g) return;
+  currentModal = {month, gameIndex};
+  document.getElementById('modal-title').textContent = `${g.teamA} vs ${g.teamB}`;
+  document.getElementById('modal-teamA').textContent = g.teamA;
+  document.getElementById('modal-teamB').textContent = g.teamB;
+  document.getElementById('score-a').value = g.scoreA ?? '';
+  document.getElementById('score-b').value = g.scoreB ?? '';
+  document.getElementById('modal-pw').value = isAdmin ? 'fvl2026' : '';
+  document.getElementById('modal-err').style.display = 'none';
+  document.getElementById('result-modal').classList.add('on');
+  document.getElementById('score-a').focus();
+}
+
+function closeModal() {
+  document.getElementById('result-modal').classList.remove('on');
+  currentModal = null;
+}
+
+async function submitResult() {
+  if (!currentModal) return;
+  const sa = parseInt(document.getElementById('score-a').value);
+  const sb = parseInt(document.getElementById('score-b').value);
+  const pw = document.getElementById('modal-pw').value;
+  const err = document.getElementById('modal-err');
+
+  if (isNaN(sa)||isNaN(sb)) { err.textContent='Enter both scores'; err.style.display='block'; return; }
+  if (sa===sb) { err.textContent='No draws — one team must win'; err.style.display='block'; return; }
+  if (Math.abs(sa-sb)<2) { err.textContent='Must win by at least 2 points'; err.style.display='block'; return; }
+  const maxScore = Math.max(sa,sb);
+  const minScore = Math.min(sa,sb);
+  if (maxScore<21) { err.textContent='Winning score must be at least 21'; err.style.display='block'; return; }
+  if (maxScore>25) { err.textContent='Max score is 25'; err.style.display='block'; return; }
+  if (maxScore===25 && Math.abs(sa-sb)<1) { err.textContent='At 25 any lead wins'; err.style.display='block'; return; }
+
+  err.style.display='none';
+  try {
+    const r = await fetch('/api/s3/result', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:pw, month:currentModal.month, gameIndex:currentModal.gameIndex, scoreA:sa, scoreB:sb}),
+    });
+    const d = await r.json();
+    if (!d.success) { err.textContent = d.error||'Error'; err.style.display='block'; return; }
+    closeModal();
+    // Refresh event
+    const ev = await fetch(`/api/s3/event/${currentModal?.month||d.month}`).then(r=>r.json()).catch(()=>null);
+    if (ev) {
+      const idx = allEvents.findIndex(e=>e.month===ev.month);
+      if(idx>=0) allEvents[idx]=ev;
+    }
+    renderSchedule();
+    toast('✓ Result saved');
+  } catch(e) { err.textContent='Network error'; err.style.display='block'; }
+}
+
+// ── LOCK MONTH ────────────────────────────────────────────────────
+async function lockMonth(month) {
+  const m = month || parseInt(prompt('Lock which month? (1-6)'));
+  if (!m||m<1||m>6) return;
+  if (!confirm(`Lock Month ${m} and calculate standings?`)) return;
+  const pw = isAdmin ? 'fvl2026' : prompt('Password:');
+  const r = await fetch(`/api/s3/lock/${m}`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({password:pw}),
+  });
+  const d = await r.json();
+  if (d.success) { toast(`🏆 Month ${m} locked · Champion: ${d.champion}`); allEvents=[]; loadSchedule(); loadStandings(); }
+  else toast('Error: '+d.error);
+}
+
+// ── STANDINGS ─────────────────────────────────────────────────────
+async function loadStandings() {
+  const r = await fetch('/api/s3/standings');
+  const data = await r.json();
+  if (!data.length) return;
+  const MONTH_LABELS = ['May','Jun','Jul','Aug','Sep','Oct'];
+  document.getElementById('standings-body').innerHTML = data.map((s,i) => {
+    const team = TEAMS.find(t=>t.name===s.team)||{color:'#888'};
+    const monthCells = [1,2,3,4,5,6].map(m => {
+      const mdata = s.months?.find(x=>x.month===m);
+      if (!mdata) return '<td class="month-cell" style="color:#ccc">—</td>';
+      const posCls = mdata.position===1?'pos-1':mdata.position===2?'pos-2':mdata.position===3?'pos-3':'';
+      return `<td class="month-cell ${posCls}">${mdata.champion?'🏆':mdata.position}</td>`;
+    }).join('');
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace;font-weight:700;text-align:center">${i+1}</td>
+      <td><span class="team-badge">${dot(s.team,true)} ${s.team}</span></td>
+      <td style="font-weight:700;font-family:'DM Mono',monospace">${s.totalPoints}</td>
+      <td style="font-family:'DM Mono',monospace">${s.totalWins}</td>
+      <td style="text-align:center">${'⭐'.repeat(s.championships||0)||'—'}</td>
+      ${monthCells}
+    </tr>`;
+  }).join('');
+}
+
+// ── ROTATION ──────────────────────────────────────────────────────
+function renderRotation() {
+  const base = TEAMS.map(t=>t.name);
+  const n = base.length;
+  let h = '<div class="rg-hd">Month</div>' + ['T1','T2','T3','T4','T5','T6'].map(p=>`<div class="rg-hd">${p}</div>`).join('');
+  MONTHS.forEach((label, mi) => {
+    const positions = new Array(n);
+    base.forEach((team,i) => { positions[(i+mi)%n] = team; });
+    h += `<div class="rg-cell" style="background:var(--light);font-weight:700;border-right:1px solid var(--border2)">${label.split(' ')[0]}</div>`;
+    positions.forEach(team => {
+      const col = teamColor(team);
+      h += `<div class="rg-cell" style="border-right:1px solid var(--border2);border-bottom:1px solid var(--border2)">${dot(team)} ${team}</div>`;
+    });
+  });
+  document.getElementById('rotation-grid').innerHTML = h;
+}
+
+let _tt;
+function toast(msg,dur=3000){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
+
+// Close modal on backdrop click
+document.getElementById('result-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+
+// Enter key submits score
+document.addEventListener('keydown', e => { if(e.key==='Enter'&&currentModal) submitResult(); if(e.key==='Escape') closeModal(); });
+
+// Boot
+renderTeams();
+</script>
+</body>
+</html>

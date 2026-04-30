@@ -149,4 +149,63 @@ module.exports = {
   Player:       mongoose.model('Player',       PlayerModelSchema),
   PlayerSeason: mongoose.model('PlayerSeason', PlayerSeasonSchema),
   DraftSave:    mongoose.model('DraftSave',    DraftSaveSchema),
+  S3Team:       mongoose.model('S3Team',       S3TeamSchema),
+  MonthlyEvent: mongoose.model('MonthlyEvent', MonthlyEventSchema),
+  S3Standing:   mongoose.model('S3Standing',   S3StandingSchema),
 };
+
+// ── Season 3 Teams (locked roster) ───────────────────────────────────
+const S3TeamSchema = new mongoose.Schema({
+  name:     { type: String, required: true, unique: true },
+  captain:  { type: String, required: true },
+  players:  [{ type: String }],
+  color:    { type: String, default: '#1a5fb4' },
+  slug:     { type: String },
+}, { timestamps: true });
+
+// ── Monthly Event ─────────────────────────────────────────────────────
+const GameSchema = new mongoose.Schema({
+  slot:     { type: Number, required: true },  // 0-7
+  type:     { type: String, enum: ['rr','final','third','fifth'], default: 'rr' },
+  teamA:    { type: String },
+  teamB:    { type: String },
+  scoreA:   { type: Number, default: null },
+  scoreB:   { type: Number, default: null },
+  played:   { type: Boolean, default: false },
+  court:    { type: Number, enum: [1,2], default: 1 },
+});
+
+const MonthlyEventSchema = new mongoose.Schema({
+  season:   { type: Number, default: 3 },
+  month:    { type: Number, required: true },   // 1-6
+  label:    { type: String, required: true },   // "May 2026"
+  date:     { type: String },                   // "Sun 3 May 2026"
+  rotation: { type: Number, required: true },   // 0-5 (which shift)
+  // positions[i] = team name at position T(i+1) this month
+  positions: [{ type: String }],
+  games:    [GameSchema],
+  locked:   { type: Boolean, default: false },  // results locked
+  champion: { type: String, default: null },
+}, { timestamps: true });
+
+// ── Season 3 Standings ────────────────────────────────────────────────
+const S3StandingSchema = new mongoose.Schema({
+  season:      { type: Number, default: 3 },
+  team:        { type: String, required: true },
+  // Monthly results: array of { month, position (1-6), points, wins, scoreDiff, champion }
+  months:      [{
+    month:     Number,
+    label:     String,
+    position:  Number,
+    wins:      Number,
+    losses:    Number,
+    points:    Number,
+    scoreDiff: Number,
+    champion:  Boolean,
+  }],
+  totalPoints:    { type: Number, default: 0 },
+  totalWins:      { type: Number, default: 0 },
+  championships:  { type: Number, default: 0 },
+}, { timestamps: true });
+
+

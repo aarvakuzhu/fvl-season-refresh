@@ -3,7 +3,7 @@ const express   = require('express');
 const cors      = require('cors');
 const path      = require('path');
 const mongoose  = require('mongoose');
-const { Team, Standing, Season, CoreMember, Decision, Comment, Config, Player, PlayerSeason, DraftSave } = require('./models');
+const { Team, Standing, Season, CoreMember, Decision, Comment, Config, Player, PlayerSeason, DraftSave, S3Team, MonthlyEvent, S3Standing } = require('./models');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -658,4 +658,261 @@ app.post('/api/draft-clone', async (req, res) => {
     });
     res.json({ success: true, message: `Cloned ${fromUser} opt${opt} → ${toUser}`, pickCount: clone.pickCount });
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// SEASON 3 — TEAMS, SCHEDULE, RESULTS, STANDINGS
+// ═══════════════════════════════════════════════════════════════════════
+
+const S3_PASSWORD = process.env.S3_ADMIN_PASS || 'fvl2026';
+
+// Season 3 team data
+const S3_TEAMS = [
+  { name:'Dragons',   captain:'Anil',     color:'#c62828', slug:'dragons',
+    players:['Ishant','Jugal','Krupa','Naren','Saravanan','Venkat'] },
+  { name:'Predators', captain:'Harsha',   color:'#1b5e20', slug:'predators',
+    players:['Gopal','Mukhesh','Pawan','Rakesh','Sachin','Uday B'] },
+  { name:'Falcons',   captain:'Karthik',  color:'#1a3566', slug:'falcons',
+    players:['Ashok','Divyanshu','Kiran','Naveen','Raja S','Vikas'] },
+  { name:'Spartans',  captain:'Koti',     color:'#311b92', slug:'spartans',
+    players:['Keshav','Krishna','Rahul','Rajan','Santosh','Suri'] },
+  { name:'Titans',    captain:'Pratik',   color:'#e65100', slug:'titans',
+    players:['Chandu','Raja Vasu','Rajesh','Ritesh','Sunil','Surendra K'] },
+  { name:'Raptors',   captain:'Shanthan', color:'#004d40', slug:'raptors',
+    players:['Ahmed','Amrendra','Chandra','Rizwan','Ronak','Uday K'] },
+];
+
+// Month schedule: May–Oct 2026 (Sundays)
+const S3_MONTHS = [
+  { month:1, label:'May 2026',      date:'Sun 3 May 2026' },
+  { month:2, label:'June 2026',     date:'Sun 7 Jun 2026' },
+  { month:3, label:'July 2026',     date:'Sun 5 Jul 2026' },
+  { month:4, label:'August 2026',   date:'Sun 2 Aug 2026' },
+  { month:5, label:'September 2026',date:'Sun 6 Sep 2026' },
+  { month:6, label:'October 2026',  date:'Sun 4 Oct 2026' },
+];
+
+// Fixed RR matchup pairs (positions T1-T6, not real teams)
+// Each slot: [[posA, posB, court], [posA, posB, court]]
+const RR_SLOTS = [
+  [[1,2,1],[3,5,2]],
+  [[1,3,1],[4,6,2]],
+  [[2,4,1],[1,5,2]],
+  [[2,6,1],[3,4,2]],
+  [[1,6,1],[4,5,2]],
+  [[2,3,1],[5,6,2]],
+];
+
+// Shift-right rotation: month 0 = base order, each month shifts all teams right by 1
+function getPositions(monthIdx) {
+  // Base: Dragons=0, Predators=1, ..., Raptors=5
+  const base = S3_TEAMS.map(t => t.name);
+  const n = base.length;
+  // Shift right by monthIdx: team[i] goes to position (i + monthIdx) % n
+  const positions = new Array(n);
+  base.forEach((team, i) => { positions[(i + monthIdx) % n] = team; });
+  return positions; // positions[0] = T1, positions[1] = T2, etc.
+}
+
+function buildGames(positions) {
+  const games = [];
+  let slot = 0;
+  RR_SLOTS.forEach(([g1, g2]) => {
+    games.push({ slot, type:'rr', teamA:positions[g1[0]-1], teamB:positions[g1[1]-1], court:g1[2], scoreA:null, scoreB:null, played:false });
+    games.push({ slot, type:'rr', teamA:positions[g2[0]-1], teamB:positions[g2[1]-1], court:g2[2], scoreA:null, scoreB:null, played:false });
+    slot++;
+  });
+  // Finals slots (teams determined after RR — placeholders)
+  games.push({ slot:6, type:'fifth',  teamA:'#5', teamB:'#6', court:1, scoreA:null, scoreB:null, played:false });
+  games.push({ slot:6, type:'third',  teamA:'#3', teamB:'#4', court:2, scoreA:null, scoreB:null, played:false });
+  games.push({ slot:7, type:'final',  teamA:'#1', teamB:'#2', court:1, scoreA:null, scoreB:null, played:false });
+  return games;
+}
+
+// ── GET /api/s3/teams ─────────────────────────────────────────────────
+app.get('/api/s3/teams', async (req, res) => {
+  try {
+    let teams = await S3Team.find().sort({ name: 1 });
+    if (!teams.length) teams = S3_TEAMS; // fallback to hardcoded
+    res.json(teams);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── POST /api/s3/seed ─────────────────────────────────────────────────
+app.post('/api/s3/seed', async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Wrong password' });
+
+    // Seed teams
+    for (const t of S3_TEAMS) {
+      await S3Team.findOneAndUpdate({ name: t.name }, t, { upsert: true, new: true });
+    }
+
+    // Seed all 6 monthly events
+    const events = [];
+    for (const m of S3_MONTHS) {
+      const positions = getPositions(m.month - 1);
+      const games = buildGames(positions);
+      const ev = await MonthlyEvent.findOneAndUpdate(
+        { season: 3, month: m.month },
+        { ...m, season: 3, rotation: m.month - 1, positions, games, locked: false, champion: null },
+        { upsert: true, new: true }
+      );
+      events.push(ev);
+    }
+
+    // Seed empty standings
+    for (const t of S3_TEAMS) {
+      await S3Standing.findOneAndUpdate(
+        { season: 3, team: t.name },
+        { season: 3, team: t.name, months: [], totalPoints: 0, totalWins: 0, championships: 0 },
+        { upsert: true, new: true }
+      );
+    }
+
+    res.json({ success: true, teams: S3_TEAMS.length, events: events.length });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GET /api/s3/schedule ──────────────────────────────────────────────
+app.get('/api/s3/schedule', async (req, res) => {
+  try {
+    const events = await MonthlyEvent.find({ season: 3 }).sort({ month: 1 });
+    res.json(events);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GET /api/s3/event/:month ──────────────────────────────────────────
+app.get('/api/s3/event/:month', async (req, res) => {
+  try {
+    const ev = await MonthlyEvent.findOne({ season: 3, month: Number(req.params.month) });
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    res.json(ev);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── POST /api/s3/result ───────────────────────────────────────────────
+// Save game result: { password, month, gameIndex, scoreA, scoreB }
+app.post('/api/s3/result', async (req, res) => {
+  try {
+    const { password, month, gameIndex, scoreA, scoreB } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Wrong password' });
+
+    const ev = await MonthlyEvent.findOne({ season: 3, month: Number(month) });
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    if (ev.locked) return res.status(400).json({ error: 'Event is locked' });
+
+    ev.games[gameIndex].scoreA = scoreA;
+    ev.games[gameIndex].scoreB = scoreB;
+    ev.games[gameIndex].played = true;
+    ev.markModified('games');
+
+    // After all RR games played, compute standings and update final teams
+    const rrGames = ev.games.filter(g => g.type === 'rr' && g.played);
+    if (rrGames.length === 12) {
+      const ranked = computeRRStandings(ev.games.filter(g=>g.type==='rr'), ev.positions);
+      // Update final game teams
+      const finalGame  = ev.games.find(g=>g.type==='final');
+      const thirdGame  = ev.games.find(g=>g.type==='third');
+      const fifthGame  = ev.games.find(g=>g.type==='fifth');
+      if (finalGame) { finalGame.teamA = ranked[0]; finalGame.teamB = ranked[1]; }
+      if (thirdGame) { thirdGame.teamA = ranked[2]; thirdGame.teamB = ranked[3]; }
+      if (fifthGame) { fifthGame.teamA = ranked[4]; fifthGame.teamB = ranked[5]; }
+      ev.markModified('games');
+    }
+
+    await ev.save();
+    res.json({ success: true, game: ev.games[gameIndex] });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── POST /api/s3/lock/:month ──────────────────────────────────────────
+// Lock month, record champion, update season standings
+app.post('/api/s3/lock/:month', async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Wrong password' });
+
+    const ev = await MonthlyEvent.findOne({ season: 3, month: Number(req.params.month) });
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+
+    // Determine final standings from all played games
+    const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+    const ranked = computeRRStandings(rrGames, ev.positions);
+    const finalGame = ev.games.find(g=>g.type==='final'&&g.played);
+    const champion = finalGame
+      ? (finalGame.scoreA > finalGame.scoreB ? finalGame.teamA : finalGame.teamB)
+      : ranked[0];
+
+    ev.champion = champion;
+    ev.locked = true;
+    await ev.save();
+
+    // Compute full month standings: position per team
+    const monthStandings = computeFullStandings(ev);
+    for (const [team, data] of Object.entries(monthStandings)) {
+      const st = await S3Standing.findOne({ season:3, team });
+      if (!st) continue;
+      // Remove existing entry for this month if re-locking
+      st.months = st.months.filter(m => m.month !== ev.month);
+      st.months.push({ month: ev.month, label: ev.label, ...data, champion: team === champion });
+      st.totalPoints  = st.months.reduce((a,m)=>a+(m.points||0),0);
+      st.totalWins    = st.months.reduce((a,m)=>a+(m.wins||0),0);
+      st.championships = st.months.filter(m=>m.champion).length;
+      await st.save();
+    }
+
+    res.json({ success: true, champion, ranked });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GET /api/s3/standings ─────────────────────────────────────────────
+app.get('/api/s3/standings', async (req, res) => {
+  try {
+    const standings = await S3Standing.find({ season:3 }).sort({ championships:-1, totalPoints:-1 });
+    res.json(standings);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function computeRRStandings(rrGames, positions) {
+  const stats = {};
+  positions.forEach(t => { stats[t] = { wins:0, losses:0, points:0, scoreDiff:0 }; });
+  rrGames.filter(g=>g.played).forEach(g => {
+    const a = g.teamA, b = g.teamB;
+    const sa = g.scoreA, sb = g.scoreB;
+    if (!stats[a] || !stats[b]) return;
+    stats[a].scoreDiff += (sa - sb);
+    stats[b].scoreDiff += (sb - sa);
+    if (sa > sb) {
+      stats[a].wins++; stats[a].points += 2;
+      stats[b].losses++;
+    } else {
+      stats[b].wins++; stats[b].points += 2;
+      stats[a].losses++;
+    }
+  });
+  return Object.entries(stats)
+    .sort(([,a],[,b]) => b.points-a.points || b.scoreDiff-a.scoreDiff)
+    .map(([t]) => t);
+}
+
+function computeFullStandings(ev) {
+  const result = {};
+  const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+  const ranked = computeRRStandings(rrGames, ev.positions);
+  ranked.forEach((team, i) => {
+    const g = rrGames.filter(g=>g.teamA===team||g.teamB===team);
+    const wins   = g.filter(g=>(g.teamA===team&&g.scoreA>g.scoreB)||(g.teamB===team&&g.scoreB>g.scoreA)).length;
+    const losses = g.length - wins;
+    const scoreDiff = g.reduce((a,g)=>a+(g.teamA===team?g.scoreA-g.scoreB:g.scoreB-g.scoreA),0);
+    result[team] = { position: i+1, wins, losses, points: wins*2, scoreDiff };
+  });
+  return result;
+}
+
+// ── Season 3 page ─────────────────────────────────────────────────────
+app.get('/season3', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'season3.html'));
 });
