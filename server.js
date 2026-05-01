@@ -164,53 +164,25 @@ app.post('/api/admin/verify', async (req, res) => {
 // Team data is the source of truth for who played which season.
 // Player collection stores skills/tier/displayName/notes enrichment.
 async function buildPlayerList(seasonFilter) {
-  const CORE     = new Set(['Amrendra','Ashok','Naren','Rahul','Sachin','Sunil']);
-  const CAPTAINS = new Set(['Anil','Pratik','Harsha','Shanthan','Koti','Karthik S']);
-  const OUT      = new Set(['Kunal']);
-  const NEW_S3   = ['Surendra Kings','Raja Vasu'];
-
-  // Load all teams (optionally filtered by season)
-  const teamQuery = seasonFilter ? { season: seasonFilter } : {};
-  const teams = await Team.find(teamQuery).sort({ season: 1 });
-
-  // Collect unique player names and their season appearances
-  const playerMap = {}; // name → { name, seasons:[] }
-  for (const t of teams) {
-    for (const p of (t.players || [])) {
-      if (OUT.has(p.name)) continue;
-      if (!playerMap[p.name]) playerMap[p.name] = { name: p.name, seasons: [] };
-      playerMap[p.name].seasons.push({
-        season: t.season,
-        team: t.name.replace('FVL ',''),
-        role: CAPTAINS.has(p.name) ? 'Captain' : CORE.has(p.name) ? 'Wingman' : 'Player',
-      });
-    }
-  }
-  // Add new S3 players not in any team yet
-  for (const name of NEW_S3) {
-    if (!playerMap[name]) playerMap[name] = { name, seasons: [{ season: 3, team: 'New', role: 'Player' }] };
-  }
-
-  // Load enrichment from Player collection (keyed by name)
-  const enrichments = await Player.find({ name: { $in: Object.keys(playerMap) } });
-  const enrichMap = {};
-  enrichments.forEach(e => enrichMap[e.name] = e);
-
-  // Merge
-  return Object.values(playerMap).map(p => {
-    const e = enrichMap[p.name] || {};
-    return {
-      _id:         e._id ? e._id.toString() : null,
-      name:        p.name,
-      displayName: e.displayName || null,
-      label:       e.displayName || p.name,
-      skills:      e.skills || [],
-      tier:        e.tier || 'B',
-      notes:       e.notes || null,
-      active:      e.active !== false,
-      seasons:     (p.seasons || []).sort((a,b) => a.season - b.season),
-    };
-  }).sort((a,b) => a.label.localeCompare(b.label));
+  // Single source of truth: PlayerProfile collection
+  const profiles = await PlayerProfile.find().sort({ shortName: 1 });
+  return profiles
+    .filter(p => !seasonFilter || (p.seasons||[]).some(s=>s.season===Number(seasonFilter)))
+    .map(p => {
+      const inactive = !(p.seasons||[]).some(s=>s.season===3);
+      return {
+        _id:         p._id.toString(),
+        name:        p.shortName,
+        displayName: null,
+        label:       p.shortName,
+        photo:       p.photo || null,
+        skills:      p.skills || [],
+        tier:        'B',
+        notes:       null,
+        inactive,
+        seasons:     (p.seasons||[]).sort((a,b)=>a.season-b.season),
+      };
+    });
 }
 
 // GET /api/players — all players merged from Team + Player enrichment
@@ -221,20 +193,15 @@ app.get('/api/players', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// PATCH /api/players/:id — update Player enrichment by _id
+// PATCH /api/players/:id — update PlayerProfile skills (single source of truth)
 app.patch('/api/players/:id', async (req, res) => {
   try {
-    const { name, displayName, skills, tier, notes, active } = req.body;
+    const { skills, notes } = req.body;
     const update = {};
-    if (name        !== undefined) update.name = name;
-    if (displayName !== undefined) update.displayName = displayName || null;
-    if (skills      !== undefined) update.skills = skills;
-    if (tier        !== undefined) update.tier = tier;
-    if (notes       !== undefined) update.notes = notes || null;
-    if (active      !== undefined) update.active = active;
-    const doc = await Player.findByIdAndUpdate(req.params.id, { $set: update }, { new: true });
+    if (skills !== undefined) update.skills = skills;
+    const doc = await PlayerProfile.findByIdAndUpdate(req.params.id, { $set: update }, { new: true });
     if (!doc) return res.status(404).json({ error: 'Not found' });
-    res.json(doc);
+    res.json({ _id: doc._id.toString(), name: doc.shortName, label: doc.shortName, photo: doc.photo, skills: doc.skills, seasons: doc.seasons, inactive: !(doc.seasons||[]).some(s=>s.season===3) });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

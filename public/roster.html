@@ -286,7 +286,83 @@ function applyFilters() {
     : '<div class="empty">No players match the current filters.</div>';
 }
 
-// ── CARD ──────────────────────────────────────────────────────────
+function cardHTML(p) {
+  const uid = p._id || ('new_' + p.name.replace(/[^a-zA-Z0-9]/g,'_'));
+  p = {...p, uid};
+  const cur    = currentSeasonData(p);
+  const role   = cur?.role || 'Player';
+  const skills = p.skills || [];
+  const skillTags = skills.length
+    ? skills.map(sk=>`<span class="sk sk-${sk}">${SKILL_LABELS[sk]||sk}</span>`).join('')
+    : '<span class="no-skills">No skills assigned yet</span>';
+
+  const seasonPills = (p.seasons||[]).sort((a,b)=>a.season-b.season).map(s=>
+    `<span class="season-pill ${s.season===3?'current':''}" title="${s.role}">
+      S${s.season} · ${s.team||'?'} · ${s.role}
+    </span>`).join('');
+
+  // Compact photo: small circle avatar top-right
+  const initials = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const teamCol = (() => {
+    const latest = [...(p.seasons||[])].sort((a,b)=>b.season-a.season)[0];
+    const COLS = {Dragons:'#c62828',Predators:'#1b5e20',Falcons:'#1a3566',Spartans:'#311b92',Titans:'#e65100',Raptors:'#004d40',Panthers:'#004d40'};
+    return COLS[latest?.team] || '#64748b';
+  })();
+  const photoHtml = p.photo
+    ? `<img src="${p.photo}" alt="${p.name}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;object-position:center top;border:2px solid ${teamCol};flex-shrink:0"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : '';
+  const avatarHtml = `<div style="width:36px;height:36px;border-radius:50%;background:${teamCol};color:#fff;font-size:11px;font-weight:900;display:${p.photo?'none':'flex'};align-items:center;justify-content:center;flex-shrink:0;border:2px solid ${teamCol}">${initials}</div>`;
+
+  const inactiveBadge = p.inactive ? `<span class="badge" style="background:#f1f5f9;color:#94a3b8;border:1px solid #cbd5e1">Inactive</span>` : '';
+
+  return `<div class="pcard ${p.inactive?'opacity-60':''}" id="card-${uid}" data-id="${uid}" style="${p.inactive?'opacity:.65':''}">
+    <div class="pc-stripe ${stripeClass(p)}"></div>
+    <div class="pc-body">
+      <div class="pc-top">
+        <div class="pc-names" style="flex:1;min-width:0">
+          <div class="pc-name">${p.label}</div>
+          ${p.displayName?`<div class="pc-dispname">${p.name}</div>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          ${photoHtml}${avatarHtml}
+          <button class="pc-edit-btn" onclick="toggleEdit('${uid}',this)">✏️ Edit</button>
+        </div>
+      </div>
+      <div class="pc-meta">
+        <span class="badge badge-${role}">${role==='Captain'?'⭐ Cap':role==='Wingman'?'🤝 Wing':'Player'}</span>
+        ${inactiveBadge}
+      </div>
+      ${seasonPills?`<div class="pc-seasons">${seasonPills}</div>`:''}
+      <div class="pc-skills">${skillTags}</div>
+      ${p.notes?`<div class="pc-notes">${p.notes}</div>`:''}
+    </div>
+    <div class="pc-edit">
+      <div class="ef">
+        <label class="el">Skills <span style="opacity:.5;font-weight:400">(tap to toggle)</span></label>
+        <div class="skill-toggles">
+          ${SKILL_DEFS.map(sk=>`<button class="sk-tog ${sk} ${skills.includes(sk)?'on':''}" onclick="this.classList.toggle('on')">${SKILL_LABELS[sk]}</button>`).join('')}
+        </div>
+      </div>
+      ${(p.seasons||[]).length?`
+      <div class="ef">
+        <label class="el">Season History</label>
+        ${[...(p.seasons||[])].sort((a,b)=>a.season-b.season).map(s=>`
+          <div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border2);font-size:12px">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--blue);min-width:24px">S${s.season}</span>
+            <span style="color:var(--muted)">${s.team||'?'}</span>
+            <span class="badge badge-${s.role||'Player'}" style="margin-left:auto">${s.role||'Player'}</span>
+          </div>`).join('')}
+      </div>`:''}
+      <div class="edit-actions">
+        <button class="btn-save" onclick="savePlayer('${uid}')">💾 Save Skills</button>
+        <button class="btn-cancel" onclick="toggleEdit('${uid}',null,true)">Cancel</button>
+        <span class="si" id="si-${uid}"></span>
+      </div>
+    </div>
+  </div>`;
+}
+
 function stripeClass(p) {
   if (!p.seasons?.length) return 'stripe-default';
   // Use most recent season's team for stripe
@@ -301,83 +377,6 @@ function currentSeasonData(p) {
   return [...(p.seasons||[])].sort((a,b)=>b.season-a.season)[0];
 }
 
-function cardHTML(p) {
-  // Use _id if available, else a slug from name (for unenriched players)
-  const uid = p._id || ('new_' + p.name.replace(/[^a-zA-Z0-9]/g,'_'));
-  p = {...p, uid}; // attach uid to local copy
-  const cur    = currentSeasonData(p);
-  const role   = cur?.role || 'Player';
-  const skills = p.skills || [];
-  const skillTags = skills.length
-    ? skills.map(sk=>`<span class="sk sk-${sk}">${SKILL_LABELS[sk]||sk}</span>`).join('')
-    : '<span class="no-skills">No skills assigned yet</span>';
-
-  const seasonPills = (p.seasons||[]).sort((a,b)=>a.season-b.season).map(s=>
-    `<span class="season-pill ${s.season===3?'current':''}" title="${s.role}">
-      S${s.season} · ${s.team||'?'} · ${s.role}
-    </span>`).join('');
-
-  return `<div class="pcard" id="card-${uid}" data-id="${uid}">
-    <div class="pc-stripe ${stripeClass(p)}"></div>
-    <div class="pc-body">
-      <div class="pc-top">
-        <div class="pc-names">
-          <div class="pc-name">${p.label}</div>
-          ${p.displayName?`<div class="pc-dispname">${p.name}</div>`:''}
-        </div>
-        <button class="pc-edit-btn" onclick="toggleEdit('${uid}',this)">✏️ Edit</button>
-      </div>
-      <div class="pc-meta">
-        <span class="badge badge-${role}">${role==='Captain'?'⭐ Cap':role==='Wingman'?'🤝 Wing':'Player'}</span>
-        <span class="badge badge-tier-${p.tier||'B'}">${p.tier||'B'}</span>
-      </div>
-      ${seasonPills?`<div class="pc-seasons">${seasonPills}</div>`:''}
-      <div class="pc-skills">${skillTags}</div>
-      ${p.notes?`<div class="pc-notes">${p.notes}</div>`:''}
-    </div>
-    <div class="pc-edit">
-      <div class="ef">
-        <label class="el">Name <span style="opacity:.5;font-weight:400">(canonical)</span></label>
-        <input class="ei" id="cn-${uid}" value="${p.name}">
-      </div>
-      <div class="ef">
-        <label class="el">Display Name <span style="opacity:.5;font-weight:400">(shown in UI — overrides name)</span></label>
-        <input class="ei" id="dn-${uid}" value="${p.displayName||''}" placeholder="${p.name}">
-      </div>
-      <div class="ef">
-        <label class="el">Skills <span style="opacity:.5;font-weight:400">(tap to toggle multiple)</span></label>
-        <div class="skill-toggles">
-          ${SKILL_DEFS.map(sk=>`<button class="sk-tog ${sk} ${skills.includes(sk)?'on':''}" onclick="this.classList.toggle('on')">${SKILL_LABELS[sk]}</button>`).join('')}
-        </div>
-      </div>
-      <div class="ef">
-        <label class="el">Tier</label>
-        <div class="tier-toggles">
-          ${['S','A','B','C'].map(t=>`<button class="tier-tog ${t} ${(p.tier||'B')===t?'on':''}" onclick="selectOne(this,'.tier-tog','on')">${t} — ${{S:'Elite',A:'Competitive',B:'Developing',C:'Recreational'}[t]}</button>`).join('')}
-        </div>
-      </div>
-      ${(p.seasons||[]).length?`
-      <div class="ef">
-        <label class="el">Season History <span style="opacity:.5;font-weight:400">(from team records)</span></label>
-        ${[...(p.seasons||[])].sort((a,b)=>a.season-b.season).map(s=>`
-          <div style="display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border2);font-size:12px">
-            <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--blue);min-width:24px">S${s.season}</span>
-            <span style="color:var(--muted)">${s.team||'?'}</span>
-            <span class="badge badge-${s.role||'Player'}" style="margin-left:auto">${s.role||'Player'}</span>
-          </div>`).join('')}
-      </div>`:''}
-      <div class="ef">
-        <label class="el">Notes</label>
-        <input class="ei" id="notes-${p._id}" value="${p.notes||''}" placeholder="Any notes…">
-      </div>
-      <div class="edit-actions">
-        <button class="btn-save" onclick="savePlayer('${uid}')">💾 Save</button>
-        <button class="btn-cancel" onclick="toggleEdit('${uid}',null,true)">Cancel</button>
-        <span class="si" id="si-${uid}"></span>
-      </div>
-    </div>
-  </div>`;
-}
 
 // ── EDIT HELPERS ──────────────────────────────────────────────────
 function toggleEdit(uid, btn, cancel=false) {
@@ -404,63 +403,36 @@ async function savePlayer(uid) {
   const si   = document.getElementById(`si-${uid}`);
   si.textContent = 'Saving…'; si.className = 'si';
 
-  const name        = document.getElementById(`cn-${uid}`).value.trim();
-  const displayName = document.getElementById(`dn-${uid}`).value.trim();
-  const notes       = document.getElementById(`notes-${uid}`).value.trim();
-  // Resolve real _id from ALL data
-  const playerData = ALL.find(p => (p._id||('new_'+p.name.replace(/[^a-zA-Z0-9]/g,'_'))) === uid);
-  const id = playerData?._id || null;
-  const skills      = [...card.querySelectorAll('.sk-tog.on')].map(b=>b.classList[1]);
-  const tier        = card.querySelector('.tier-tog.on')?.classList[1] || 'B';
+  const playerData = ALL.find(p => p._id === uid);
+  if (!playerData?._id) { si.textContent = '✗ No ID'; si.className = 'si err'; return; }
+
+  const skills = [...card.querySelectorAll('.sk-tog.on')].map(b=>b.classList[1]);
 
   try {
-    // Save player enrichment — PATCH if _id exists, POST /enrich if new
-    const isNew = !id || id === 'null';
-    const url    = isNew ? '/api/players/enrich' : `/api/players/${id}`;
-    const method = isNew ? 'POST' : 'PATCH';
-    const r = await fetch(url, {
-      method, headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name: name||undefined, displayName: displayName||undefined, notes: notes||undefined, skills, tier }),
+    const r = await fetch(`/api/players/${playerData._id}`, {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ skills }),
     });
     if (!r.ok) throw new Error(await r.text());
     const updated = await r.json();
-    // Update local _id if this was a new enrichment
-    if (isNew && updated._id) { ALL[idx]._id = updated._id.toString(); id = updated._id.toString(); }
-
-    // Save each season role/team
-    const seasonRows = card.querySelectorAll('.season-edit-row');
-    for (const row of seasonRows) {
-      const psid  = row.querySelector('.role-tog.on')?.dataset?.psid;
-      const role  = row.querySelector('.role-tog.on')?.textContent?.trim();
-      const team  = row.querySelector('.sea-inp')?.value?.trim();
-      if (psid) {
-        await fetch(`/api/playerseason/${psid}`, {
-          method:'PATCH', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ role, team }),
-        });
-      }
-    }
 
     // Update local data
-    const idx = ALL.findIndex(p=>(p._id||('new_'+p.name.replace(/[^a-zA-Z0-9]/g,'_')))===uid);
-    if (idx>=0) {
-      ALL[idx] = {...ALL[idx], ...updated,
-        _id: updated._id?.toString() || ALL[idx]._id,
-        name: updated.name || ALL[idx].name,
-        label: updated.displayName || updated.name || ALL[idx].label,
-      };
-    }
+    const idx = ALL.findIndex(p=>p._id===uid);
+    if (idx>=0) ALL[idx] = {...ALL[idx], skills: updated.skills};
 
     si.textContent = '✓ Saved'; si.className = 'si ok';
-    // Refresh card — close edit mode, show updated data
     const newHTML = document.createElement('div');
     newHTML.innerHTML = cardHTML(ALL[idx]);
-    const fresh = newHTML.firstChild;
-    card.replaceWith(fresh);
-    toast(`✓ ${updated.name} saved`);
-
+    card.replaceWith(newHTML.firstChild);
+    toast(`✓ ${updated.name} skills saved`);
   } catch(e) { si.textContent='✗ Error'; si.className='si err'; console.error(e); }
 }
+  const card = document.getElementById(`card-${uid}`);
+  const si   = document.getElementById(`si-${uid}`);
+  si.textContent = 'Saving…'; si.className = 'si';
+
+
 
 let _tt;
 function toast(msg,dur=2500){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}

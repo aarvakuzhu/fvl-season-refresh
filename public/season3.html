@@ -431,7 +431,7 @@ function switchTab(el) {
   el.classList.add('active');
   document.getElementById('panel-'+el.dataset.panel).classList.add('active');
   if(el.dataset.panel==='overview')  loadOverview();
-  if(el.dataset.panel==='players')   renderPlayers(getFilteredPlayers());
+  if(el.dataset.panel==='players')   loadPlayers();
   if(el.dataset.panel==='schedule')  loadSchedule();
   if(el.dataset.panel==='standings') loadStandings();
   if(el.dataset.panel==='rotation')  renderRotation();
@@ -926,17 +926,30 @@ const PHOTOS = {
   'Uday K':     'https://lh3.googleusercontent.com/d/1WL-1MnBWTmAb_uzfYcCGpwxHD9LxdYzv=w400',
 };
 
-// Flatten all players with team info
-const ALL_PLAYERS = [];
-TEAMS.forEach(t => {
-  const isCapt = name => name === t.captain;
-  const members = [t.captain, ...(ROSTERS[t.name]||[])];
-  members.forEach(name => {
-    ALL_PLAYERS.push({ name, team: t.name, color: t.color, captain: isCapt(name), photo: PHOTOS[name]||null });
-  });
-});
-
+// Players loaded from API (PlayerProfile — single source of truth)
+let ALL_PLAYERS = [];
 let _playerTeamFilter = null;
+
+async function loadPlayers() {
+  if (ALL_PLAYERS.length) { renderPlayers(getFilteredPlayers()); return; }
+  try {
+    const r = await fetch('/api/players?season=3');
+    const data = await r.json();
+    ALL_PLAYERS = data.map(p => {
+      const s3 = (p.seasons||[]).find(s=>s.season===3);
+      const col = teamColor(s3?.team||'');
+      return {
+        name: p.name, team: s3?.team||'', color: col,
+        captain: s3?.role==='Captain', wingman: s3?.role==='Wingman',
+        photo: p.photo||PHOTOS[p.name]||null,  // API first, fallback to hardcoded
+        skills: p.skills||[],
+      };
+    }).filter(p=>p.team); // only players with a S3 team
+    renderPlayers(getFilteredPlayers());
+  } catch(e) {
+    document.getElementById('player-grid').innerHTML = '<div class="empty">Could not load players.</div>';
+  }
+}
 
 function renderPlayers(list) {
   const grid  = document.getElementById('player-grid');
@@ -953,8 +966,9 @@ function renderPlayers(list) {
     return `<div class="player-card" data-name="${p.name.toLowerCase()}" data-team="${p.team}" onclick="openProfile('${p.name}')" style="cursor:pointer">
       <div class="player-photo-wrap">${photoHtml}</div>
       <div class="player-info" style="background:${p.color};border:none">
-        <div class="player-name" style="color:#fff">${p.name}${p.captain?' ⭐':''}</div>
+        <div class="player-name" style="color:#fff">${p.name}${p.captain?' ⭐':p.wingman?' 🤝':''}</div>
         <div class="player-team" style="color:rgba(255,255,255,.75)">${p.team}</div>
+        ${p.skills&&p.skills.length?`<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:4px">${p.skills.map(sk=>`<span style="font-size:9px;padding:1px 5px;border-radius:2px;background:rgba(255,255,255,.2);color:#fff;font-weight:700">${sk}</span>`).join('')}</div>`:''}
       </div>
     </div>`;
   }).join('');
