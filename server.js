@@ -321,7 +321,6 @@ app.get('/api/draft-saves', async (req, res) => {
 });
 
 
-// /api/seed-naren-draft — retired
 
 app.get('/api/draft-compare', async (req, res) => {
   try {
@@ -390,7 +389,6 @@ app.get('/api/draft-compare', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// /api/seed-ashok-draft — retired
 
 // ── Roster page ──────────────────────────────────────────────────────
 app.get('/roster', (req, res) => {

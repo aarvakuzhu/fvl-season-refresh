@@ -34,10 +34,10 @@ async function switchTab(name) {
 }
 
 function runRenderersFor(name) {
-  if (name === 'overview')    { renderStandings(); renderDecisionsSidebar(); }
+  if (name === 'overview')    { renderStandings(); }
   if (name === 'format')      { renderSchedule(); }
   if (name === 'governance')  { renderDecisions(); }
-  if (name === 'actions')     { renderNextSteps(); renderChecklists(); }
+  if (name === 'actions')     { renderChecklists(); }
   // feedback is all static HTML — no renderers needed
 }
 
@@ -62,7 +62,7 @@ async function renderStandings() {
 }
 
 // ── Teams ──────────────────────────────────────────────────────────
-async function renderTeams() {
+async function {
   const [teams, standings] = await Promise.all([api('/api/teams?season=2'), api('/api/standings?season=2')]);
   const sm = {}; standings.forEach(s => sm[s.teamName] = s);
   teams.sort((a,b) => (sm[b.name]?.totalPoints||0)-(sm[a.name]?.totalPoints||0) || (sm[b.name]?.championships||0)-(sm[a.name]?.championships||0));
@@ -78,13 +78,6 @@ async function renderTeams() {
   }).join('');
 }
 
-// ── Core Members ───────────────────────────────────────────────────
-async function renderCoreMembers() {
-  const m = await api('/api/core-members?season=2');
-  document.getElementById('core-members-grid').innerHTML = m.map(x =>
-    `<div class="cmr"><div><div class="cmname">${x.name}</div><div class="cmteam">${x.assignedTeam||''}</div></div><div class="cmrole">${x.role}</div></div>`
-  ).join('');
-}
 
 // ── Schedule — Option A and B ──────────────────────────────────────
 // 6 teams, 2 courts, 25-min games, no breaks, 3.5 hrs
@@ -162,40 +155,6 @@ function renderSchedule() {
   }
 }
 
-// ── Decisions sidebar (overview) ──────────────────────────────────
-async function renderDecisionsSidebar() {
-  const el = document.getElementById('decisions-sidebar');
-  if (!el) return;
-  // Active S3 decisions — hardcoded (DB decisions are all archived legacy items)
-  el.innerHTML = `
-    <div class="do ph" style="margin-bottom:6px"><div class="do-body">
-      <span class="ptag pth">OPEN</span>
-      <div class="dt">Finalise Draft Option</div>
-      <div class="dd">Option 1 (pair picks + snake from pick 3) vs Option 2 (R0 bonus + skip rounds).</div>
-    </div></div>
-    <div class="do ph" style="margin-bottom:6px"><div class="do-body">
-      <span class="ptag pth">OPEN</span>
-      <div class="dt">Monthly Event Format</div>
-      <div class="dd">Option A (full RR + final) vs Option B (2 pools + bracket).</div>
-    </div></div>
-    <div class="do pm" style="margin-bottom:6px"><div class="do-body">
-      <span class="ptag ptm">OPEN</span>
-      <div class="dt">Player Classifications / Tiers</div>
-      <div class="dd">Assign role + tier to all 37 pool players before the draft.</div>
-    </div></div>
-    <div class="do pm" style="margin-bottom:6px"><div class="do-body">
-      <span class="ptag ptm">OPEN</span>
-      <div class="dt">Season Scoring Format</div>
-      <div class="dd">Points per finish, season standings tracking, draft order implications.</div>
-    </div></div>
-    <div class="do pm"><div class="do-body">
-      <span class="ptag ptm">OPEN</span>
-      <div class="dt">Mid-Season Transfer &amp; Replacement Rules</div>
-      <div class="dd">Transfer window criteria + replacement process for &lt;6 available players.</div>
-    </div></div>`;
-  const oc = document.getElementById('open-count');
-  if (oc) oc.textContent = '5';
-}
 
 // ── Decisions (governance tab) ─────────────────────────────────────
 async function renderDecisions() {
@@ -216,32 +175,6 @@ async function renderDecisions() {
   }
 }
 
-// ── Next Steps ─────────────────────────────────────────────────────
-function renderNextSteps() {
-  const steps=[
-    ['1','All 6','Decide format: Option A (full RR + final) or Option B (2 pools + bracket). Present to captains once decided.','🔴 Open'],
-    ['2','All 6','Assign role + tier to all 37 pool players. Share with captains before draft.','Before draft'],
-    ['3','All 6','Finalise Season 3 draft order (based on inverse Season 2 final standings).','Before draft'],
-    ['4','All 6','Publish snake draft rules, pick order table, and skip rounds to all 6 captains.','Before draft'],
-    ['5','Captains','Each captain must pick their Wingman using one of their picks — must happen by end of R5.','Draft day'],
-    ['6','Captains','Run draft (Option 1 or 2 — pending decision). Each captain picks Wingman by end of pick 5 (Opt 1) or R5 (Opt 2).','Draft day'],
-    ['7','All 6','Review rosters for tier balance. Flag any significant imbalances.','Post-draft'],
-    ['8','All 6','Publish all 6 rosters. Open 48-hour player appeals window.','Post-draft'],
-    ['9','All 6','Book venue. Confirm 2 courts for 3.5-hour event block.','Before Month 1'],
-    ['10','All 6','Publish full Season 3 schedule and confirmed format to all 42 players.','Before Month 1'],
-  ];
-  const el = document.getElementById('nextsteps-list');
-  if (!el) return;
-  el.innerHTML = steps.map(([n,o,t,w]) =>
-    `<div class="nsitem">
-      <div class="nsn">${n}</div>
-      <div>
-        <div class="nst">${t}</div>
-        <div class="nsmeta"><span class="nso">${o}</span><span class="nsw">${w}</span></div>
-      </div>
-    </div>`
-  ).join('');
-}
 
 // ── Checklists ─────────────────────────────────────────────────────
 function renderChecklists() {

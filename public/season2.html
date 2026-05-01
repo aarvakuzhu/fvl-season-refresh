@@ -118,38 +118,6 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
     </div>
     <div style="padding:6px 13px 10px;font-size:11px;color:var(--muted);border-top:1px solid var(--border2)">Core members are drafted as players but serve as team Wingmen. They are never captains. Roles rotate across seasons.</div>
   </div>
-
-  <div class="sec">Player Tiers</div>
-  <span class="sec-line"></span>
-  <div class="card" style="margin-bottom:14px">
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr>
-        <th style="padding:7px 12px;background:var(--navy);color:#fff;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-align:left">Tier</th>
-        <th style="padding:7px 12px;background:var(--navy);color:#fff;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-align:left">Label</th>
-        <th style="padding:7px 12px;background:var(--navy);color:#fff;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-align:left">League</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border2)"><span style="font-size:18px;font-weight:900;color:#b8860b">S</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border2);font-weight:700">Elite</td><td style="padding:8px 12px;border-bottom:1px solid var(--border2);color:var(--muted);font-size:12px">Any</td></tr>
-        <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border2);background:var(--light)"><span style="font-size:18px;font-weight:900;color:#1565c0">A</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border2);font-weight:700;background:var(--light)">Competitive</td><td style="padding:8px 12px;border-bottom:1px solid var(--border2);color:var(--muted);font-size:12px;background:var(--light)">Mini</td></tr>
-        <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border2)"><span style="font-size:18px;font-weight:900;color:#1b7a1b">B</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border2);font-weight:700">Developing</td><td style="padding:8px 12px;border-bottom:1px solid var(--border2);color:var(--muted);font-size:12px">Mini / Nano</td></tr>
-        <tr><td style="padding:8px 12px"><span style="font-size:18px;font-weight:900;color:#64748b">C</span></td><td style="padding:8px 12px;font-weight:700">Recreational</td><td style="padding:8px 12px;color:var(--muted);font-size:12px">Nano</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-
-<script>
-async function load() {
-  // Load standings
-  try {
-    const r = await fetch('/api/standings?season=2');
-    const data = await r.json();
-    const troph = n => '🏆'.repeat(n)||'';
-    document.getElementById('s2-standings').innerHTML = data.map((d,i) => {
-      const cm = (d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)).join(', ');
-      return `<div class="srow ${i===0?'gold':''}">
-        <div class="spos">${i+1}</div>
-        <div><div class="sname">${d.teamName} ${d.seasonChampion?'<span class="champ-badge">SEASON CHAMP</span>':''}</div><div class="ssub">${cm?'Won: '+cm:''}</div></div>
         <div style="font-size:13px;color:var(--muted)">${troph(d.championships||0)}</div>
         <div class="spts">${d.totalPoints} pts</div>
       </div>`;
