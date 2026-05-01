@@ -103,11 +103,11 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 .month-body{display:none;border-top:1px solid var(--border)}
 .month-body.open{display:block}
 .section-lbl{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);padding:7px 13px 5px;background:var(--light);border-bottom:1px solid var(--border2)}
-.game-row{display:grid;grid-template-columns:60px 60px 1fr;border-bottom:1px solid var(--border2);min-height:40px;align-items:center}
+.game-row{display:grid;grid-template-columns:60px 80px 1fr;border-bottom:1px solid var(--border2);min-height:44px;align-items:center}
 .game-row:last-child{border-bottom:none}
 .game-row.hidden{display:none}
 .time-cell{padding:5px 7px;font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);font-weight:600;background:var(--light);border-right:1px solid var(--border2);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.3}
-.court-cell{padding:5px 6px;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#fff;background:var(--c1);border-right:1px solid var(--border2);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;text-transform:uppercase;letter-spacing:.3px;line-height:1.3}
+.court-cell{padding:5px 6px;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#fff;background:var(--c1);border-right:1px solid var(--border2);height:100%;display:flex;align-items:center;justify-content:center;text-align:center;text-transform:uppercase;letter-spacing:.3px;line-height:1.4;white-space:pre-line;min-width:60px}
 .game-row[data-court="2"] .court-cell{background:var(--c2)}
 .game-row[data-type="final"] .court-cell,.game-row[data-type="third"] .court-cell,.game-row[data-type="fifth"] .court-cell{background:var(--amber)}
 .game-cell{display:flex;align-items:center;gap:7px;padding:7px 12px}
@@ -499,7 +499,9 @@ function monthCard(ev, mi) {
   const rows = allG.map(g => {
     const names = [g.teamA,g.teamB].filter(t=>t&&!t.startsWith('#'));
     const court = g.court||1;
-    const courtLbl = g.type!=='rr' ? ({final:'Final',third:'3rd',fifth:'5th'}[g.type]||'') : `C${court}`;
+    const courtLbl = g.type!=='rr'
+      ? `${({final:'Final',third:'3rd Place',fifth:'5th Place'}[g.type]||g.type)} · C${court}`
+      : `C${court}`;
     const isP = g.teamA?.startsWith('#')||g.teamB?.startsWith('#');
     const tA = isP ? `<span style="color:var(--muted)">${g.teamA}</span>` : `${dot(g.teamA)} <span class="g-name">${g.teamA}</span>`;
     const tB = isP ? `<span style="color:var(--muted)">${g.teamB}</span>` : `<span class="g-name">${g.teamB}</span> ${dot(g.teamB)}`;
@@ -653,7 +655,9 @@ function renderSVMonth(month){
       const ms=isMe?g.scoreA:g.scoreB, os=isMe?g.scoreB:g.scoreA;
       const won=g.played&&ms>os, lost=g.played&&ms<os;
       const isFin=g.type!=='rr';
-      const cLbl=isFin?{final:'Final',third:'3rd',fifth:'5th'}[g.type]:`C${g.court||1}`;
+      const cLbl=isFin
+        ? `${({final:'Final',third:'3rd Place',fifth:'5th Place'}[g.type]||g.type)} · C${g.court||1}`
+        : `C${g.court||1}`;
       const cCol=isFin?'var(--amber)':(g.court||1)===1?'var(--c1)':'var(--c2)';
       const resHtml=g.played
         ?(won?`<span class="sv-result win">W ${ms}–${os}</span>`:`<span class="sv-result loss">L ${ms}–${os}</span>`)
