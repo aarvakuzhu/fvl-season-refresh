@@ -382,9 +382,65 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 <!-- STANDINGS (season) -->
 <div class="panel" id="panel-standings">
-  <div class="card">
+  <div class="card" style="margin-bottom:12px">
     <div class="card-hd">🏆 Season 3 Standings · May – Oct 2026 · Cumulative</div>
-    <div id="standings-list"><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div></div>
+    <div style="overflow-x:auto">
+      <table class="s-table" style="width:100%">
+        <thead><tr>
+          <th style="width:32px">#</th>
+          <th>Team</th>
+          <th class="c" style="width:56px" title="RR wins (1pt) + positional bonus">Pts</th>
+          <th class="c" style="width:52px" title="Total RR wins across season">RR W</th>
+          <th class="c" style="width:60px">Titles</th>
+        </tr></thead>
+        <tbody id="standings-list">
+          <tr><td colspan="5" class="empty">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Scoring Rules -->
+  <div class="card">
+    <div class="card-hd" style="background:#f8fafc;font-size:12px;font-weight:700">📋 Season Scoring Rules</div>
+    <div style="padding:12px 14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:8px 10px">
+          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#15803d;margin-bottom:4px">EACH RR WIN</div>
+          <div style="font-size:20px;font-weight:900;color:#15803d">+1 pt</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Max 4 per month</div>
+        </div>
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:3px;padding:8px 10px">
+          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#92400e;margin-bottom:4px">MAX PER MONTH</div>
+          <div style="font-size:20px;font-weight:900;color:#92400e">10 pts</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">4 RR wins + 6 bonus</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px">
+        <thead><tr style="background:#f8fafc">
+          <th style="padding:5px 10px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Finish</th>
+          <th style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Bonus</th>
+          <th style="padding:5px 10px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Game</th>
+        </tr></thead>
+        <tbody>
+          <tr style="background:#fffbeb"><td style="padding:5px 10px;font-weight:700">🏆 1st Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#b8860b">+6</td><td style="padding:5px 10px;color:var(--muted)">Grand Final winner</td></tr>
+          <tr><td style="padding:5px 10px;font-weight:700">🥈 2nd Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#9ca3af">+5</td><td style="padding:5px 10px;color:var(--muted)">Grand Final loser</td></tr>
+          <tr style="background:#f8fafc"><td style="padding:5px 10px;font-weight:700">🥉 3rd Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#cd7f32">+4</td><td style="padding:5px 10px;color:var(--muted)">3rd place game winner</td></tr>
+          <tr><td style="padding:5px 10px;font-weight:700">4th Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700">+3</td><td style="padding:5px 10px;color:var(--muted)">3rd place game loser</td></tr>
+          <tr style="background:#f8fafc"><td style="padding:5px 10px;font-weight:700">5th Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700">+2</td><td style="padding:5px 10px;color:var(--muted)">5th place game winner</td></tr>
+          <tr><td style="padding:5px 10px;font-weight:700">6th Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700">+1</td><td style="padding:5px 10px;color:var(--muted)">5th place game loser</td></tr>
+        </tbody>
+      </table>
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:3px;padding:10px 12px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#0369a1;margin-bottom:6px">🔄 TIEBREAKER ORDER</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
+          <div style="display:flex;gap:8px"><span style="font-family:'Roboto Mono',monospace;font-weight:700;color:#0369a1;min-width:20px">1.</span><span>Most <strong>monthly championships</strong> (1st place finishes)</span></div>
+          <div style="display:flex;gap:8px"><span style="font-family:'Roboto Mono',monospace;font-weight:700;color:#0369a1;min-width:20px">2.</span><span>Most <strong>2nd place finishes</strong>, then 3rd, 4th, 5th</span></div>
+          <div style="display:flex;gap:8px"><span style="font-family:'Roboto Mono',monospace;font-weight:700;color:#0369a1;min-width:20px">3.</span><span>Most <strong>total RR wins</strong> across the season</span></div>
+          <div style="display:flex;gap:8px"><span style="font-family:'Roboto Mono',monospace;font-weight:700;color:#0369a1;min-width:20px">4.</span><span><strong>Coin toss</strong> — conducted by the Tournament Director at the end of Season 3</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -847,13 +903,14 @@ async function loadOverview() {
       el.innerHTML = data.map((s,i) => {
         const col = teamColor(s.team);
         const cm = (s.months||[]).filter(m=>m.champion).map(m=>m.label?.split(' ')[0]).join(', ');
+        const totalRR = (s.months||[]).reduce((a,m)=>a+(m.rrWins||m.wins||0),0);
         return `<div class="srow-ov ${i===0?'gold':''}">
           <div class="spos" style="${i===0?'color:#b8860b':''}">${i+1}</div>
           <div>
             <div class="sname" style="display:flex;align-items:center;gap:6px">${dot(s.team,8)} ${s.team} ${'🏆'.repeat(s.championships||0)}</div>
             <div class="ssub">${cm?'Won: '+cm:''}</div>
           </div>
-          <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${s.totalWins}W</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${totalRR}W</div>
           <div class="spts" style="color:${col}">${s.totalPoints} pts</div>
         </div>`;
       }).join('');

@@ -703,8 +703,8 @@ app.post('/api/s3/lock/:month', async (req, res) => {
       // Remove existing entry for this month if re-locking
       st.months = st.months.filter(m => m.month !== ev.month);
       st.months.push({ month: ev.month, label: ev.label, ...data, champion: team === champion });
-      st.totalPoints  = st.months.reduce((a,m)=>a+(m.points||0),0);
-      st.totalWins    = st.months.reduce((a,m)=>a+(m.wins||0),0);
+      st.totalPoints   = st.months.reduce((a,m)=>a+(m.points||0),0);
+      st.totalWins     = st.months.reduce((a,m)=>a+(m.rrWins||m.wins||0),0);
       st.championships = st.months.filter(m=>m.champion).length;
       await st.save();
     }
@@ -716,7 +716,25 @@ app.post('/api/s3/lock/:month', async (req, res) => {
 // ── GET /api/s3/standings ─────────────────────────────────────────────
 app.get('/api/s3/standings', async (req, res) => {
   try {
-    const standings = await S3Standing.find({ season:3 }).sort({ championships:-1, totalPoints:-1 });
+    // Sort: totalPoints → championships → count of 2nd/3rd/etc positions → totalWins
+    let standings = await S3Standing.find({ season:3 });
+    standings = standings.sort((a,b) => {
+      if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+      // Tiebreaker 1: most monthly championships (1st place finishes)
+      if (b.championships !== a.championships) return b.championships - a.championships;
+      // Tiebreaker 2-5: most 2nd, 3rd, 4th, 5th place finishes
+      for (const pos of [2,3,4,5]) {
+        const bCount = (b.months||[]).filter(m=>m.position===pos).length;
+        const aCount = (a.months||[]).filter(m=>m.position===pos).length;
+        if (bCount !== aCount) return bCount - aCount;
+      }
+      // Tiebreaker 6: total RR wins across season
+      const bRR = (b.months||[]).reduce((s,m)=>s+(m.rrWins||m.wins||0),0);
+      const aRR = (a.months||[]).reduce((s,m)=>s+(m.rrWins||m.wins||0),0);
+      if (bRR !== aRR) return bRR - aRR;
+      // Tiebreaker 7: coin toss (random, stable per request)
+      return 0;
+    });
     res.json(standings);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
@@ -746,14 +764,44 @@ function computeRRStandings(rrGames, positions) {
 
 function computeFullStandings(ev) {
   const result = {};
-  const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+  const rrGames  = ev.games.filter(g=>g.type==='rr'&&g.played);
+  const finGame  = ev.games.find(g=>g.type==='final'&&g.played);
+  const thdGame  = ev.games.find(g=>g.type==='third'&&g.played);
+  const fifGame  = ev.games.find(g=>g.type==='fifth'&&g.played);
+
+  // Determine final positions from playoff results
+  const positions = {}; // team → final position (1-6)
+  if (finGame) {
+    positions[finGame.scoreA>finGame.scoreB?finGame.teamA:finGame.teamB] = 1;
+    positions[finGame.scoreA>finGame.scoreB?finGame.teamB:finGame.teamA] = 2;
+  }
+  if (thdGame) {
+    positions[thdGame.scoreA>thdGame.scoreB?thdGame.teamA:thdGame.teamB] = 3;
+    positions[thdGame.scoreA>thdGame.scoreB?thdGame.teamB:thdGame.teamA] = 4;
+  }
+  if (fifGame) {
+    positions[fifGame.scoreA>fifGame.scoreB?fifGame.teamA:fifGame.teamB] = 5;
+    positions[fifGame.scoreA>fifGame.scoreB?fifGame.teamB:fifGame.teamA] = 6;
+  }
+
+  const BONUS = {1:6, 2:5, 3:4, 4:3, 5:2, 6:1};
   const ranked = computeRRStandings(rrGames, ev.positions);
+
   ranked.forEach((team, i) => {
-    const g = rrGames.filter(g=>g.teamA===team||g.teamB===team);
-    const wins   = g.filter(g=>(g.teamA===team&&g.scoreA>g.scoreB)||(g.teamB===team&&g.scoreB>g.scoreA)).length;
-    const losses = g.length - wins;
-    const scoreDiff = g.reduce((a,g)=>a+(g.teamA===team?g.scoreA-g.scoreB:g.scoreB-g.scoreA),0);
-    result[team] = { position: i+1, wins, losses, points: wins*2, scoreDiff };
+    const myRR = rrGames.filter(g=>g.teamA===team||g.teamB===team);
+    const rrWins = myRR.filter(g=>(g.teamA===team&&g.scoreA>g.scoreB)||(g.teamB===team&&g.scoreB>g.scoreA)).length;
+    const scoreDiff = myRR.reduce((a,g)=>a+(g.teamA===team?g.scoreA-g.scoreB:g.scoreB-g.scoreA),0);
+    const finalPos = positions[team] || (i+1); // fallback to RR rank if playoffs not played
+    const posBonus = BONUS[finalPos] || 1;
+    const totalPts = rrWins + posBonus; // 1pt per RR win + positional bonus
+    result[team] = {
+      position:     finalPos,
+      rrWins,
+      losses:       myRR.length - rrWins,
+      positionBonus: posBonus,
+      points:       totalPts,
+      scoreDiff,
+    };
   });
   return result;
 }
