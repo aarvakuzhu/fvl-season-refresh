@@ -832,7 +832,11 @@ async function loadStandings(){
   try{
     const r=await fetch('/api/s3/standings'); const data=await r.json();
     const el=document.getElementById('standings-list');
-    if(!data.length){el.innerHTML='<div class="empty" style="padding:20px;text-align:center;color:var(--muted)">No results yet — season starts May 2026</div>';return;}
+    if(!el) return;
+    if(!Array.isArray(data)||!data.length){
+      el.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No results yet — season starts May 2026</div>';
+      return;
+    }
     el.innerHTML=data.map((s,i)=>{
       const col=teamColor(s.team);
       const totalRR=(s.months||[]).reduce((a,m)=>a+(m.rrWins||m.wins||0),0);
@@ -865,7 +869,10 @@ async function loadStandings(){
         ${monthRows?`<div id="${uid}" style="display:none">${monthRows}</div>`:''}
       </div>`;
     }).join('');
-  }catch(e){}
+  }catch(e){
+    const el=document.getElementById('standings-list');
+    if(el) el.innerHTML=`<div style="padding:16px;color:#c62828;font-size:12px">Error loading standings: ${e.message}</div>`;
+  }
 }
 
 function toggleStRow(uid) {
@@ -1210,6 +1217,8 @@ function closeProfile() {
 
 // ── BOOT ──────────────────────────────────────────────────────────────
 loadOverview();
+// Pre-fetch standings so it's ready when tab is clicked
+loadStandings();
 </script>
 
 <!-- PLAYER PROFILE MODAL -->
