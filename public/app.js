@@ -61,22 +61,7 @@ async function renderStandings() {
   }).join('');
 }
 
-// ── Teams ──────────────────────────────────────────────────────────
-async function {
-  const [teams, standings] = await Promise.all([api('/api/teams?season=2'), api('/api/standings?season=2')]);
-  const sm = {}; standings.forEach(s => sm[s.teamName] = s);
-  teams.sort((a,b) => (sm[b.name]?.totalPoints||0)-(sm[a.name]?.totalPoints||0) || (sm[b.name]?.championships||0)-(sm[a.name]?.championships||0));
-  document.getElementById('teams-grid').innerHTML = teams.map(t => {
-    const st = sm[t.name] || {};
-    const players = [...t.players].sort((a,b) => { const o={Wingman:0,Captain:1,Player:2}; return o[a.role]-o[b.role]||a.name.localeCompare(b.name); });
-    const rows = players.map(p => {
-      const cls = p.role==='Captain'?'pcap':p.role==='Wingman'?'pwing':'';
-      const bdg = p.role==='Captain'?'<span class="pbdg" style="background:#e3f2fd;color:#1565c0">Cap</span>':p.role==='Wingman'?'<span class="pbdg" style="background:#e8f5e9;color:#1b7a1b">Wing</span>':'';
-      return `<div class="prow"><span class="${cls}">${p.name}</span>${bdg}</div>`;
-    }).join('');
-    return `<div class="tmc"><div class="tmhd" style="background:${t.gradient||'#1a3566'}"><span>⚡ ${t.name.replace('FVL ','')} ${tr(st.championships||0)}</span><span class="tmpts">${st.totalPoints!=null?st.totalPoints+'pts':''}</span></div>${rows}${t.exception?`<div style="padding:3px 9px;font-size:10px;color:var(--muted);font-style:italic">* ${t.exception}</div>`:''}</div>`;
-  }).join('');
-}
+
 
 
 // ── Schedule — Option A and B ──────────────────────────────────────
