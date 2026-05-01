@@ -130,13 +130,15 @@
     .si.ok{color:var(--green)}.si.err{color:var(--red)}
 
     /* stripe colors */
-    .stripe-Falcons {background:linear-gradient(90deg,#1a3566,#2b5ba8)}
-    .stripe-Spartans{background:linear-gradient(90deg,#311b92,#4527a0)}
-    .stripe-Titans  {background:linear-gradient(90deg,#0f1e3d,#1a3566)}
-    .stripe-Dragons {background:linear-gradient(90deg,#7f0000,#c62828)}
-    .stripe-Panthers{background:linear-gradient(90deg,#1b5e20,#2e7d32)}
-    .stripe-New     {background:linear-gradient(90deg,#555,#888)}
-    .stripe-default {background:var(--border)}
+    .stripe-Falcons  {background:linear-gradient(90deg,#1a3566,#2b5ba8)}
+    .stripe-Spartans {background:linear-gradient(90deg,#311b92,#4527a0)}
+    .stripe-Titans   {background:linear-gradient(90deg,#e65100,#f57c00)}
+    .stripe-Dragons  {background:linear-gradient(90deg,#7f0000,#c62828)}
+    .stripe-Panthers {background:linear-gradient(90deg,#1b5e20,#2e7d32)}
+    .stripe-Predators{background:linear-gradient(90deg,#1b5e20,#388e3c)}
+    .stripe-Raptors  {background:linear-gradient(90deg,#004d40,#00695c)}
+    .stripe-New      {background:linear-gradient(90deg,#555,#888)}
+    .stripe-default  {background:var(--border)}
 
     .skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200%;animation:sk 1.3s infinite;border-radius:4px}
     @keyframes sk{0%{background-position:200%}100%{background-position:-200%}}
@@ -208,12 +210,18 @@ let seasonF = 'all';   // 'all', 2, or 3
 async function load() {
   try {
     const r = await fetch('/api/players');
-    if (!r.ok) throw new Error(r.status);
-    ALL = await r.json();
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    if (!Array.isArray(data)) throw new Error('Invalid response');
+    if (!data.length) throw new Error('No players returned — seed Player Profiles via /admin');
+    ALL = data;
     applyFilters();
   } catch(e) {
     document.getElementById('roster-grid').innerHTML =
-      `<div class="empty">Could not load players.<br><small>${e.message}</small></div>`;
+      `<div class="empty" style="padding:30px;text-align:center;color:var(--muted)">
+        Could not load players.<br><small>${e.message}</small><br>
+        <a href="/admin" style="color:var(--blue);font-size:12px;margin-top:8px;display:inline-block">Go to Admin →</a>
+      </div>`;
     document.getElementById('count-lbl').textContent = '0 players';
   }
 }
@@ -365,9 +373,8 @@ function cardHTML(p) {
 
 function stripeClass(p) {
   if (!p.seasons?.length) return 'stripe-default';
-  // Use most recent season's team for stripe
   const latest = [...p.seasons].sort((a,b)=>b.season-a.season)[0];
-  const team = (latest?.team||'').replace(/\s+/g,'');
+  const team = (latest?.team||'').replace('FVL ','').replace(/\s+/g,'');
   return `stripe-${team||'default'}`;
 }
 
