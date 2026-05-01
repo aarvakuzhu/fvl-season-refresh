@@ -1,6 +1,6 @@
 
 // ── Tab switching with dynamic panel loading ──────────────────────
-const TABS = ['overview','feedback','teams','format','governance','actions'];
+const TABS = ['overview','feedback','format','governance','actions'];
 const _loaded = {};
 
 async function switchTab(name) {
@@ -35,7 +35,6 @@ async function switchTab(name) {
 
 function runRenderersFor(name) {
   if (name === 'overview')    { renderStandings(); renderDecisionsSidebar(); }
-  if (name === 'teams')       { renderTeams(); renderCoreMembers(); }
   if (name === 'format')      { renderSchedule(); }
   if (name === 'governance')  { renderDecisions(); }
   if (name === 'actions')     { renderNextSteps(); renderChecklists(); }
