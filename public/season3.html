@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>FVL Season 3</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -829,11 +832,16 @@ async function lockMonth(month){
 
 // ── STANDINGS (season) ────────────────────────────────────────────────
 async function loadStandings(){
+  const el=document.getElementById('standings-list');
+  if(el) el.innerHTML='<div style="padding:12px;font-size:12px;color:var(--muted)">Loading standings…</div>';
   try{
-    const r=await fetch('/api/s3/standings'); const data=await r.json();
-    const el=document.getElementById('standings-list');
+    const r=await fetch('/api/s3/standings');
+    const text=await r.text();
+    let data;
+    try{ data=JSON.parse(text); } catch(pe){ throw new Error('Bad JSON: '+text.slice(0,80)); }
     if(!el) return;
-    if(!Array.isArray(data)||!data.length){
+    if(!Array.isArray(data)){ throw new Error('Not array: '+text.slice(0,80)); }
+    if(!data.length){
       el.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No results yet — season starts May 2026</div>';
       return;
     }
