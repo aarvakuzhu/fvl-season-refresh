@@ -200,6 +200,15 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 /* misc */
 .empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.skill-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:2px;border:1px solid}
+.season-card{border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.season-card:last-child{margin-bottom:0}
+.season-hd{padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700}
+.season-body{padding:8px 12px;background:var(--light);border-top:1px solid var(--border2)}
+.medal-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.medal-monthly{font-size:16px;title:attr(title)}
+.medal-season{font-size:22px}
+.no-medals{font-size:12px;color:var(--muted);font-style:italic}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:8px 16px;border-radius:3px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .toast.hide{opacity:0}
 /* ── PLAYER CARDS ── */
@@ -800,7 +809,7 @@ let _tt;
 function toast(msg,dur=3000){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
 
 // ── KEYBOARD ──────────────────────────────────────────────────────────
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&_pendingModal)submitScore();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeProfile();}if(e.key==='Enter'&&_pendingModal)submitScore();});
 
 // ── OVERVIEW ─────────────────────────────────────────────────────────
 async function loadOverview() {
@@ -936,7 +945,7 @@ function renderPlayers(list) {
            loading="lazy">
          <div class="player-avatar" style="background:${p.color};display:none">${initials}</div>`
       : `<div class="player-avatar" style="background:${p.color}">${initials}</div>`;
-    return `<div class="player-card" data-name="${p.name.toLowerCase()}" data-team="${p.team}">
+    return `<div class="player-card" data-name="${p.name.toLowerCase()}" data-team="${p.team}" onclick="openProfile('${p.name}')" style="cursor:pointer">
       <div class="player-photo-wrap">${photoHtml}</div>
       <div class="player-info" style="background:${p.color};border:none">
         <div class="player-name" style="color:#fff">${p.name}${p.captain?' ⭐':''}</div>
@@ -966,9 +975,141 @@ function setPlayerTeamFilter(team, btn) {
   filterPlayers();
 }
 
+// ── PLAYER PROFILE ────────────────────────────────────────────────────
+const SKILL_COLORS = {
+  'Spiker':     {bg:'#dbeafe',border:'#3b82f6',color:'#1e40af'},
+  'Setter':     {bg:'#fce7f3',border:'#ec4899',color:'#9d174d'},
+  'Defense':    {bg:'#dcfce7',border:'#22c55e',color:'#15803d'},
+  'Allrounder': {bg:'#fef9c3',border:'#eab308',color:'#854d0e'},
+  'Developing': {bg:'#fed7aa',border:'#f97316',color:'#9a3412'},
+};
+
+async function openProfile(shortName) {
+  document.getElementById('profile-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  
+  // Find player in local registry first (for photo/color while loading)
+  const localPlayer = ALL_PLAYERS.find(p=>p.name===shortName);
+  const col = localPlayer?.color || '#1a5fb4';
+  const initials = shortName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  
+  // Set header color immediately
+  document.getElementById('pm-header').style.background = col;
+  document.getElementById('pm-avatar').style.background = col;
+  document.getElementById('pm-avatar').textContent = initials;
+  document.getElementById('pm-name').textContent = shortName;
+  document.getElementById('pm-role').textContent = 'Loading…';
+  document.getElementById('pm-skills').innerHTML = '';
+  document.getElementById('pm-seasons').innerHTML = '<div style="padding:12px;text-align:center;color:var(--muted);font-size:13px">Loading…</div>';
+  
+  // Set photo
+  const photo = PHOTOS[shortName];
+  const photoEl = document.getElementById('pm-photo');
+  const avatarEl = document.getElementById('pm-avatar');
+  if (photo) {
+    photoEl.src = photo;
+    photoEl.style.display = 'block';
+    avatarEl.style.display = 'none';
+  } else {
+    photoEl.style.display = 'none';
+    avatarEl.style.display = 'flex';
+  }
+  
+  // Fetch full profile from API
+  try {
+    const r = await fetch('/api/players/profile/'+encodeURIComponent(shortName));
+    if (!r.ok) throw new Error('Profile not found');
+    const p = await r.json();
+    renderProfile(p, col, initials);
+  } catch(e) {
+    // Fallback to local data
+    if (localPlayer) renderProfileLocal(localPlayer, col, initials);
+    else document.getElementById('pm-seasons').innerHTML = '<div style="padding:12px;color:var(--muted);font-size:12px">Profile not yet seeded — use Admin → Seed Player Profiles</div>';
+  }
+}
+
+function renderProfile(p, col, initials) {
+  const s3season = p.seasons?.find(s=>s.season===3);
+  const s2season = p.seasons?.find(s=>s.season===2);
+  
+  // Role line
+  const roleTag = s3season?.role==='Captain'?'⭐ Captain':s3season?.role==='Wingman'?'🤝 Wingman':'Player';
+  document.getElementById('pm-role').textContent = `${roleTag} · ${s3season?.team||s2season?.team||''}`;
+  
+  // Skills
+  document.getElementById('pm-skills').innerHTML = (p.skills||[]).map(sk => {
+    const c = SKILL_COLORS[sk]||{bg:'#f3f4f6',border:'#9ca3af',color:'#374151'};
+    return `<span class="skill-badge" style="background:${c.bg};border-color:${c.border};color:${c.color}">${sk}</span>`;
+  }).join('');
+  
+  // Seasons
+  const S2_COLORS = {Falcons:'#1a3566',Spartans:'#311b92',Titans:'#e65100',Dragons:'#c62828',Panthers:'#1b5e20'};
+  const S3_COLORS = {Dragons:'#c62828',Predators:'#1b5e20',Falcons:'#1a3566',Spartans:'#311b92',Titans:'#e65100',Raptors:'#004d40'};
+  
+  const seasons = [...(p.seasons||[])].sort((a,b)=>b.season-a.season);
+  document.getElementById('pm-seasons').innerHTML = seasons.map(s => {
+    const sCol = s.season===2 ? (S2_COLORS[s.team]||'#888') : (S3_COLORS[s.team]||'#888');
+    const roleIcon = s.role==='Captain'?'⭐':s.role==='Wingman'?'🤝':'';
+    const chMonths = s.championMonths||[];
+    const medals = chMonths.map(m => `<span class="medal-monthly" title="Monthly Champion · ${m}">🥇</span>`).join('');
+    const seasonMedal = s.seasonChampion ? '<span class="medal-season" title="Season Champion">🏆</span>' : '';
+    const allMedals = seasonMedal + medals;
+    const titleStr = chMonths.length ? ' · ' + chMonths.length + ' monthly title' + (chMonths.length>1?'s':'') : '';
+    const statLine = s.role + (s.seasonChampion?' · Season Champion':'') + titleStr;
+    return `<div class="season-card">
+      <div class="season-hd" style="background:${sCol}22;border-left:3px solid ${sCol}">
+        <span style="font-family:'Roboto Mono',monospace;font-size:10px;background:${sCol};color:#fff;padding:1px 6px;border-radius:2px">S${s.season}</span>
+        <span style="font-weight:700">${s.team}</span>
+        <span style="color:var(--muted);font-weight:400">${roleIcon}</span>
+      </div>
+      <div class="season-body">
+        <div class="medal-row">
+          ${allMedals || '<span class="no-medals">No titles this season</span>'}
+        </div>
+        <div style="font-size:11px;color:var(--muted)">${statLine}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderProfileLocal(localPlayer, col, initials) {
+  document.getElementById('pm-role').textContent = `${localPlayer.captain?'⭐ Captain':'Player'} · ${localPlayer.team}`;
+  document.getElementById('pm-seasons').innerHTML = `<div style="padding:12px;font-size:12px;color:var(--muted)">Seed player profiles via Admin for full season history.</div>`;
+}
+
+function closeProfile() {
+  document.getElementById('profile-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
 // ── BOOT ──────────────────────────────────────────────────────────────
 loadOverview();
 </script>
+
+<!-- PLAYER PROFILE MODAL -->
+<div id="profile-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto" onclick="if(event.target===this)closeProfile()">
+  <div id="profile-modal" style="background:#fff;border-radius:4px;width:90%;max-width:420px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.25);margin-bottom:40px">
+    <!-- Header with team color -->
+    <div id="pm-header" style="padding:20px;display:flex;gap:16px;align-items:flex-start">
+      <div id="pm-photo-wrap" style="width:80px;height:80px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#e5e7eb;display:flex;align-items:center;justify-content:center">
+        <img id="pm-photo" src="" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:none"
+          onerror="this.style.display='none';document.getElementById('pm-avatar').style.display='flex'">
+        <div id="pm-avatar" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff"></div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div id="pm-name" style="font-size:20px;font-weight:900;color:#fff;margin-bottom:2px"></div>
+        <div id="pm-role" style="font-size:12px;color:rgba(255,255,255,.8);margin-bottom:6px"></div>
+        <div id="pm-skills" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+      </div>
+      <button onclick="closeProfile()" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <!-- Season history -->
+    <div style="padding:0 16px 16px">
+      <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:8px">Season History</div>
+      <div id="pm-seasons"></div>
+    </div>
+  </div>
+</div>
 
 <div style="text-align:center;padding:20px;font-size:11px;color:#888">
   <a href="/sitemap" style="color:#888;text-decoration:none">Site Map</a>

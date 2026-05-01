@@ -3,7 +3,7 @@ const express   = require('express');
 const cors      = require('cors');
 const path      = require('path');
 const mongoose  = require('mongoose');
-const { Team, Standing, Season, CoreMember, Decision, Comment, Config, Player, PlayerSeason, DraftSave, S3Team, MonthlyEvent, S3Standing } = require('./models');
+const { Team, Standing, Season, CoreMember, Decision, Comment, Config, Player, PlayerSeason, DraftSave, S3Team, MonthlyEvent, S3Standing, PlayerProfile } = require('./models');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -408,6 +408,101 @@ app.get('/admin', (req, res) => {
 });
 
 // ── Frontend (catch-all) ─────────────────────────────────────────────
+
+// ═══════════════════════════════════════════════════════════════════════
+// PLAYER PROFILES — unified registry across seasons
+// ═══════════════════════════════════════════════════════════════════════
+
+const PLAYER_REGISTRY = [
+  {name:"Anil",photo:'https://lh3.googleusercontent.com/d/1LXwgRP3DQmxbWw1DX1sHRC07Vhv1vSRF=w400',skills:["Spiker", "Defense"],seasons:[{season:2,team:"Dragons",role:"Captain",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Dragons",role:"Captain",championMonths:[],seasonChampion:false}]},
+  {name:"Shanthan",photo:'https://lh3.googleusercontent.com/d/1DjV6Kzs7QOdaCIElzf-yZazWfO0sbLKe=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Dragons",role:"Captain",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Raptors",role:"Captain",championMonths:[],seasonChampion:false}]},
+  {name:"Naren",photo:'https://lh3.googleusercontent.com/d/1uqSxsnYiRC__K14trVDG_guZA1k_qUYA=w400',skills:["Spiker", "Defense"],seasons:[{season:2,team:"Dragons",role:"Player",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Dragons",role:"Wingman",championMonths:[],seasonChampion:false}]},
+  {name:"Ahmed",photo:'https://lh3.googleusercontent.com/d/10Ssg4vyAAAJowHroxkO32r0ljX7kf5-L=w400',skills:["Setter", "Spiker"],seasons:[{season:2,team:"Dragons",role:"Player",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Raptors",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Keshav",photo:'https://lh3.googleusercontent.com/d/1Z3Bjg2tBY9AGHj-mbi0YRwjrk2WauObU=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Dragons",role:"Player",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Spartans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Pawan",photo:'https://lh3.googleusercontent.com/d/19SlcPbRo_DkrUIFoIgnJqGHyNzbl6Mr8=w400',skills:["Setter", "Spiker"],seasons:[{season:2,team:"Dragons",role:"Player",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Predators",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Saravanan",photo:'https://lh3.googleusercontent.com/d/1bv7OOQ8zajkhY8ZcxY3fOtT6DqXW_r0n=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Dragons",role:"Player",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Dragons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Suri",photo:'https://lh3.googleusercontent.com/d/1zmKmrnF_FS2ZIg8joi-YK6s0dnL0Mdph=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Dragons",role:"Player",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Spartans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Uday K",photo:'https://lh3.googleusercontent.com/d/1WL-1MnBWTmAb_uzfYcCGpwxHD9LxdYzv=w400',skills:["Defense"],seasons:[{season:2,team:"Dragons",role:"Player",championMonths:["March 2026", "April 2026"],seasonChampion:false},{season:3,team:"Raptors",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Karthik",photo:'https://lh3.googleusercontent.com/d/1ZLKY_80v1la-szX88WBUsCICxrluLnG_=w400',skills:["Spiker", "Defense"],seasons:[{season:2,team:"Falcons",role:"Captain",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Falcons",role:"Captain",championMonths:[],seasonChampion:false}]},
+  {name:"Ashok",photo:'https://lh3.googleusercontent.com/d/1thRn6lVicqxfWiGIp5tcYAPZrn7DtSJd=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Falcons",role:"Wingman",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Falcons",role:"Wingman",championMonths:[],seasonChampion:false}]},
+  {name:"Harsha",photo:'https://lh3.googleusercontent.com/d/1ok9HvGIZaFQBzZUoHLPZqt63Lf-orrs2=w400',skills:["Setter", "Spiker"],seasons:[{season:2,team:"Falcons",role:"Player",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Predators",role:"Captain",championMonths:[],seasonChampion:false}]},
+  {name:"Naveen",photo:'https://lh3.googleusercontent.com/d/1QrNWkDz4RfImHnB_A6puWcnvyJxEQqct=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Falcons",role:"Player",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Falcons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Raja S",photo:'https://lh3.googleusercontent.com/d/118N4-eWR-Gb4y1DayA1sHuII2Pp42x_K=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Falcons",role:"Player",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Falcons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Rajesh",photo:'https://lh3.googleusercontent.com/d/1UA0q7sI441cChlhCphizJrBGtlH9nmG9=w400',skills:["Spiker"],seasons:[{season:2,team:"Falcons",role:"Player",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Ritesh",photo:'https://lh3.googleusercontent.com/d/19-IotE0V-ru58IIqqis7BqCpW312Rxvy=w400',skills:["Defense"],seasons:[{season:2,team:"Falcons",role:"Player",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Rizwan",photo:'https://lh3.googleusercontent.com/d/1wdGn6Bk7qSwIuJIq9RGnYsaI5ViJooR5=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Falcons",role:"Player",championMonths:["November 2025", "February 2026"],seasonChampion:true},{season:3,team:"Raptors",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Krishna",photo:'https://lh3.googleusercontent.com/d/1aPmdpvPDtbTXst9NC_0eWwoKjE7NjcRy=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Panthers",role:"Captain",championMonths:[],seasonChampion:false},{season:3,team:"Spartans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Sachin",photo:'https://lh3.googleusercontent.com/d/1XTMIap-OJRPTZaTIp7UwPP6prsAg7pMD=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Panthers",role:"Wingman",championMonths:[],seasonChampion:false},{season:3,team:"Predators",role:"Wingman",championMonths:[],seasonChampion:false}]},
+  {name:"Chandu",photo:'https://lh3.googleusercontent.com/d/1GnS7MfBPsXBdgE7uIjK9HiwvVyaeVzsV=w400',skills:["Defense"],seasons:[{season:2,team:"Panthers",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Chandra",photo:null,skills:[],seasons:[{season:2,team:"Panthers",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Raptors",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Divyanshu",photo:'https://lh3.googleusercontent.com/d/1sgMR2FMWf5IvO1rXjkvAtS1cxAugPch7=w400',skills:["Defense"],seasons:[{season:2,team:"Panthers",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Falcons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Gopal",photo:'https://lh3.googleusercontent.com/d/1aPksBf35huLJUT5hW9RO9yI9mqXDeTo9=w400',skills:["Setter"],seasons:[{season:2,team:"Panthers",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Predators",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Krupa",photo:'https://lh3.googleusercontent.com/d/1_L4e8OEFbTT8U2bSJNAypDRi3KdHCzpH=w400',skills:["Setter"],seasons:[{season:2,team:"Panthers",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Dragons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Mukhesh",photo:'https://lh3.googleusercontent.com/d/1yvlzIxCulNYnF72K6-BdI7fOoIFqWRmM=w400',skills:["Spiker", "Defense"],seasons:[{season:2,team:"Panthers",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Predators",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Koti",photo:'https://lh3.googleusercontent.com/d/1mqArlyDfPZ3ZrvGXTJvmkftqkboVAFbP=w400',skills:["Spiker"],seasons:[{season:2,team:"Spartans",role:"Captain",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Spartans",role:"Captain",championMonths:[],seasonChampion:false}]},
+  {name:"Amrendra",photo:'https://lh3.googleusercontent.com/d/1TnjwV0Q8QlxJNxQaiOR9z1FY2IgNB1bQ=w400',skills:["Spiker"],seasons:[{season:2,team:"Spartans",role:"Wingman",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Raptors",role:"Wingman",championMonths:[],seasonChampion:false}]},
+  {name:"Jugal",photo:null,skills:[],seasons:[{season:2,team:"Spartans",role:"Player",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Dragons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Kiran",photo:'https://lh3.googleusercontent.com/d/1Ylv0as5NWKY31RxkMEww0VboTpO2zUYy=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Spartans",role:"Player",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Falcons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Rakesh",photo:'https://lh3.googleusercontent.com/d/1T7efu_V3Ao0CxvXf54MeXh9HGaQmuLaJ=w400',skills:["Defense"],seasons:[{season:2,team:"Spartans",role:"Player",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Predators",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Rajan",photo:'https://lh3.googleusercontent.com/d/1jg6XbVr2--trvNKwVEHsIBklwPkoJxI1=w400',skills:["Setter"],seasons:[{season:2,team:"Spartans",role:"Player",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Spartans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Santosh",photo:'https://lh3.googleusercontent.com/d/1IOQOx0I5u7BkHXvSaCq18D_veTY2WvK4=w400',skills:["Defense"],seasons:[{season:2,team:"Spartans",role:"Player",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Spartans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Uday B",photo:'https://lh3.googleusercontent.com/d/1DoVcp-Q1g1LNbNJEqY96uVnzggLhRYbq=w400',skills:["Setter"],seasons:[{season:2,team:"Spartans",role:"Player",championMonths:["December 2025", "January 2026"],seasonChampion:false},{season:3,team:"Predators",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Pratik",photo:'https://lh3.googleusercontent.com/d/1ctl4St-YHark0lyu6FHDY2X1729Ksu3Y=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Titans",role:"Captain",championMonths:[],seasonChampion:false},{season:3,team:"Titans",role:"Captain",championMonths:[],seasonChampion:false}]},
+  {name:"Rahul",photo:'https://lh3.googleusercontent.com/d/1Td2x_QuFJ1cPpQ-se_4Ld0Csf3Vhuyd2=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Titans",role:"Wingman",championMonths:[],seasonChampion:false},{season:3,team:"Spartans",role:"Wingman",championMonths:[],seasonChampion:false}]},
+  {name:"Ishant",photo:'https://lh3.googleusercontent.com/d/1sDEmid2ZVfTufncdVuiF5Vem3odx-54M=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Dragons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Kunal",photo:'https://lh3.googleusercontent.com/d/1VsDhL2S7mDTw_F6DBc68ENyjDgtLQutM=w400',skills:["Setter", "Spiker", "Defense"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Ronak",photo:'https://lh3.googleusercontent.com/d/1H4soPf2ztA_uVzYgq9YLIG9EXMHjmW6k=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Raptors",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Sunil",photo:'https://lh3.googleusercontent.com/d/1Q3fmG04rvczPhhG-_ore8l96gzcx3jji=w400',skills:["Defense"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Venkat",photo:'https://lh3.googleusercontent.com/d/1ps-h13q6IkvqRIY5WQKh5xyts4XClMYV=w400',skills:["Spiker"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Dragons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Vikas",photo:'https://lh3.googleusercontent.com/d/1p0HpAAfsCQDj6RJhxJB6HuIMFgPYmdix=w400',skills:["Spiker"],seasons:[{season:3,team:"Falcons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Raja Vasu",photo:null,skills:[],seasons:[{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Surendra K",photo:'https://lh3.googleusercontent.com/d/1LeTFALHEyQ_yR5f1dgrbu-9zd48rEZ-l=w400',skills:["Setter"],seasons:[{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
+];
+
+// ── POST /api/players/seed-profiles ──────────────────────────────────
+app.post('/api/players/seed-profiles', async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Wrong password' });
+    let created = 0, updated = 0;
+    for (const p of PLAYER_REGISTRY) {
+      const doc = await PlayerProfile.findOneAndUpdate(
+        { shortName: p.name },
+        { shortName: p.name, photo: p.photo, skills: p.skills, seasons: p.seasons },
+        { upsert: true, new: true }
+      );
+      if (doc.createdAt === doc.updatedAt) created++; else updated++;
+    }
+    res.json({ success: true, created, updated, total: PLAYER_REGISTRY.length });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GET /api/players/profile/:name ───────────────────────────────────
+app.get('/api/players/profile/:name', async (req, res) => {
+  try {
+    const name = decodeURIComponent(req.params.name);
+    const profile = await PlayerProfile.findOne({ shortName: name });
+    if (!profile) return res.status(404).json({ error: 'Player not found' });
+    
+    // Augment S3 champion months live from standings
+    const s3standing = await S3Standing.findOne({ season: 3, team: profile.seasons.find(s=>s.season===3)?.team });
+    const s3season = profile.seasons.find(s=>s.season===3);
+    if (s3season && s3standing) {
+      s3season.championMonths = (s3standing.months||[]).filter(m=>m.champion).map(m=>m.label);
+    }
+    
+    res.json(profile);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GET /api/players/profiles ─────────────────────────────────────────
+app.get('/api/players/profiles', async (req, res) => {
+  try {
+    const profiles = await PlayerProfile.find().sort({ shortName: 1 });
+    res.json(profiles);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Sitemap ──────────────────────────────────────────────────────────────
 app.get('/sitemap', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sitemap.html'));

@@ -137,6 +137,23 @@ const DraftSaveSchema = new mongoose.Schema({
 // One save per user per season per option
 DraftSaveSchema.index({ user: 1, season: 1, opt: 1 }, { unique: true });
 
+
+// ── Player Profile — one per real person, stable across seasons ────────
+// _id is the canonical key. shortName is the display name used in rosters.
+// seasons[] is updated at seed time and when months lock.
+const PlayerProfileSchema = new mongoose.Schema({
+  shortName:   { type: String, required: true, unique: true }, // "Anil", "Uday B", "Raja S"
+  photo:       { type: String, default: null },
+  skills:      [{ type: String }],  // ['Spiker','Setter','Defense','Allrounder','Developing']
+  seasons: [{
+    season:         { type: Number },
+    team:           { type: String },
+    role:           { type: String, enum: ['Captain','Wingman','Player'], default: 'Player' },
+    championMonths: [{ type: String }],  // e.g. ["May 2026"]
+    seasonChampion: { type: Boolean, default: false },
+  }],
+}, { timestamps: true });
+
 // ── Exports ───────────────────────────────────────────────────────────
 // ── Season 3 Teams (locked roster) ───────────────────────────────────
 const S3TeamSchema = new mongoose.Schema({
@@ -205,5 +222,6 @@ module.exports = {
   DraftSave:    mongoose.model('DraftSave',    DraftSaveSchema),
   S3Team:       mongoose.model('S3Team',       S3TeamSchema),
   MonthlyEvent: mongoose.model('MonthlyEvent', MonthlyEventSchema),
-  S3Standing:   mongoose.model('S3Standing',   S3StandingSchema),
+  S3Standing:    mongoose.model('S3Standing',    S3StandingSchema),
+  PlayerProfile: mongoose.model('PlayerProfile', PlayerProfileSchema),
 };
