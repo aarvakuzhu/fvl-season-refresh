@@ -233,13 +233,13 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <span class="hbadge">FVL</span>
   <span class="htitle">Season <span>3</span> · Mini League</span>
   <div class="hright">
-    <button class="hbtn hbtn-admin" id="admin-btn" onclick="toggleAdmin()">🔐 Admin</button>
+    <button class="hbtn hbtn-admin" id="admin-btn" onclick="toggleAdmin()">🏆 Tournament Director</button>
     <a href="/" class="hbtn">← Home</a>
   </div>
 </div>
 
 <div class="admin-bar" id="admin-bar">
-  🔐 Admin mode active — score entry and locking enabled
+  🏆 Tournament Director mode — score entry and locking enabled
   <button onclick="toggleAdmin()">Exit</button>
 </div>
 
@@ -247,7 +247,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <div class="tab active" data-panel="overview" onclick="switchTab(this)">🏠 Overview</div>
   <div class="tab"        data-panel="players"  onclick="switchTab(this)">🏐 Players</div>
   <div class="tab"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</div>
-  <div class="tab"        data-panel="standings"onclick="switchTab(this)">🏆 Standings</div>
+  <div class="tab"        data-panel="standings" onclick="switchTab(this)">🏆 Season Standings</div>
   <div class="tab"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</div>
 </div>
 
@@ -383,7 +383,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 <!-- STANDINGS (season) -->
 <div class="panel" id="panel-standings">
   <div class="card">
-    <div class="card-hd">Season 3 · May – Oct 2026 · Cumulative</div>
+    <div class="card-hd">🏆 Season 3 Standings · May – Oct 2026 · Cumulative</div>
     <div id="standings-list"><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div></div>
   </div>
 </div>
