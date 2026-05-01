@@ -236,8 +236,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 <div class="tabs" id="tabs">
   <div class="tab active" data-panel="overview" onclick="switchTab(this)">🏠 Overview</div>
-  <div class="tab"        data-panel="teams"    onclick="switchTab(this)">🏐 Teams</div>
-  <div class="tab"        data-panel="players"  onclick="switchTab(this)">👤 Players</div>
+  <div class="tab"        data-panel="players"  onclick="switchTab(this)">🏐 Players</div>
   <div class="tab"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</div>
   <div class="tab"        data-panel="standings"onclick="switchTab(this)">🏆 Standings</div>
   <div class="tab"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</div>
@@ -308,11 +307,6 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
       <div class="ov-cell"><div class="ov-lbl">Rotation</div><div class="ov-val" style="font-size:15px">Shift-right</div><div class="ov-sub">New matchups each month</div></div>
     </div>
   </div>
-</div>
-
-<!-- TEAMS -->
-<div class="panel" id="panel-teams">
-  <div class="teams-grid" id="teams-grid"></div>
 </div>
 
 <!-- PLAYERS -->
@@ -904,7 +898,7 @@ const PHOTOS = {
   'Suri':       'https://lh3.googleusercontent.com/d/1zmKmrnF_FS2ZIg8joi-YK6s0dnL0Mdph=w400',
   'Pratik':     'https://lh3.googleusercontent.com/d/1ctl4St-YHark0lyu6FHDY2X1729Ksu3Y=w400',
   'Chandu':     'https://lh3.googleusercontent.com/d/1GnS7MfBPsXBdgE7uIjK9HiwvVyaeVzsV=w400',
-  'Raja Vasu':  'https://lh3.googleusercontent.com/d/1X79CjxOjrR_3p_UE-SWQ_KuT1xWAtsvr=w400',
+  'Raja Vasu':  null,
   'Rajesh':     'https://lh3.googleusercontent.com/d/1UA0q7sI441cChlhCphizJrBGtlH9nmG9=w400',
   'Ritesh':     'https://lh3.googleusercontent.com/d/19-IotE0V-ru58IIqqis7BqCpW312Rxvy=w400',
   'Sunil':      'https://lh3.googleusercontent.com/d/1Q3fmG04rvczPhhG-_ore8l96gzcx3jji=w400',
@@ -943,8 +937,9 @@ function renderPlayers(list) {
          <div class="player-avatar" style="background:${p.color};display:none">${initials}</div>`
       : `<div class="player-avatar" style="background:${p.color}">${initials}</div>`;
     return `<div class="player-card" data-name="${p.name.toLowerCase()}" data-team="${p.team}">
+      <div style="height:4px;background:${p.color}"></div>
       <div class="player-photo-wrap">${photoHtml}</div>
-      <div class="player-info">
+      <div class="player-info" style="border-top:1px solid ${p.color}22">
         <div class="player-name">${p.name}${p.captain?' ⭐':''}</div>
         <div class="player-team" style="color:${p.color}">${p.team}</div>
       </div>
