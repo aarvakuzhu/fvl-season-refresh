@@ -383,20 +383,17 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 <!-- STANDINGS (season) -->
 <div class="panel" id="panel-standings">
   <div class="card" style="margin-bottom:12px">
-    <div class="card-hd">🏆 Season 3 Standings · May – Oct 2026 · Cumulative</div>
-    <div style="overflow-x:auto">
-      <table class="s-table" style="width:100%">
-        <thead><tr>
-          <th style="width:32px">#</th>
-          <th>Team</th>
-          <th class="c" style="width:56px" title="RR wins (1pt) + positional bonus">Pts</th>
-          <th class="c" style="width:52px" title="Total RR wins across season">RR W</th>
-          <th class="c" style="width:60px">Titles</th>
-        </tr></thead>
-        <tbody id="standings-list">
-          <tr><td colspan="5" class="empty">Loading…</td></tr>
-        </tbody>
-      </table>
+    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center">
+      <span>🏆 Season 3 Standings · May – Oct 2026</span>
+      <span style="font-size:10px;font-family:'Roboto Mono',monospace;color:var(--muted)">Pts · RR W · Titles</span>
+    </div>
+    <div id="standings-list">
+      <div class="skel" style="height:44px;margin:2px"></div>
+      <div class="skel" style="height:44px;margin:2px"></div>
+      <div class="skel" style="height:44px;margin:2px"></div>
+      <div class="skel" style="height:44px;margin:2px"></div>
+      <div class="skel" style="height:44px;margin:2px"></div>
+      <div class="skel" style="height:44px;margin:2px"></div>
     </div>
   </div>
 
@@ -489,7 +486,7 @@ function switchTab(el) {
   if(el.dataset.panel==='overview')  loadOverview();
   if(el.dataset.panel==='players')   loadPlayers();
   if(el.dataset.panel==='schedule')  loadSchedule();
-  if(el.dataset.panel==='standings') loadStandings();
+  if(el.dataset.panel==='standings') { const sp=window.scrollY; loadStandings().then(()=>window.scrollTo(0,sp)); }
   if(el.dataset.panel==='rotation')  renderRotation();
 }
 
@@ -831,18 +828,22 @@ async function lockMonth(month){
 async function loadStandings(){
   try{
     const r=await fetch('/api/s3/standings'); const data=await r.json();
-    if(!data.length){document.getElementById('standings-list').innerHTML='<div class="empty">No results yet</div>';return;}
-    document.getElementById('standings-list').innerHTML=data.map((s,i)=>{
+    const el=document.getElementById('standings-list');
+    if(!data.length){el.innerHTML='<div class="empty" style="padding:20px;text-align:center;color:var(--muted)">No results yet — season starts May 2026</div>';return;}
+    el.innerHTML=data.map((s,i)=>{
       const col=teamColor(s.team);
-      const cm=(s.months||[]).filter(m=>m.champion).map(m=>m.label?.split(' ')[0]).join(', ');
-      return `<div class="srow ${i===0?'gold':''}">
-        <div class="spos">${i+1}</div>
-        <div>
-          <div class="sname" style="display:flex;align-items:center;gap:6px">${dot(s.team,8)} ${s.team} ${'🏆'.repeat(s.championships||0)}</div>
-          <div class="ssub">${cm?'Won: '+cm:''}</div>
-        </div>
-        <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${s.totalWins}W</div>
-        <div class="spts" style="color:${col}">${s.totalPoints} pts</div>
+      const totalRR=(s.months||[]).reduce((a,m)=>a+(m.rrWins||m.wins||0),0);
+      const titles=s.championships||0;
+      const rankIcon=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'';
+      const titleBadge=titles>0
+        ?`<span style="background:#fffbeb;border:1px solid #fcd34d;color:#92400e;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:2px;white-space:nowrap">🏆 ×${titles}</span>`
+        :`<span style="color:#ccc;font-size:11px;font-family:'Roboto Mono',monospace">—</span>`;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border2)">
+        <span style="font-size:${i<3?'18':'14'}px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'};min-width:28px;text-align:center;line-height:1">${rankIcon}</span>
+        <span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;font-weight:700;font-size:13px">${dot(s.team,8)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.team}</span></span>
+        <span style="font-family:'Roboto Mono',monospace;font-weight:900;font-size:16px;color:${col};min-width:28px;text-align:right">${s.totalPoints}</span>
+        <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted);min-width:28px;text-align:center">${totalRR}W</span>
+        <span style="min-width:52px;text-align:right">${titleBadge}</span>
       </div>`;
     }).join('');
   }catch(e){}
