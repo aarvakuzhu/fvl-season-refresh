@@ -1,16 +1,49 @@
 <div class="page"><div class="pgrid">
 <div class="main">
 
-  <!-- Confirmed Format -->
-  <div class="sec">Event Format — Option A ✅ Confirmed</div>
+  <!-- Event Format -->
+  <div class="sec" style="padding-top:0">Event Format — Option A ✅</div>
   <span class="sec-line"></span>
   <div id="format-a-container" style="margin-bottom:14px"></div>
 
-  <!-- Draft Format -->
-  <div class="sec">Draft Format — Option 2 ✅ Confirmed</div>
+  <!-- Game Rules -->
+  <div class="sec">Game Rules</div>
+  <span class="sec-line"></span>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div>
+      <div class="rb"><div class="rhd blue">12.1 Ball In / Out</div><div class="rbd"><div class="ri">Ball landing on line = IN. Ball fully outside = OUT.</div></div></div>
+      <div class="rb"><div class="rhd blue">12.2 Blocking</div><div class="rbd"><div class="ri">A block does NOT count as one of the 3 hits.</div></div></div>
+      <div class="rb"><div class="rhd amb">12.3 Overreach — FVL Rule</div><div class="rbd"><div class="co amber" style="margin-bottom:5px;font-size:12px"><strong>Before attack completes → hands off. After attack completes → fair game, even over net.</strong></div><div class="ri">Attack = ball going toward opponent's side. Umpire has final discretion.</div></div></div>
+    </div>
+    <div>
+      <div class="rb"><div class="rhd red">12.4 Violations</div><div class="rbd"><div class="ri">Foot fault · net touch · ball under net · carrying.</div><div class="ri">Serve can't be blocked or spiked. Double contact = foul.</div><div class="ri">Center line: violation if crosses AND interferes.</div></div></div>
+      <div class="rb"><div class="rhd blue">12.5 Rotation</div><div class="rbd"><div class="ri">Mandatory clockwise. Right-back serves first.</div><div class="ri">Back-row attacks only behind 10-foot line.</div></div></div>
+      <div class="rb"><div class="rhd blue">12.7–12.8 Replacement &amp; Tiebreaker</div><div class="rbd"><div class="ri">Similar skill level · accepted by both captains.</div><div class="ri">Tiebreak: Wins → Points diff → Coin toss. No tiebreaker games.</div></div></div>
+    </div>
+  </div>
+
+  <!-- Team Rotation -->
+  <div class="sec">Team Rotation — Shift-Right ✅</div>
   <span class="sec-line"></span>
   <div class="card" style="margin-bottom:14px">
-    <div class="card-hd" style="background:var(--green2);color:var(--green)">✅ Option 2 — R0 Bonus Round + Skip Rounds · Season 3</div>
+    <div class="card-body">
+      <div class="co blue" style="margin-bottom:8px">All teams shift right by one position each month. Every team faces every other team across the season.</div>
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;background:#f5f8ff;border:1px solid var(--border);padding:10px 12px;line-height:2">
+        Month 1: T1=Dragons &nbsp; T2=Predators T3=Falcons &nbsp; T4=Spartans T5=Titans &nbsp;&nbsp; T6=Raptors<br>
+        Month 2: T1=Raptors &nbsp; T2=Dragons &nbsp;&nbsp; T3=Predators T4=Falcons &nbsp;&nbsp; T5=Spartans T6=Titans<br>
+        Month 3: T1=Titans &nbsp;&nbsp; T2=Raptors &nbsp;&nbsp; T3=Dragons &nbsp;&nbsp; T4=Predators T5=Falcons &nbsp;&nbsp; T6=Spartans<br>
+        Month 4: T1=Spartans T2=Titans &nbsp;&nbsp;&nbsp; T3=Raptors &nbsp;&nbsp; T4=Dragons &nbsp;&nbsp;&nbsp; T5=Predators T6=Falcons<br>
+        Month 5: T1=Falcons &nbsp; T2=Spartans &nbsp; T3=Titans &nbsp;&nbsp;&nbsp; T4=Raptors &nbsp;&nbsp;&nbsp; T5=Dragons &nbsp;&nbsp; T6=Predators<br>
+        Month 6: T1=Predators T2=Falcons &nbsp;&nbsp; T3=Spartans T4=Titans &nbsp;&nbsp;&nbsp;&nbsp; T5=Raptors &nbsp;&nbsp; T6=Dragons
+      </div>
+    </div>
+  </div>
+
+  <!-- Draft Format -->
+  <div class="sec">Draft Format — Option 2 ✅</div>
+  <span class="sec-line"></span>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd" style="background:var(--green2);color:var(--green)">✅ R0 Bonus Round + Skip Rounds · Season 3 Confirmed</div>
     <div class="card-body">
       <div class="co blue" style="margin-bottom:10px">Captains with later entry rounds receive bonus R0 picks as compensation, then are skipped in their entry round.</div>
       <div style="font-family:'Roboto Mono',monospace;font-size:11px;background:#f5f8ff;border:1px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:2">
@@ -26,32 +59,50 @@
     </div>
   </div>
 
-  <!-- Scoring Rules -->
-  <div class="sec">Scoring Rules</div>
+  <!-- Captain Selection -->
+  <div class="sec">Captain Selection</div>
   <span class="sec-line"></span>
   <div class="card" style="margin-bottom:14px">
     <div class="card-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div class="co green"><strong>Win</strong> = 2 points<br><span style="font-size:11px">Win by minimum 2</span></div>
-        <div class="co red"><strong>Loss</strong> = 0 points<br><span style="font-size:11px">No draws</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">Eligibility</div>
+          <table class="sct" style="font-size:12px"><tbody>
+            <tr><td>Not a core member</td></tr>
+            <tr><td>Tier A or S</td></tr>
+            <tr><td>1+ full FVL seasons</td></tr>
+            <tr><td>≤ 2 absences prior season</td></tr>
+            <tr><td>Must explicitly accept</td></tr>
+          </tbody></table>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">Process</div>
+          <div class="slist">
+            <div class="si"><div class="snum">1</div><div class="sd">Core members nominate privately (up to 2 each)</div></div>
+            <div class="si"><div class="snum">2</div><div class="sd">Reveal simultaneously — 2+ votes advance</div></div>
+            <div class="si"><div class="snum">3</div><div class="sd">Discussed max 5 min, confirmed by majority</div></div>
+            <div class="si"><div class="snum">4</div><div class="sd">Contact within 24 hours to accept/decline</div></div>
+          </div>
+        </div>
       </div>
-      <div class="co blue" style="font-size:12px"><strong>Score target:</strong> Play to 21 (win by 2). If tied at 24–24, next point wins. Maximum score: 25.</div>
+      <div class="co green" style="font-size:12px"><strong>✅ Season 3:</strong> Anil · Pratik · Harsha · Shanthan · Koti · Karthik</div>
     </div>
   </div>
 
-  <!-- Game Rules -->
-  <div class="sec">Game Rules</div>
+  <!-- Wingman System -->
+  <div class="sec">Wingman System</div>
   <span class="sec-line"></span>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-    <div>
-      <div class="rb"><div class="rhd blue">12.1 Ball In / Out</div><div class="rbd"><div class="ri">Ball landing on line = IN. Ball fully outside = OUT.</div></div></div>
-      <div class="rb"><div class="rhd blue">12.2 Blocking</div><div class="rbd"><div class="ri">A block does NOT count as one of the 3 hits.</div></div></div>
-      <div class="rb"><div class="rhd amb">12.3 Overreach — FVL Rule</div><div class="rbd"><div class="co amber" style="margin-bottom:5px;font-size:12px"><strong>Before attack completes → hands off. After attack completes → fair game, even over net.</strong></div><div class="ri">Attack = ball going toward opponent's side. Umpire has final discretion.</div></div></div>
-    </div>
-    <div>
-      <div class="rb"><div class="rhd red">12.4 Violations</div><div class="rbd"><div class="ri">Foot fault · net touch · ball under net · carrying.</div><div class="ri">Serve can't be blocked or spiked. Double contact = foul.</div><div class="ri">Center line: violation if crosses AND interferes.</div></div></div>
-      <div class="rb"><div class="rhd blue">12.5 Rotation</div><div class="rbd"><div class="ri">Mandatory clockwise. Right-back serves first.</div><div class="ri">Back-row attacks only behind 10-foot line.</div></div></div>
-      <div class="rb"><div class="rhd blue">12.7–12.8 Replacement &amp; Tiebreaker</div><div class="rbd"><div class="ri">Similar skill level · accepted by both captains.</div><div class="ri">Tiebreak: Wins → Points diff → Coin toss. No tiebreaker games.</div></div></div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body" style="font-size:13px;line-height:1.7">
+      Core members serve as <strong>Wingmen</strong> — drafted as regular players but provide team support. Never captains. Each core member rotates as Wingman for different teams across seasons. Must be picked by end of pick 30.
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+        <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:3px 10px;font-size:12px;font-weight:600;border-radius:2px">Amrendra</span>
+        <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:3px 10px;font-size:12px;font-weight:600;border-radius:2px">Ashok</span>
+        <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:3px 10px;font-size:12px;font-weight:600;border-radius:2px">Naren</span>
+        <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:3px 10px;font-size:12px;font-weight:600;border-radius:2px">Rahul</span>
+        <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:3px 10px;font-size:12px;font-weight:600;border-radius:2px">Sachin</span>
+        <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:3px 10px;font-size:12px;font-weight:600;border-radius:2px">Sunil</span>
+      </div>
     </div>
   </div>
 
@@ -72,27 +123,34 @@
         <tr><td>RR games / team</td><td class="r" style="font-weight:700">4</td></tr>
         <tr><td>Teams</td><td class="r" style="font-weight:700">6</td></tr>
         <tr><td>Players / team</td><td class="r" style="font-weight:700">7</td></tr>
-        <tr><td>Total players</td><td class="r" style="font-weight:700">42</td></tr>
+        <tr><td>Draft</td><td class="r" style="font-weight:700;color:var(--green)">Option 2 ✅</td></tr>
+        <tr><td>Rotation</td><td class="r" style="font-weight:700">Shift-right</td></tr>
       </table>
     </div>
   </div>
 
-  <div class="sec" style="padding-top:4px">Finals Order</div>
+  <div class="sec" style="padding-top:8px">Finals Order</div>
   <span class="sec-line"></span>
   <div class="widget">
     <div class="wbody" style="padding:0;font-size:12px">
-      <div style="padding:7px 11px;border-bottom:1px solid var(--border2)"><span style="font-weight:700">4:30 PM</span> — 5th Place &amp; 3rd Place (simultaneous)</div>
+      <div style="padding:7px 11px;border-bottom:1px solid var(--border2)"><span style="font-weight:700">4:30 PM</span> — 5th &amp; 3rd Place (simultaneous)</div>
       <div style="padding:7px 11px"><span style="font-weight:700">4:55 PM</span> — 🏆 Grand Final · #1 vs #2</div>
     </div>
   </div>
 
-  <div class="sec" style="padding-top:4px">Wingman System</div>
+  <div class="sec" style="padding-top:8px">Scoring</div>
   <span class="sec-line"></span>
   <div class="widget">
-    <div class="wbody" style="padding:0">
-      <div style="padding:8px 11px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;margin-bottom:3px">🤝 6 Wingmen</div><div style="font-size:12px;color:var(--muted);line-height:1.5">One per team. Core members drafted as players, serve as team Wingmen. Never captains.</div></div>
+    <div class="wbody" style="padding:0;font-size:12px">
+      <div style="padding:7px 11px;border-bottom:1px solid var(--border2)"><strong>RR win</strong> = +1 season pt</div>
+      <div style="padding:7px 11px;border-bottom:1px solid var(--border2)"><strong>1st–6th</strong> = +6/5/4/3/2/1 bonus</div>
+      <div style="padding:7px 11px">Score to <strong>21</strong>, win by 2, cap at <strong>25</strong></div>
     </div>
   </div>
+
+  <div style="padding:10px 0 0"><a href="/season3" style="display:block;background:var(--ci-blue);color:#fff;text-align:center;padding:9px;font-size:13px;font-weight:700;text-decoration:none;border-radius:2px">🏐 Season 3 Live →</a></div>
+  <div style="padding:8px 0 0"><a href="/draft" style="display:block;background:var(--light);border:1px solid var(--border);color:var(--ci-blue);text-align:center;padding:9px;font-size:13px;font-weight:700;text-decoration:none;border-radius:2px">🐍 Draft Simulator →</a></div>
+  <div style="padding:8px 0 0"><a href="/season2" style="display:block;background:var(--light);border:1px solid var(--border);color:var(--muted);text-align:center;padding:9px;font-size:13px;font-weight:600;text-decoration:none;border-radius:2px">📋 Season 2 History →</a></div>
 
 </div>
 </div></div>

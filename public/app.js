@@ -1,6 +1,6 @@
 
 // ── Tab switching with dynamic panel loading ──────────────────────
-const TABS = ['overview','feedback','format','governance','actions'];
+const TABS = ['overview','feedback','format','actions'];
 const _loaded = {};
 
 async function switchTab(name) {
@@ -163,8 +163,44 @@ async function renderDecisions() {
 
 // ── Checklists ─────────────────────────────────────────────────────
 function renderChecklists() {
-  const monthly={'Before':['6 teams confirmed — full rosters of 7','6 Wingmen assigned (one per team)','Venue and 2 courts booked — Sundays 2 PM – 5:30 PM','Prior month standings updated','Any substitutions approved'],'Day Of':['Wingmen present with their teams','Referee confirmed for finals','Standings / seedings calculated after RR','Finals bracket set and shared'],'After':['Results and standings published within 24 hrs','Tier observations logged by all Wingmen','Conduct issues reported to core group']};
-  const season={'Tiers & Pool':['All 42 players tiered by core consensus','Draft order confirmed (inverse standings)'],'Roles':['Season 3 Wingman assignments confirmed'],'Captains':['Nominations submitted privately','All 6 captains confirmed','Wingman–captain pairings announced','Draft format (snake) confirmed and communicated'],'Draft':['Draft order published to all captains','Draft conducted — tier balance reviewed','Players notified of team within 24 hours','48-hr appeals window opened and closed','Season schedule and format published']};
+  const monthly={
+    'Before Event': [
+      'Venue and 2 courts confirmed — Sunday 2:00–5:30 PM',
+      'Notify all captains of date and time',
+      'Any substitution requests reviewed and approved',
+      'Prior month standings and rotation position shared',
+    ],
+    'Day Of': [
+      'Wingmen present with their assigned teams',
+      'Tournament Director identified for the day',
+      'Schedule printed / shared digitally with captains',
+      'RR results entered after each slot',
+      'Playoff bracket seeded and shared after RR',
+      'Finals conducted — Grand Final last',
+    ],
+    'After Event': [
+      'Final results and standings published within 24 hrs',
+      'Monthly champion announced',
+      'Season standings updated',
+      'Conduct issues reported to core group if any',
+    ],
+  };
+  const season={
+    'End of Season': [
+      'Final season standings locked after Month 6',
+      'Season champion announced',
+      'Season 4 draft order confirmed (inverse final standings)',
+      'Core member debrief — format and governance review',
+      'Captain nominations for Season 4 opened',
+    ],
+    'Between Seasons': [
+      'Player tier review and updates',
+      'Any rule changes agreed by core members',
+      'New player pipeline reviewed',
+      'Season 4 draft conducted',
+      'Season 4 rosters and schedule published',
+    ],
+  };
   const render = data => Object.entries(data).map(([sec,items]) =>
     `<div class="csh">${sec}</div>${items.map(t=>`<div class="citem"><div class="cbox"></div><span>${t}</span></div>`).join('')}`
   ).join('');
