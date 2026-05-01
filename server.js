@@ -673,12 +673,21 @@ app.get('/api/s3/event/:month', async (req, res) => {
 // Save game result: { password, month, gameIndex, scoreA, scoreB }
 app.post('/api/s3/result', async (req, res) => {
   try {
-    const { password, month, gameIndex, scoreA, scoreB } = req.body;
+    const { password, month, gameIndex, scoreA, scoreB, clear } = req.body;
     if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Wrong password' });
 
     const ev = await MonthlyEvent.findOne({ season: 3, month: Number(month) });
     if (!ev) return res.status(404).json({ error: 'Event not found' });
     if (ev.locked) return res.status(400).json({ error: 'Event is locked' });
+
+    if (clear) {
+      ev.games[gameIndex].scoreA = null;
+      ev.games[gameIndex].scoreB = null;
+      ev.games[gameIndex].played = false;
+      ev.markModified('games');
+      await ev.save();
+      return res.json({ success: true, game: ev.games[gameIndex] });
+    }
 
     ev.games[gameIndex].scoreA = scoreA;
     ev.games[gameIndex].scoreB = scoreB;

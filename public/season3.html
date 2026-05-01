@@ -273,6 +273,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
     <div class="modal-err" id="m-err"></div>
     <div class="modal-btns">
       <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-secondary" onclick="clearScore()" style="color:var(--red);border-color:var(--red)" title="Remove score and reset to unplayed">✕ Clear</button>
       <button class="btn-primary"   onclick="submitScore()">Save Result</button>
     </div>
   </div>
@@ -1077,8 +1078,26 @@ function renderProfileLocal(localPlayer, col, initials) {
   document.getElementById('pm-seasons').innerHTML = `<div style="padding:12px;font-size:12px;color:var(--muted)">Seed player profiles via Admin for full season history.</div>`;
 }
 
+async function clearScore() {
+  if (!_pendingModal) return;
+  if (!confirm('Clear this score and reset to unplayed?')) return;
+  try {
+    const r = await fetch('/api/s3/result', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:'fvl2026', month:_pendingModal.month, gameIndex:_pendingModal.idx, scoreA:null, scoreB:null, clear:true}),
+    });
+    const d = await r.json();
+    if (!d.success) { document.getElementById('m-err').textContent = d.error||'Error'; return; }
+    const pm = _pendingModal.month; closeModal();
+    const ev = await fetch(`/api/s3/event/${pm}`).then(r=>r.json()).catch(()=>null);
+    if (ev) { const i=events.findIndex(e=>e.month===pm); if(i>=0) events[i]=ev; }
+    renderSchedule();
+    if(_schedView==='standings'&&pm===_svMonth) renderSVMonth(_svMonth);
+    toast('Score cleared');
+  } catch(e) { document.getElementById('m-err').textContent = 'Network error'; }
+}
+
 function closeProfile() {
-  document.getElementById('profile-overlay').style.display = 'none';
   document.body.style.overflow = '';
 }
 

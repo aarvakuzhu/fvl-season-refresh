@@ -118,6 +118,21 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
     </div>
     <div style="padding:6px 13px 10px;font-size:11px;color:var(--muted);border-top:1px solid var(--border2)">Core members are drafted as players but serve as team Wingmen. They are never captains. Roles rotate across seasons.</div>
   </div>
+
+</div>
+
+<script>
+async function load() {
+  // Load standings
+  try {
+    const r = await fetch('/api/standings?season=2');
+    const data = await r.json();
+    const troph = n => '🏆'.repeat(n)||'';
+    document.getElementById('s2-standings').innerHTML = data.map((d,i) => {
+      const cm = (d.monthlyResults||[]).filter(m=>m.champion).map(m=>m.month.split(' ')[0].slice(0,3)).join(', ');
+      return `<div class="srow ${i===0?'gold':''}">
+        <div class="spos">${i+1}</div>
+        <div><div class="sname">${d.teamName} ${d.seasonChampion?'<span class="champ-badge">SEASON CHAMP</span>':''}</div><div class="ssub">${cm?'Won: '+cm:''}</div></div>
         <div style="font-size:13px;color:var(--muted)">${troph(d.championships||0)}</div>
         <div class="spts">${d.totalPoints} pts</div>
       </div>`;

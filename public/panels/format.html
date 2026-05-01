@@ -1,22 +1,57 @@
 <div class="page"><div class="pgrid">
 <div class="main">
 
-  <!-- Format options -->
-  <div class="sec">Event Format — Choose One</div>
+  <!-- Confirmed Format -->
+  <div class="sec">Event Format — Option A ✅ Confirmed</div>
   <span class="sec-line"></span>
-  <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px">
+  <div id="format-a-container" style="margin-bottom:14px"></div>
 
-    <!-- Option A -->
-    </div>
-          <div class="rb"><div class="rhd blue">12.2 Blocking</div><div class="rbd"><div class="ri">A block does NOT count as one of the 3 hits.</div></div></div>
-          <div class="rb"><div class="rhd amb">12.3 Overreach — FVL Rule</div><div class="rbd"><div class="co amber" style="margin-bottom:5px;font-size:12px"><strong>Before attack completes → hands off. After attack completes → fair game, even over net.</strong></div><div class="ri">Attack = ball going toward opponent's side. Umpire has final discretion.</div></div></div>
-        </div>
-        <div>
-          <div class="rb"><div class="rhd red">12.4 Violations</div><div class="rbd"><div class="ri">Foot fault · net touch · ball under net · carrying.</div><div class="ri">Serve can't be blocked or spiked. Double contact = foul.</div><div class="ri">Center line: violation if crosses AND interferes.</div></div></div>
-          <div class="rb"><div class="rhd blue">12.5 Rotation</div><div class="rbd"><div class="ri">Mandatory clockwise. Right-back serves first.</div><div class="ri">Back-row attacks only behind 10-foot line.</div></div></div>
-          <div class="rb"><div class="rhd blue">12.7–12.8 Replacement &amp; Tiebreaker</div><div class="rbd"><div class="ri">Similar skill level · accepted by both captains.</div><div class="ri">Tiebreak: Wins → Points diff → Coin toss. No tiebreaker games.</div></div></div>
-        </div>
+  <!-- Draft Format -->
+  <div class="sec">Draft Format — Option 2 ✅ Confirmed</div>
+  <span class="sec-line"></span>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd" style="background:var(--green2);color:var(--green)">✅ Option 2 — R0 Bonus Round + Skip Rounds · Season 3</div>
+    <div class="card-body">
+      <div class="co blue" style="margin-bottom:10px">Captains with later entry rounds receive bonus R0 picks as compensation, then are skipped in their entry round.</div>
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;background:#f5f8ff;border:1px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:2">
+        R0 (bonus): Anil(1) → Pratik(2) → Harsha(3)<br>
+        R1 ↑: Anil(4) → Pratik(5) → Harsha(6) → Shanthan(7) → Koti(8) → Karthik(9)<br>
+        R2 ↓: Karthik(10) → Koti(11) → Shanthan(12) → <span style="color:var(--red)">Harsha SKIP</span> → Pratik(13) → Anil(14)<br>
+        R3 ↑: Anil(15) → <span style="color:var(--red)">Pratik SKIP</span> → Harsha(16) → Shanthan(17) → Koti(18) → Karthik(19)<br>
+        R4 ↓: Karthik(20) → Koti(21) → Shanthan(22) → Harsha(23) → Pratik(24) → <span style="color:var(--red)">Anil SKIP</span><br>
+        R5 ↑: Anil(25) → Pratik(26) → Harsha(27) → Shanthan(28) → Koti(29) → Karthik(30)<br>
+        R6 ↓: Karthik(31) → Koti(32) → Shanthan(33) → Harsha(34) → Pratik(35) → Anil(36)
       </div>
+      <div class="co amber" style="font-size:12px"><strong>Wingman rule:</strong> Must be picked by end of Round 5 (pick 30).</div>
+    </div>
+  </div>
+
+  <!-- Scoring Rules -->
+  <div class="sec">Scoring Rules</div>
+  <span class="sec-line"></span>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="co green"><strong>Win</strong> = 2 points<br><span style="font-size:11px">Win by minimum 2</span></div>
+        <div class="co red"><strong>Loss</strong> = 0 points<br><span style="font-size:11px">No draws</span></div>
+      </div>
+      <div class="co blue" style="font-size:12px"><strong>Score target:</strong> Play to 21 (win by 2). If tied at 24–24, next point wins. Maximum score: 25.</div>
+    </div>
+  </div>
+
+  <!-- Game Rules -->
+  <div class="sec">Game Rules</div>
+  <span class="sec-line"></span>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div>
+      <div class="rb"><div class="rhd blue">12.1 Ball In / Out</div><div class="rbd"><div class="ri">Ball landing on line = IN. Ball fully outside = OUT.</div></div></div>
+      <div class="rb"><div class="rhd blue">12.2 Blocking</div><div class="rbd"><div class="ri">A block does NOT count as one of the 3 hits.</div></div></div>
+      <div class="rb"><div class="rhd amb">12.3 Overreach — FVL Rule</div><div class="rbd"><div class="co amber" style="margin-bottom:5px;font-size:12px"><strong>Before attack completes → hands off. After attack completes → fair game, even over net.</strong></div><div class="ri">Attack = ball going toward opponent's side. Umpire has final discretion.</div></div></div>
+    </div>
+    <div>
+      <div class="rb"><div class="rhd red">12.4 Violations</div><div class="rbd"><div class="ri">Foot fault · net touch · ball under net · carrying.</div><div class="ri">Serve can't be blocked or spiked. Double contact = foul.</div><div class="ri">Center line: violation if crosses AND interferes.</div></div></div>
+      <div class="rb"><div class="rhd blue">12.5 Rotation</div><div class="rbd"><div class="ri">Mandatory clockwise. Right-back serves first.</div><div class="ri">Back-row attacks only behind 10-foot line.</div></div></div>
+      <div class="rb"><div class="rhd blue">12.7–12.8 Replacement &amp; Tiebreaker</div><div class="rbd"><div class="ri">Similar skill level · accepted by both captains.</div><div class="ri">Tiebreak: Wins → Points diff → Coin toss. No tiebreaker games.</div></div></div>
     </div>
   </div>
 
@@ -28,12 +63,13 @@
   <div class="widget">
     <div class="wbody" style="padding:0">
       <table class="sct" style="font-size:12px">
+        <tr><td>Format</td><td class="r" style="font-weight:700;color:var(--green)">Option A ✅</td></tr>
         <tr><td>Courts</td><td class="r" style="font-weight:700">2 (simultaneous)</td></tr>
         <tr><td>Game time</td><td class="r" style="font-weight:700">25 mins</td></tr>
-        <tr><td>Breaks</td><td class="r" style="font-weight:700;color:var(--red)">None</td></tr>
         <tr><td>Start time</td><td class="r" style="font-weight:700">2:00 PM</td></tr>
         <tr><td>End time</td><td class="r" style="font-weight:700">~5:20 PM</td></tr>
         <tr><td>Total runtime</td><td class="r" style="font-weight:700">3.5 hours</td></tr>
+        <tr><td>RR games / team</td><td class="r" style="font-weight:700">4</td></tr>
         <tr><td>Teams</td><td class="r" style="font-weight:700">6</td></tr>
         <tr><td>Players / team</td><td class="r" style="font-weight:700">7</td></tr>
         <tr><td>Total players</td><td class="r" style="font-weight:700">42</td></tr>
@@ -41,12 +77,20 @@
     </div>
   </div>
 
+  <div class="sec" style="padding-top:4px">Finals Order</div>
+  <span class="sec-line"></span>
+  <div class="widget">
+    <div class="wbody" style="padding:0;font-size:12px">
+      <div style="padding:7px 11px;border-bottom:1px solid var(--border2)"><span style="font-weight:700">4:30 PM</span> — 5th Place &amp; 3rd Place (simultaneous)</div>
+      <div style="padding:7px 11px"><span style="font-weight:700">4:55 PM</span> — 🏆 Grand Final · #1 vs #2</div>
+    </div>
+  </div>
+
   <div class="sec" style="padding-top:4px">Wingman System</div>
   <span class="sec-line"></span>
   <div class="widget">
     <div class="wbody" style="padding:0">
-      <div style="padding:8px 11px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;margin-bottom:3px">🤝 6 Wingmen</div><div style="font-size:12px;color:var(--muted);line-height:1.5">One per team. Advise captains, flag tier changes, co-sign any roster moves.</div></div>
-      <div style="padding:8px 11px"><div style="font-size:12px;font-weight:700;margin-bottom:3px">⚙️ League Manager</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Admin, dispute resolution, schedule management.</div></div>
+      <div style="padding:8px 11px;border-bottom:1px solid var(--border2)"><div style="font-size:12px;font-weight:700;margin-bottom:3px">🤝 6 Wingmen</div><div style="font-size:12px;color:var(--muted);line-height:1.5">One per team. Core members drafted as players, serve as team Wingmen. Never captains.</div></div>
     </div>
   </div>
 
