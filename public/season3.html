@@ -202,6 +202,18 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 .empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:8px 16px;border-radius:3px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .toast.hide{opacity:0}
+/* ── PLAYER CARDS ── */
+.player-card{background:var(--white);border:1px solid var(--border);border-radius:3px;overflow:hidden;text-align:center;transition:box-shadow .15s}
+.player-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.player-card.hidden{display:none}
+.player-photo-wrap{position:relative;width:100%;padding-top:100%;background:var(--light);overflow:hidden}
+.player-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+.player-avatar{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;font-family:'Roboto',sans-serif}
+.player-info{padding:6px 8px}
+.player-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:2px}
+.player-team{font-size:10px;font-weight:600;font-family:'Roboto Mono',monospace}
+.player-role{font-size:10px;color:var(--muted);margin-top:1px}
+
 .skel{background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200%;animation:sk 1.3s infinite;border-radius:3px}
 @keyframes sk{0%{background-position:200%}100%{background-position:-200%}}
 </style>
@@ -225,6 +237,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 <div class="tabs" id="tabs">
   <div class="tab active" data-panel="overview" onclick="switchTab(this)">🏠 Overview</div>
   <div class="tab"        data-panel="teams"    onclick="switchTab(this)">🏐 Teams</div>
+  <div class="tab"        data-panel="players"  onclick="switchTab(this)">👤 Players</div>
   <div class="tab"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</div>
   <div class="tab"        data-panel="standings"onclick="switchTab(this)">🏆 Standings</div>
   <div class="tab"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</div>
@@ -300,6 +313,26 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 <!-- TEAMS -->
 <div class="panel" id="panel-teams">
   <div class="teams-grid" id="teams-grid"></div>
+</div>
+
+<!-- PLAYERS -->
+<div class="panel" id="panel-players">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+    <input id="player-search" type="text" placeholder="🔍 Search player name…"
+      style="flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:3px;font-size:13px;font-family:inherit;outline:none"
+      oninput="filterPlayers()">
+    <div id="player-team-chips" style="display:flex;gap:5px;flex-wrap:wrap">
+      <button class="chip chip-all active" onclick="setPlayerTeamFilter(null,this)">All</button>
+      <button class="chip" onclick="setPlayerTeamFilter('Dragons',this)"   style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#c62828;display:inline-block"></span>Dragons</button>
+      <button class="chip" onclick="setPlayerTeamFilter('Predators',this)" style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#1b5e20;display:inline-block"></span>Predators</button>
+      <button class="chip" onclick="setPlayerTeamFilter('Falcons',this)"   style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#1a3566;display:inline-block"></span>Falcons</button>
+      <button class="chip" onclick="setPlayerTeamFilter('Spartans',this)"  style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#311b92;display:inline-block"></span>Spartans</button>
+      <button class="chip" onclick="setPlayerTeamFilter('Titans',this)"    style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#e65100;display:inline-block"></span>Titans</button>
+      <button class="chip" onclick="setPlayerTeamFilter('Raptors',this)"   style="display:inline-flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#004d40;display:inline-block"></span>Raptors</button>
+    </div>
+  </div>
+  <div id="player-count" style="font-size:11px;color:var(--muted);margin-bottom:10px;font-family:'Roboto Mono',monospace"></div>
+  <div id="player-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px"></div>
 </div>
 
 <!-- SCHEDULE -->
@@ -394,6 +427,7 @@ function switchTab(el) {
   el.classList.add('active');
   document.getElementById('panel-'+el.dataset.panel).classList.add('active');
   if(el.dataset.panel==='overview')  loadOverview();
+  if(el.dataset.panel==='players')   renderPlayers(getFilteredPlayers());
   if(el.dataset.panel==='schedule')  loadSchedule();
   if(el.dataset.panel==='standings') loadStandings();
   if(el.dataset.panel==='rotation')  renderRotation();
@@ -836,6 +870,106 @@ async function loadOverview() {
       </div>`;
     }).join('');
   } catch(e) {}
+}
+
+// ── PLAYER PHOTOS ────────────────────────────────────────────────────
+const PHOTOS = {
+  'Anil':       'https://lh3.googleusercontent.com/d/1LXwgRP3DQmxbWw1DX1sHRC07Vhv1vSRF=w400',
+  'Ishant':     'https://lh3.googleusercontent.com/d/1sDEmid2ZVfTufncdVuiF5Vem3odx-54M=w400',
+  'Jugal':      null,
+  'Krupa':      'https://lh3.googleusercontent.com/d/1_L4e8OEFbTT8U2bSJNAypDRi3KdHCzpH=w400',
+  'Naren':      'https://lh3.googleusercontent.com/d/1uqSxsnYiRC__K14trVDG_guZA1k_qUYA=w400',
+  'Saravanan':  'https://lh3.googleusercontent.com/d/1bv7OOQ8zajkhY8ZcxY3fOtT6DqXW_r0n=w400',
+  'Venkat':     'https://lh3.googleusercontent.com/d/1ps-h13q6IkvqRIY5WQKh5xyts4XClMYV=w400',
+  'Harsha':     'https://lh3.googleusercontent.com/d/1ok9HvGIZaFQBzZUoHLPZqt63Lf-orrs2=w400',
+  'Gopal':      'https://lh3.googleusercontent.com/d/1aPksBf35huLJUT5hW9RO9yI9mqXDeTo9=w400',
+  'Mukhesh':    'https://lh3.googleusercontent.com/d/1yvlzIxCulNYnF72K6-BdI7fOoIFqWRmM=w400',
+  'Pawan':      'https://lh3.googleusercontent.com/d/19SlcPbRo_DkrUIFoIgnJqGHyNzbl6Mr8=w400',
+  'Rakesh':     'https://lh3.googleusercontent.com/d/1T7efu_V3Ao0CxvXf54MeXh9HGaQmuLaJ=w400',
+  'Sachin':     'https://lh3.googleusercontent.com/d/1XTMIap-OJRPTZaTIp7UwPP6prsAg7pMD=w400',
+  'Uday B':     'https://lh3.googleusercontent.com/d/1DoVcp-Q1g1LNbNJEqY96uVnzggLhRYbq=w400',
+  'Karthik':    'https://lh3.googleusercontent.com/d/1ZLKY_80v1la-szX88WBUsCICxrluLnG_=w400',
+  'Ashok':      'https://lh3.googleusercontent.com/d/1thRn6lVicqxfWiGIp5tcYAPZrn7DtSJd=w400',
+  'Divyanshu':  'https://lh3.googleusercontent.com/d/1sgMR2FMWf5IvO1rXjkvAtS1cxAugPch7=w400',
+  'Kiran':      'https://lh3.googleusercontent.com/d/1Ylv0as5NWKY31RxkMEww0VboTpO2zUYy=w400',
+  'Naveen':     'https://lh3.googleusercontent.com/d/1QrNWkDz4RfImHnB_A6puWcnvyJxEQqct=w400',
+  'Raja S':     'https://lh3.googleusercontent.com/d/118N4-eWR-Gb4y1DayA1sHuII2Pp42x_K=w400',
+  'Vikas':      'https://lh3.googleusercontent.com/d/1p0HpAAfsCQDj6RJhxJB6HuIMFgPYmdix=w400',
+  'Koti':       'https://lh3.googleusercontent.com/d/1mqArlyDfPZ3ZrvGXTJvmkftqkboVAFbP=w400',
+  'Keshav':     'https://lh3.googleusercontent.com/d/1Z3Bjg2tBY9AGHj-mbi0YRwjrk2WauObU=w400',
+  'Krishna':    'https://lh3.googleusercontent.com/d/1aPmdpvPDtbTXst9NC_0eWwoKjE7NjcRy=w400',
+  'Rahul':      'https://lh3.googleusercontent.com/d/1Td2x_QuFJ1cPpQ-se_4Ld0Csf3Vhuyd2=w400',
+  'Rajan':      'https://lh3.googleusercontent.com/d/1jg6XbVr2--trvNKwVEHsIBklwPkoJxI1=w400',
+  'Santosh':    'https://lh3.googleusercontent.com/d/1IOQOx0I5u7BkHXvSaCq18D_veTY2WvK4=w400',
+  'Suri':       'https://lh3.googleusercontent.com/d/1zmKmrnF_FS2ZIg8joi-YK6s0dnL0Mdph=w400',
+  'Pratik':     'https://lh3.googleusercontent.com/d/1ctl4St-YHark0lyu6FHDY2X1729Ksu3Y=w400',
+  'Chandu':     'https://lh3.googleusercontent.com/d/1GnS7MfBPsXBdgE7uIjK9HiwvVyaeVzsV=w400',
+  'Raja Vasu':  'https://lh3.googleusercontent.com/d/1X79CjxOjrR_3p_UE-SWQ_KuT1xWAtsvr=w400',
+  'Rajesh':     'https://lh3.googleusercontent.com/d/1UA0q7sI441cChlhCphizJrBGtlH9nmG9=w400',
+  'Ritesh':     'https://lh3.googleusercontent.com/d/19-IotE0V-ru58IIqqis7BqCpW312Rxvy=w400',
+  'Sunil':      'https://lh3.googleusercontent.com/d/1Q3fmG04rvczPhhG-_ore8l96gzcx3jji=w400',
+  'Surendra K': 'https://lh3.googleusercontent.com/d/1LeTFALHEyQ_yR5f1dgrbu-9zd48rEZ-l=w400',
+  'Shanthan':   'https://lh3.googleusercontent.com/d/1DjV6Kzs7QOdaCIElzf-yZazWfO0sbLKe=w400',
+  'Ahmed':      'https://lh3.googleusercontent.com/d/10Ssg4vyAAAJowHroxkO32r0ljX7kf5-L=w400',
+  'Amrendra':   'https://lh3.googleusercontent.com/d/1TnjwV0Q8QlxJNxQaiOR9z1FY2IgNB1bQ=w400',
+  'Chandra':    null,
+  'Rizwan':     'https://lh3.googleusercontent.com/d/1wdGn6Bk7qSwIuJIq9RGnYsaI5ViJooR5=w400',
+  'Ronak':      'https://lh3.googleusercontent.com/d/1H4soPf2ztA_uVzYgq9YLIG9EXMHjmW6k=w400',
+  'Uday K':     'https://lh3.googleusercontent.com/d/1WL-1MnBWTmAb_uzfYcCGpwxHD9LxdYzv=w400',
+};
+
+// Flatten all players with team info
+const ALL_PLAYERS = [];
+TEAMS.forEach(t => {
+  const isCapt = name => name === t.captain;
+  const members = [t.captain, ...(ROSTERS[t.name]||[])];
+  members.forEach(name => {
+    ALL_PLAYERS.push({ name, team: t.name, color: t.color, captain: isCapt(name), photo: PHOTOS[name]||null });
+  });
+});
+
+let _playerTeamFilter = null;
+
+function renderPlayers(list) {
+  const grid  = document.getElementById('player-grid');
+  const count = document.getElementById('player-count');
+  count.textContent = `${list.length} player${list.length!==1?'s':''}`;
+  grid.innerHTML = list.map(p => {
+    const initials = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const photoHtml = p.photo
+      ? `<img class="player-photo" src="${p.photo}" alt="${p.name}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+           loading="lazy">
+         <div class="player-avatar" style="background:${p.color};display:none">${initials}</div>`
+      : `<div class="player-avatar" style="background:${p.color}">${initials}</div>`;
+    return `<div class="player-card" data-name="${p.name.toLowerCase()}" data-team="${p.team}">
+      <div class="player-photo-wrap">${photoHtml}</div>
+      <div class="player-info">
+        <div class="player-name">${p.name}${p.captain?' ⭐':''}</div>
+        <div class="player-team" style="color:${p.color}">${p.team}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getFilteredPlayers() {
+  const q = (document.getElementById('player-search')?.value||'').toLowerCase().trim();
+  return ALL_PLAYERS.filter(p => {
+    const nameOk = !q || p.name.toLowerCase().includes(q);
+    const teamOk = !_playerTeamFilter || p.team === _playerTeamFilter;
+    return nameOk && teamOk;
+  });
+}
+
+function filterPlayers() {
+  renderPlayers(getFilteredPlayers());
+}
+
+function setPlayerTeamFilter(team, btn) {
+  _playerTeamFilter = team;
+  document.querySelectorAll('#player-team-chips .chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterPlayers();
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────
