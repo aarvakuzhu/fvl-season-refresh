@@ -865,28 +865,31 @@ async function loadStandings(){
         if(m){
           const posIcon=m.champion?'🏆':m.position===2?'🥈':m.position===3?'🥉':(m.position||'?')+'th';
           const mPts=(m.rrWins||m.wins||0)+(m.positionBonus||0);
-          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 13px 6px 48px;border-bottom:1px solid var(--border2);background:#fafafa;font-size:12px">
-            <span style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);min-width:28px">${mn}</span>
-            <span style="flex:1;font-weight:600">${posIcon}</span>
-            <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${m.rrWins||m.wins||0}W +${m.positionBonus||0}</span>
-            <span style="font-family:'Roboto Mono',monospace;font-weight:700;color:${col};min-width:32px;text-align:right">${mPts}pts</span>
+          return `<div style="display:grid;grid-template-columns:36px 1fr 48px 44px 60px 20px;align-items:center;gap:6px;padding:6px 13px;border-bottom:1px solid var(--border2);background:#fafafa;font-size:12px">
+            <span style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);text-align:center">${mn}</span>
+            <span style="font-weight:600">${posIcon}</span>
+            <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:${col};font-weight:700;text-align:right">${mPts}</span>
+            <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted);text-align:center">${m.rrWins||m.wins||0}W</span>
+            <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);text-align:right">+${m.positionBonus||0}</span>
+            <span></span>
           </div>`;
         } else {
-          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 13px 6px 48px;border-bottom:1px solid var(--border2);background:#fafafa;font-size:12px;opacity:.45">
-            <span style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);min-width:28px">${mn}</span>
-            <span style="flex:1;color:var(--muted)">Upcoming</span>
-            <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:#ccc">—</span>
+          return `<div style="display:grid;grid-template-columns:36px 1fr 48px 44px 60px 20px;align-items:center;gap:6px;padding:6px 13px;border-bottom:1px solid var(--border2);background:#fafafa;font-size:12px;opacity:.4">
+            <span style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);text-align:center">${mn}</span>
+            <span style="color:var(--muted)">Upcoming</span>
+            <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:#ccc;text-align:right">—</span>
+            <span></span><span></span><span></span>
           </div>`;
         }
       }).join('');
       return `<div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border2);cursor:pointer" onclick="toggleStRow('${uid}')">
-          <span style="font-size:${i<3?'18':'14'}px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'};min-width:28px;text-align:center;line-height:1">${rankIcon}</span>
-          <span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;font-weight:700;font-size:13px">${dot(s.team,8)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.team}</span></span>
-          <span style="font-family:'Roboto Mono',monospace;font-weight:900;font-size:16px;color:${col};min-width:28px;text-align:right">${s.totalPoints}</span>
-          <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted);min-width:28px;text-align:center">${totalRR}W</span>
-          <span style="min-width:52px;text-align:right">${titleBadge}</span>
-          <span id="${uid}-chev" style="color:var(--muted);font-size:11px;transition:transform .2s;display:inline-block">▾</span>
+        <div style="display:grid;grid-template-columns:36px 1fr 48px 44px 60px 20px;align-items:center;padding:10px 13px;border-bottom:1px solid var(--border2);cursor:pointer;gap:6px" onclick="toggleStRow('${uid}')">
+          <span style="font-size:${i<3?'18':'14'}px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'};text-align:center;line-height:1">${rankIcon}</span>
+          <span style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;min-width:0">${dot(s.team,8)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.team}</span></span>
+          <span style="font-family:'Roboto Mono',monospace;font-weight:900;font-size:16px;color:${col};text-align:right">${s.totalPoints}</span>
+          <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted);text-align:center">${totalRR}W</span>
+          <span style="text-align:right">${titleBadge}</span>
+          <span id="${uid}-chev" style="color:var(--muted);font-size:11px;transition:transform .2s;text-align:center">▾</span>
         </div>
         <div id="${uid}" style="display:none">${monthRows}</div>
       </div>`;
