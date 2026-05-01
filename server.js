@@ -452,7 +452,7 @@ const PLAYER_REGISTRY = [
   {name:"Ronak",photo:'https://lh3.googleusercontent.com/d/1H4soPf2ztA_uVzYgq9YLIG9EXMHjmW6k=w400',skills:["Setter", "Defense"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Raptors",role:"Player",championMonths:[],seasonChampion:false}]},
   {name:"Sunil",photo:'https://lh3.googleusercontent.com/d/1Q3fmG04rvczPhhG-_ore8l96gzcx3jji=w400',skills:["Defense"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
   {name:"Venkat",photo:'https://lh3.googleusercontent.com/d/1ps-h13q6IkvqRIY5WQKh5xyts4XClMYV=w400',skills:["Spiker"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Dragons",role:"Player",championMonths:[],seasonChampion:false}]},
-  {name:"Vikas",photo:'https://lh3.googleusercontent.com/d/1p0HpAAfsCQDj6RJhxJB6HuIMFgPYmdix=w400',skills:["Spiker"],seasons:[{season:3,team:"Falcons",role:"Player",championMonths:[],seasonChampion:false}]},
+  {name:"Vikas",photo:'https://lh3.googleusercontent.com/d/1p0HpAAfsCQDj6RJhxJB6HuIMFgPYmdix=w400',skills:["Spiker"],seasons:[{season:2,team:"Titans",role:"Player",championMonths:[],seasonChampion:false},{season:3,team:"Falcons",role:"Player",championMonths:[],seasonChampion:false}]},
   {name:"Raja Vasu",photo:null,skills:[],seasons:[{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
   {name:"Surendra K",photo:'https://lh3.googleusercontent.com/d/1LeTFALHEyQ_yR5f1dgrbu-9zd48rEZ-l=w400',skills:["Setter"],seasons:[{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
 ];
@@ -685,6 +685,16 @@ app.post('/api/s3/result', async (req, res) => {
       ev.games[gameIndex].scoreB = null;
       ev.games[gameIndex].played = false;
       ev.markModified('games');
+      // Recalculate playoffs with updated standings
+      const rrAfterClear = ev.games.filter(g => g.type === 'rr' && g.played);
+      const ranked = computeRRStandings(ev.games.filter(g=>g.type==='rr'), ev.positions);
+      const fg = ev.games.find(g=>g.type==='final');
+      const tg = ev.games.find(g=>g.type==='third');
+      const fig = ev.games.find(g=>g.type==='fifth');
+      if (fg)  { fg.teamA  = rrAfterClear.length ? ranked[0] : '#1'; fg.teamB  = rrAfterClear.length ? ranked[1] : '#2'; }
+      if (tg)  { tg.teamA  = rrAfterClear.length ? ranked[2] : '#3'; tg.teamB  = rrAfterClear.length ? ranked[3] : '#4'; }
+      if (fig) { fig.teamA = rrAfterClear.length ? ranked[4] : '#5'; fig.teamB = rrAfterClear.length ? ranked[5] : '#6'; }
+      ev.markModified('games');
       await ev.save();
       return res.json({ success: true, game: ev.games[gameIndex] });
     }
@@ -694,11 +704,10 @@ app.post('/api/s3/result', async (req, res) => {
     ev.games[gameIndex].played = true;
     ev.markModified('games');
 
-    // After all RR games played, compute standings and update final teams
+    // Recalculate playoff seedings after every result save (not just at 12)
     const rrGames = ev.games.filter(g => g.type === 'rr' && g.played);
-    if (rrGames.length === 12) {
+    if (rrGames.length >= 1) {
       const ranked = computeRRStandings(ev.games.filter(g=>g.type==='rr'), ev.positions);
-      // Update final game teams
       const finalGame  = ev.games.find(g=>g.type==='final');
       const thirdGame  = ev.games.find(g=>g.type==='third');
       const fifthGame  = ev.games.find(g=>g.type==='fifth');
