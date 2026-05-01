@@ -231,7 +231,9 @@ function renderNextSteps() {
     ['9','All 6','Book venue. Confirm 2 courts for 3.5-hour event block.','Before Month 1'],
     ['10','All 6','Publish full Season 3 schedule and confirmed format to all 42 players.','Before Month 1'],
   ];
-  document.getElementById('nextsteps-list').innerHTML = steps.map(([n,o,t,w]) =>
+  const el = document.getElementById('nextsteps-list');
+  if (!el) return;
+  el.innerHTML = steps.map(([n,o,t,w]) =>
     `<div class="nsitem">
       <div class="nsn">${n}</div>
       <div>
@@ -298,9 +300,9 @@ async function renderCurrentMonthWidget() {
       return;
     }
     const ev = events.find(e => !e.locked) || events[events.length - 1];
-    // Update heading label
+    // Update heading label with month and date
     const lbl = document.getElementById('cur-month-label');
-    if (lbl) lbl.textContent = ev.label;
+    if (lbl) lbl.textContent = `${ev.label} · ${ev.date}`;
     const TIMES = ['2:00','2:25','2:50','3:15','3:40','4:05','4:30','4:55'];
     const TCOLORS = {Dragons:'#ef4444',Predators:'#22c55e',Falcons:'#3b82f6',Spartans:'#8b5cf6',Titans:'#f97316',Raptors:'#14b8a6'};
     const dot = n => `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${TCOLORS[n]||'#888'};flex-shrink:0"></span>`;
