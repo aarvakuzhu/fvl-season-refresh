@@ -260,6 +260,31 @@ _loaded['overview'] = true;
 renderStandings();
 renderCurrentMonthWidget();
 
+// Season 3 standings on home page
+(async () => {
+  try {
+    const r = await fetch('/api/s3/standings');
+    const data = await r.json();
+    const el = document.getElementById('s3-standings-home');
+    if (!el) return;
+    if (!data.length) { el.innerHTML='<div style="padding:12px;font-size:12px;color:var(--muted);text-align:center">No results yet — season starting May 2026</div>'; return; }
+    const colors = {Dragons:'#c62828',Predators:'#1b5e20',Falcons:'#1a3566',Spartans:'#311b92',Titans:'#e65100',Raptors:'#004d40'};
+    el.innerHTML = data.map((s,i) => {
+      const col = colors[s.team]||'#888';
+      const cm = (s.months||[]).filter(m=>m.champion).map(m=>m.label?.split(' ')[0]).join(', ');
+      return `<div style="display:grid;grid-template-columns:36px 1fr auto auto;align-items:center;padding:8px 13px;border-bottom:1px solid var(--border2);gap:8px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:${i===0?'#b8860b':'var(--muted)'};text-align:center">${i+1}</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block"></span>${s.team} ${'🏆'.repeat(s.championships||0)}</div>
+          <div style="font-size:11px;color:var(--muted)">${cm?'Won: '+cm:''}</div>
+        </div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${s.totalWins}W</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:${col}">${s.totalPoints} pts</div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+})();
+
 // ── Current Month Schedule Widget (Overview sidebar) ─────────────────
 async function renderCurrentMonthWidget() {
   const el = document.getElementById('current-month-widget');

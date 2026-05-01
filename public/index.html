@@ -48,24 +48,50 @@
     </div>
   </div>
 
-  <!-- Season 3 Teams -->
-  <div class="sec">Season 3 Teams</div>
+  <!-- This Month's Tournament Schedule -->
+  <div class="sec">🗓 This Month's Tournament — <span id="cur-month-label">May 2026</span></div>
   <span class="sec-line"></span>
-  <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
-    <div style="display:grid;grid-template-columns:repeat(3,1fr)">
-      <div style="padding:10px 12px;border-right:1px solid var(--border2);border-bottom:1px solid var(--border2)"><div style="width:8px;height:8px;border-radius:50%;background:#ef4444;margin-bottom:4px"></div><div style="font-size:13px;font-weight:800;color:#ef4444">Dragons</div><div style="font-size:11px;color:var(--muted)">⭐ Anil</div></div>
-      <div style="padding:10px 12px;border-right:1px solid var(--border2);border-bottom:1px solid var(--border2)"><div style="width:8px;height:8px;border-radius:50%;background:#22c55e;margin-bottom:4px"></div><div style="font-size:13px;font-weight:800;color:#22c55e">Predators</div><div style="font-size:11px;color:var(--muted)">⭐ Harsha</div></div>
-      <div style="padding:10px 12px;border-bottom:1px solid var(--border2)"><div style="width:8px;height:8px;border-radius:50%;background:#3b82f6;margin-bottom:4px"></div><div style="font-size:13px;font-weight:800;color:#3b82f6">Falcons</div><div style="font-size:11px;color:var(--muted)">⭐ Karthik</div></div>
-      <div style="padding:10px 12px;border-right:1px solid var(--border2)"><div style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;margin-bottom:4px"></div><div style="font-size:13px;font-weight:800;color:#8b5cf6">Spartans</div><div style="font-size:11px;color:var(--muted)">⭐ Koti</div></div>
-      <div style="padding:10px 12px;border-right:1px solid var(--border2)"><div style="width:8px;height:8px;border-radius:50%;background:#f97316;margin-bottom:4px"></div><div style="font-size:13px;font-weight:800;color:#f97316">Titans</div><div style="font-size:11px;color:var(--muted)">⭐ Pratik</div></div>
-      <div style="padding:10px 12px"><div style="width:8px;height:8px;border-radius:50%;background:#14b8a6;margin-bottom:4px"></div><div style="font-size:13px;font-weight:800;color:#14b8a6">Raptors</div><div style="font-size:11px;color:var(--muted)">⭐ Shanthan</div></div>
+  <div id="current-month-widget" style="margin-bottom:14px">
+    <div class="skel" style="height:160px"></div>
+  </div>
+
+  <!-- Season 3 Standings -->
+  <div class="sec">Season 3 Standings</div>
+  <span class="sec-line"></span>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Season 3 · May – Oct 2026 · Cumulative</span>
+      <a href="/season3" style="font-size:11px;color:var(--ci-blue);font-weight:700;text-decoration:none">Full standings →</a>
     </div>
-    <div style="padding:8px 12px;background:var(--light);border-top:1px solid var(--border2);text-align:center">
-      <a href="/season3" style="font-size:12px;color:var(--ci-blue);font-weight:700;text-decoration:none">View full rosters, schedule &amp; standings →</a>
+    <div id="s3-standings-home">
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
     </div>
   </div>
 
-  <!-- Season 3 Format -->
+  <!-- Season 2 Final Standings -->
+  <div class="sec">Season 2 Final Standings</div>
+  <span class="sec-line"></span>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Season 2 · Nov 2025 – Apr 2026 · Final</span>
+      <a href="/season2" style="font-size:11px;color:var(--ci-blue);font-weight:700;text-decoration:none">Full history →</a>
+    </div>
+    <div id="standings-list">
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+      <div class="skel" style="height:38px;margin:2px"></div>
+    </div>
+    <div style="padding:6px 11px;font-size:11px;color:var(--muted);font-style:italic;border-top:1px solid var(--border2)">Falcons 🏆 Season Champions · Dragons 🏆 March &amp; April monthly champions</div>
+  </div>
+
+  <!-- Season 3 Confirmed Details -->
   <div class="sec">Season 3 — Confirmed Details</div>
   <span class="sec-line"></span>
   <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
@@ -79,48 +105,11 @@
     </div>
   </div>
 
-  <!-- Current Month Schedule -->
-  <div class="sec">Current Month — <span id="cur-month-label">May 2026</span></div>
-  <span class="sec-line"></span>
-  <div id="current-month-widget" style="margin-bottom:14px">
-    <div class="skel" style="height:160px"></div>
-  </div>
-
-  <!-- Season 2 Final Standings -->
-  <div class="sec">Season 2 Final Standings</div>
-  <span class="sec-line"></span>
-  <div class="card" style="margin-bottom:10px">
-    <div id="standings-list">
-      <div class="skel" style="height:42px;margin:2px"></div>
-      <div class="skel" style="height:42px;margin:2px"></div>
-      <div class="skel" style="height:42px;margin:2px"></div>
-      <div class="skel" style="height:42px;margin:2px"></div>
-      <div class="skel" style="height:42px;margin:2px"></div>
-    </div>
-    <div style="padding:6px 11px;font-size:11px;color:var(--muted);font-style:italic;border-top:1px solid var(--border2)">Season 2 Final — Falcons 🏆 Season Champions. Dragons 🏆 April champions.</div>
-  </div>
-
 </div>
 <div class="side">
 
-  <div class="sec" style="padding-top:0">Key Feedback Themes</div>
-  <span class="sec-line"></span>
-  <div class="widget">
-    <div style="padding:7px 11px;border-bottom:1px solid var(--border2);background:#fff5f5">
-      <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:3px">🔴 Must Address</div>
-      <div style="font-size:12px;color:var(--text);line-height:1.5">Referees · Team size 7 · No transfers · Equal playtime</div>
-    </div>
-    <div style="padding:7px 11px;border-bottom:1px solid var(--border2);background:#fffbf0">
-      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:3px">🟡 High Value</div>
-      <div style="font-size:12px;color:var(--text);line-height:1.5">Captain voice · Published rules · Equal playtime tracking</div>
-    </div>
-    <div style="padding:7px 11px;background:var(--green2)">
-      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:3px">🟢 Positive</div>
-      <div style="font-size:12px;color:var(--text);line-height:1.5">Team identity · 83% returning · Comms excellent</div>
-    </div>
-  </div>
-
-  <div style="padding:10px 0 0"><a href="/season2" style="display:block;border:1px solid var(--border);color:var(--muted);text-align:center;padding:8px;font-size:12px;font-weight:600;text-decoration:none;border-radius:2px">📋 Season 2 History →</a></div>
+  <div style="padding:0 0 10px"><a href="/season2" style="display:block;border:1px solid var(--border);color:var(--muted);text-align:center;padding:8px;font-size:12px;font-weight:600;text-decoration:none;border-radius:2px">📋 Season 2 Full History →</a></div>
+  <div style="padding:0 0 10px"><a href="/season3" style="display:block;background:var(--ci-blue);color:#fff;text-align:center;padding:8px;font-size:12px;font-weight:700;text-decoration:none;border-radius:2px">🏐 Season 3 Live →</a></div>
 
 </div>
 </div></div>
