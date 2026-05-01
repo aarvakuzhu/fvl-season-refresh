@@ -44,9 +44,11 @@
       padding:3px 6px;border-radius:2px;line-height:1;
     }
     .hlogo-text{
-      font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;
+      font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;white-space:nowrap;
     }
     .hlogo-text span{font-weight:400;opacity:.85}
+    @media(max-width:520px){.hlogo-text .full{display:none}.hlogo-text .short{display:inline}}
+    @media(min-width:521px){.hlogo-text .full{display:inline}.hlogo-text .short{display:none}}
     .hmeta{
       font-size:10px;color:rgba(255,255,255,.6);
       font-family:'Roboto Mono',monospace;letter-spacing:.3px;

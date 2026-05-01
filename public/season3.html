@@ -286,7 +286,10 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <div class="sec" style="padding-top:0">Season 3 Standings</div>
   <span class="sec-line"></span>
   <div class="card">
-    <div class="card-hd">Season 3 · May – Oct 2026 · Cumulative points</div>
+    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Season 3 · May – Oct 2026</span>
+      <button onclick="switchTab(document.querySelector('[data-panel=standings]'))" style="font-size:11px;color:var(--blue);font-weight:700;background:none;border:none;cursor:pointer;padding:0">Full view ↗</button>
+    </div>
     <div id="ov-standings"><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div><div class="skel" style="height:42px;margin:4px"></div></div>
   </div>
 
@@ -928,16 +931,17 @@ async function loadOverview() {
     else {
       el.innerHTML = data.map((s,i) => {
         const col = teamColor(s.team);
-        const cm = (s.months||[]).filter(m=>m.champion).map(m=>m.label?.split(' ')[0]).join(', ');
         const totalRR = (s.months||[]).reduce((a,m)=>a+(m.rrWins||m.wins||0),0);
-        return `<div class="srow-ov ${i===0?'gold':''}">
-          <div class="spos" style="${i===0?'color:#b8860b':''}">${i+1}</div>
-          <div>
-            <div class="sname" style="display:flex;align-items:center;gap:6px">${dot(s.team,8)} ${s.team} ${'🏆'.repeat(s.championships||0)}</div>
-            <div class="ssub">${cm?'Won: '+cm:''}</div>
-          </div>
-          <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${totalRR}W</div>
-          <div class="spts" style="color:${col}">${s.totalPoints} pts</div>
+        const titles = s.championships||0;
+        const rankIcon = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'';
+        const titleBadge = titles>0
+          ? `<span style="background:#fffbeb;border:1px solid #fcd34d;color:#92400e;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px">🏆×${titles}</span>`
+          : '';
+        return `<div style="display:flex;align-items:center;gap:10px;padding:9px 13px;border-bottom:1px solid var(--border2)">
+          <span style="font-size:${i<3?'17':'13'}px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'};min-width:24px;text-align:center">${rankIcon}</span>
+          <span style="display:flex;align-items:center;gap:6px;flex:1;font-weight:700;font-size:13px">${dot(s.team,8)}<span>${s.team}</span>${titleBadge}</span>
+          <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${totalRR}W</span>
+          <span style="font-family:'Roboto Mono',monospace;font-weight:900;font-size:15px;color:${col}">${s.totalPoints}pts</span>
         </div>`;
       }).join('');
     }
