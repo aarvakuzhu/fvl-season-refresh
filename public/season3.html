@@ -382,11 +382,11 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 <!-- STANDINGS (season) -->
 <div class="panel" id="panel-standings">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
+    <span style="font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">🏆 Season 3 · May–Oct 2026</span>
+    <span style="font-size:10px;font-family:'Roboto Mono',monospace;color:var(--muted)">Pts · RR W · Titles</span>
+  </div>
   <div class="card" style="margin-bottom:12px">
-    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center">
-      <span>🏆 Season 3 Standings · May – Oct 2026</span>
-      <span style="font-size:10px;font-family:'Roboto Mono',monospace;color:var(--muted)">Pts · RR W · Titles</span>
-    </div>
     <div id="standings-list">
       <div class="skel" style="height:44px;margin:2px"></div>
       <div class="skel" style="height:44px;margin:2px"></div>
@@ -838,15 +838,40 @@ async function loadStandings(){
       const titleBadge=titles>0
         ?`<span style="background:#fffbeb;border:1px solid #fcd34d;color:#92400e;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:2px;white-space:nowrap">🏆 ×${titles}</span>`
         :`<span style="color:#ccc;font-size:11px;font-family:'Roboto Mono',monospace">—</span>`;
-      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border2)">
-        <span style="font-size:${i<3?'18':'14'}px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'};min-width:28px;text-align:center;line-height:1">${rankIcon}</span>
-        <span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;font-weight:700;font-size:13px">${dot(s.team,8)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.team}</span></span>
-        <span style="font-family:'Roboto Mono',monospace;font-weight:900;font-size:16px;color:${col};min-width:28px;text-align:right">${s.totalPoints}</span>
-        <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted);min-width:28px;text-align:center">${totalRR}W</span>
-        <span style="min-width:52px;text-align:right">${titleBadge}</span>
+      const uid='st-'+s.team.replace(/\s+/g,'_');
+      // Month breakdown rows
+      const monthRows=(s.months||[]).sort((a,b)=>a.month-b.month).map(m=>{
+        const posIcon=m.champion?'🏆':m.position===2?'🥈':m.position===3?'🥉':m.position+'th';
+        const mPts=(m.rrWins||m.wins||0)+(m.positionBonus||0);
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 13px 6px 48px;border-bottom:1px solid var(--border2);background:#fafafa;font-size:12px">
+          <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);min-width:28px">${m.label?.split(' ')[0]||'M'+m.month}</span>
+          <span style="flex:1;font-weight:600">${posIcon}</span>
+          <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted)">${m.rrWins||m.wins||0}W +${m.positionBonus||0}</span>
+          <span style="font-family:'Roboto Mono',monospace;font-weight:700;color:${col};min-width:24px;text-align:right">${mPts}pts</span>
+        </div>`;
+      }).join('');
+      return `<div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border2);cursor:pointer" onclick="toggleStRow('${uid}')">
+          <span style="font-size:${i<3?'18':'14'}px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'};min-width:28px;text-align:center;line-height:1">${rankIcon}</span>
+          <span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;font-weight:700;font-size:13px">${dot(s.team,8)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.team}</span></span>
+          <span style="font-family:'Roboto Mono',monospace;font-weight:900;font-size:16px;color:${col};min-width:28px;text-align:right">${s.totalPoints}</span>
+          <span style="font-family:'Roboto Mono',monospace;font-size:11px;color:var(--muted);min-width:28px;text-align:center">${totalRR}W</span>
+          <span style="min-width:52px;text-align:right">${titleBadge}</span>
+          ${monthRows?`<span id="${uid}-chev" style="color:var(--muted);font-size:11px;transition:transform .2s;display:inline-block">▾</span>`:''}
+        </div>
+        ${monthRows?`<div id="${uid}" style="display:none">${monthRows}</div>`:''}
       </div>`;
     }).join('');
   }catch(e){}
+}
+
+function toggleStRow(uid) {
+  const el = document.getElementById(uid);
+  const chev = document.getElementById(uid+'-chev');
+  if (!el) return;
+  const open = el.style.display === 'none' || !el.style.display;
+  el.style.display = open ? 'block' : 'none';
+  if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
 }
 
 // ── ROTATION ──────────────────────────────────────────────────────────
@@ -999,10 +1024,11 @@ async function loadPlayers() {
       return {
         name: p.name, team: s3?.team||'', color: col,
         captain: s3?.role==='Captain', wingman: s3?.role==='Wingman',
-        photo: p.photo||PHOTOS[p.name]||null,  // API first, fallback to hardcoded
+        photo: p.photo||PHOTOS[p.name]||null,
         skills: p.skills||[],
       };
-    }).filter(p=>p.team); // only players with a S3 team
+    }).filter(p=>p.team)
+      .sort((a,b)=>a.name.localeCompare(b.name)); // alphabetical
     renderPlayers(getFilteredPlayers());
   } catch(e) {
     document.getElementById('player-grid').innerHTML = '<div class="empty">Could not load players.</div>';
