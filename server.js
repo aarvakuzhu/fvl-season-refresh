@@ -485,23 +485,7 @@ app.get('/season3', (req, res) => {
 
 
 
-// ── Clone draft save ─────────────────────────────────────────────────
-app.post('/api/draft-clone', async (req, res) => {
-  try {
-    const { fromUser, toUser, season = 3, opt = 2 } = req.body;
-    const src = await DraftSave.findOne({ user: fromUser, season, opt })
-      || await DraftSave.findOne({ user: fromUser, season }).sort({ updatedAt: -1 });
-    if (!src) return res.status(404).json({ error: `No draft found for ${fromUser}` });
-    // Delete ANY existing save for toUser+season+opt (handles old index remnants)
-    await DraftSave.deleteMany({ user: toUser, season });
-    const clone = await DraftSave.create({
-      user: toUser, season, opt: Number(opt),
-      picks: src.picks, teams: src.teams,
-      pickCount: src.pickCount, complete: src.complete,
-    });
-    res.json({ success: true, message: `Cloned ${fromUser} opt${opt} → ${toUser}`, pickCount: clone.pickCount });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
+// /api/draft-clone — retired
 
 // ═══════════════════════════════════════════════════════════════════════
 // SEASON 3 — TEAMS, SCHEDULE, RESULTS, STANDINGS
