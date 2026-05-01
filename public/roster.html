@@ -226,6 +226,14 @@ async function load() {
   }
 }
 
+// Catch any render errors and show on screen
+window.onerror = function(msg, src, line, col, err) {
+  const el = document.getElementById('roster-grid');
+  if (el) el.innerHTML = `<div style="padding:20px;background:#fee2e2;border:1px solid #f87171;border-radius:4px;font-size:12px;color:#991b1b;grid-column:1/-1">
+    <strong>JS Error:</strong> ${msg}<br>Line ${line}:${col}
+  </div>`;
+};
+
 // ── FILTERS ───────────────────────────────────────────────────────
 function setSeason(btn, val) {
   document.querySelectorAll('.stbtn').forEach(b=>b.classList.remove('on'));
@@ -290,7 +298,7 @@ function applyFilters() {
   });
 
   document.getElementById('roster-grid').innerHTML = list.length
-    ? list.map(p=>cardHTML(p)).join('')
+    ? list.map(p => { try { return cardHTML(p); } catch(e) { return `<div style="padding:10px;background:#fee2e2;font-size:11px;color:#991b1b;border-radius:3px">Error rendering ${p.name}: ${e.message}</div>`; } }).join('')
     : '<div class="empty">No players match the current filters.</div>';
 }
 
