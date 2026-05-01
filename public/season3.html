@@ -937,11 +937,10 @@ function renderPlayers(list) {
          <div class="player-avatar" style="background:${p.color};display:none">${initials}</div>`
       : `<div class="player-avatar" style="background:${p.color}">${initials}</div>`;
     return `<div class="player-card" data-name="${p.name.toLowerCase()}" data-team="${p.team}">
-      <div style="height:4px;background:${p.color}"></div>
       <div class="player-photo-wrap">${photoHtml}</div>
-      <div class="player-info" style="border-top:1px solid ${p.color}22">
-        <div class="player-name">${p.name}${p.captain?' ⭐':''}</div>
-        <div class="player-team" style="color:${p.color}">${p.team}</div>
+      <div class="player-info" style="background:${p.color};border:none">
+        <div class="player-name" style="color:#fff">${p.name}${p.captain?' ⭐':''}</div>
+        <div class="player-team" style="color:rgba(255,255,255,.75)">${p.team}</div>
       </div>
     </div>`;
   }).join('');
