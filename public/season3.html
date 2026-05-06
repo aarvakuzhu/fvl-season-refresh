@@ -464,10 +464,20 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <!-- FORMAT ANALYSIS VIEW -->
   <div id="stv-analysis" style="display:none">
     <!-- Recommendation banner -->
-    <div style="background:linear-gradient(135deg,#1b5e20,#2e7d32);border-radius:4px;padding:14px 16px;margin-bottom:12px">
+    <div style="background:linear-gradient(135deg,#0d1b2a,#1a3566);border-radius:4px;padding:14px 16px;margin-bottom:12px">
       <div style="font-size:11px;font-family:'Roboto Mono',monospace;color:rgba(255,255,255,.65);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">⭐ Recommendation</div>
-      <div style="font-size:16px;font-weight:900;color:#fff;margin-bottom:4px">Option 1 — Knockout Format</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.5">Keep current scoring (RR win + positional bonus). Change playoff format to Semis (1v4, 2v3) → Final + 3rd/4th. Gives 4 teams a shot at the trophy every month. No extra time needed.</div>
+      <div style="font-size:16px;font-weight:900;color:#f5c842;margin-bottom:6px">Current Format — Keep As Is</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:8px">FVL's core principle is <strong style="color:#f5c842">maximum game time for all teams</strong>. The current format gives every team exactly 5 games — 4 RR + 1 playoff. Any knockout alternative (Options 1 &amp; 2) drops 5th/6th teams to 4 games, violating this principle.</div>
+      <div style="background:rgba(255,255,255,.08);border-radius:3px;padding:8px 10px;font-size:11px;color:rgba(255,255,255,.7);line-height:1.6">
+        <strong style="color:#fff">The real trade-off:</strong> Options 1 &amp; 2 make the trophy race more exciting for top 4 but exclude bottom 2 from playoff action. With 2 courts and no extra time, there is no arrangement that gives all 6 teams a playoff game AND runs semi-finals simultaneously — it's one or the other.
+      </div>
+    </div>
+
+    <!-- Possible tweak -->
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:11px;font-family:'Roboto Mono',monospace;font-weight:700;color:#92400e;margin-bottom:6px">💡 POSSIBLE IMPROVEMENT WITHIN CURRENT FORMAT</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:6px"><strong>Idea — Re-seed the 3rd/4th game:</strong> Instead of 3rd vs 4th (already determined by RR), make it <strong>2nd vs 3rd</strong>. Winner takes 2nd, loser drops to 3rd. 1st goes straight to final, 4th plays 5th/6th winner for 4th place. No time change, no game count change — makes the middle bracket more meaningful.</div>
+      <div style="font-size:11px;color:var(--muted)">This is a discussion item for the core group — not yet confirmed.</div>
     </div>
 
     <!-- Format comparison table -->
@@ -478,8 +488,8 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
           <thead>
             <tr style="background:var(--navy);color:#fff">
               <th style="padding:7px 10px;text-align:left;font-weight:700;white-space:nowrap"></th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Current</th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;background:#1b5e20">Option 1 ⭐</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;background:#1a5fb4">Current ⭐</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Option 1</th>
               <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Option 2</th>
             </tr>
           </thead>
@@ -998,24 +1008,24 @@ function renderAnalysis(){
   // ── Comparison table ─────────────────────────────────────────────
   const rows=[
     ['Playoff format','5th/6th · 3rd/4th · Final','Semis(1v4,2v3) · Final · 3rd/4th','Semis(1v4,2v3) · Final · 3rd/4th'],
-    ['Teams in trophy contention','Top 2 only','Top 4 🏆','Top 4 🏆'],
-    ['Playoff games','3','4','4'],
-    ['Extra time needed','—','None (2 courts)','None (2 courts)'],
+    ['Games per team (all)','✅ 5 each','❌ 4 (5th/6th) · 6 (top 4)','❌ 4 (5th/6th) · 6 (top 4)'],
+    ['Game time equality','✅ Equal for all','❌ 5th/6th excluded','❌ 5th/6th excluded'],
+    ['Teams in trophy contention','Top 2 only','Top 4','Top 4'],
+    ['Courts used at 4:55 PM','1 of 2 (1 idle)','2 of 2','2 of 2'],
+    ['Extra time needed','—','—','—'],
     ['Scoring','RR win+1, bonus 6-1','RR win+1, bonus 6-1','All wins = 1pt, no bonus'],
     ['Max pts/month','10','10','6'],
-    ['Max season pts','60','60','36'],
-    ['5th/6th earn bonus pts?','Yes (+1/+2)','No (RR pts only)','No (RR pts only)'],
-    ['Season standings spread','Wide','Wide','Narrow'],
+    ['5th/6th earn bonus pts?','✅ Yes (+1/+2)','❌ RR only','❌ RR only'],
+    ['Season standings spread','Wide','Wide','Narrow (max 36)'],
     ['Tiebreakers needed','Occasional','Occasional','Frequent'],
-    ['Complexity','Medium','Medium','Simple'],
+    ['Fits FVL principle?','✅ Yes','❌ No','❌ No'],
   ];
-  const C=['','#fff8e1','#e8f5e9','#fff8e1'];
   document.getElementById('fmt-table-body').innerHTML=rows.map((r,ri)=>`
     <tr style="border-bottom:1px solid var(--border2);${ri%2?'background:var(--light)':''}">
       <td style="padding:7px 10px;font-weight:600;color:var(--muted);font-size:11px;white-space:nowrap">${r[0]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px">${r[1]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#f0fdf4;font-weight:${ri===1||ri===2?'700':'400'};color:${ri===1?'#15803d':''}">${r[2]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px">${r[3]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;${ri===1||ri===11?'font-weight:700;color:#15803d':''}">${r[1]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#fff8f8;${ri===1||ri===2||ri===11?'font-weight:700;color:#c62828':''}">${r[2]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#fff8f8;${ri===1||ri===2||ri===11?'font-weight:700;color:#c62828':''}">${r[3]}</td>
     </tr>`).join('');
 
   // ── Monthly pts table ─────────────────────────────────────────────
@@ -1037,9 +1047,9 @@ function renderAnalysis(){
 
   // ── Pros/cons ─────────────────────────────────────────────────────
   const options=[
-    {label:'Current',color:'#64748b',pros:['Familiar format','5th/6th still get bonus pts','Wide season spread'],cons:['Only top 2 fight for trophy','4 teams eliminated early from title contention','Tight RR cluster makes 1v2 semi predictable']},
-    {label:'Option 1 ⭐ Recommended',color:'#1b5e20',pros:['4 teams in monthly trophy race','Upsets possible — 4th can beat 1st in single game','No schedule change needed (2 courts, same time)','Keeps meaningful positional bonus scoring','Preserves wide season standings spread'],cons:['5th/6th teams only earn RR pts','Semi-finalist who loses gets same pts as current 3rd — but more exciting path']},
-    {label:'Option 2',color:'#1a3566',pros:['Simplest scoring — every win = 1pt','Easy to explain to all players','4 teams in trophy race'],cons:['Narrow season spread (max 36 pts)','Tiebreakers dominate season standings','5th/6th earn 0 playoff points — hard cliff','Season feels arbitrary, not merit-based']},
+    {label:'Current Format ⭐ Recommended',color:'#1a3566',pros:['All 6 teams play exactly 5 games — equal game time','5th/6th still earn playoff bonus points','No one sits idle for 50 minutes at end of day','RR performance directly determines your playoff game','Wide season standings spread (max 60 pts)'],cons:['Only top 2 contend for monthly trophy','4:55 PM has one idle court slot','Tight RR standings can make the final feel predictable']},
+    {label:'Option 1 — Knockout',color:'#64748b',pros:['4 teams in monthly trophy race','Upsets possible — 4th can beat 1st','No extra time needed','Keeps positional bonus scoring'],cons:['❌ Violates FVL principle — 5th/6th play only 4 games','5th/6th teams sit out entire 50-min playoff window','Disconnects trophy from RR dominance','Bottom teams lose motivation after RR stage']},
+    {label:'Option 2 — Knockout + Simple Scoring',color:'#64748b',pros:['Simplest scoring model','4 teams in trophy race','Intuitive — every win = 1pt'],cons:['❌ Violates FVL principle — 5th/6th play only 4 games','Narrow season spread (max 36 pts) — tiebreakers dominate','5th/6th earn 0 playoff points','Season standings feel arbitrary, not merit-based']},
   ];
   document.getElementById('pros-cons').innerHTML=options.map(o=>`
     <div class="card">
@@ -1191,23 +1201,23 @@ function runSim(id, btn){
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px">
       <thead><tr style="background:var(--light)">
         <th style="padding:6px 10px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Team</th>
-        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Current</th>
-        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#15803d;border-bottom:1px solid var(--border2)">Opt 1 ⭐</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--blue);border-bottom:1px solid var(--border2)">Current ⭐</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 1</th>
         <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 2</th>
         <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Titles</th>
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-      <div style="background:var(--light);border-radius:3px;padding:8px 10px">
-        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">CURRENT SPREAD</div>
-        <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread1}pts</div>
-        <div style="font-size:10px;color:var(--muted)">${contested1} teams within 4pts</div>
+      <div style="background:#e8eef8;border:1px solid #c5d4f0;border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--blue);margin-bottom:3px">CURRENT ⭐ SPREAD</div>
+        <div style="font-size:18px;font-weight:900;color:var(--blue)">${spread1}pts</div>
+        <div style="font-size:10px;color:var(--blue)">All 6 teams play 5 games</div>
       </div>
-      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:8px 10px">
-        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#15803d;margin-bottom:3px">OPTION 1 ⭐</div>
-        <div style="font-size:18px;font-weight:900;color:#15803d">${spread1}pts</div>
-        <div style="font-size:10px;color:#15803d">${contested1} teams within 4pts + knockout upsets</div>
+      <div style="background:var(--light);border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPTION 1 SPREAD</div>
+        <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread1}pts</div>
+        <div style="font-size:10px;color:var(--muted)">${contested1} teams within 4pts (5th/6th: 4 games)</div>
       </div>
       <div style="background:var(--light);border-radius:3px;padding:8px 10px">
         <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPTION 2 SPREAD</div>
