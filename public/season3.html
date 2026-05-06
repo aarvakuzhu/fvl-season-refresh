@@ -524,12 +524,62 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
     <!-- Possible improvement (moved to bottom) -->
     <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;padding:12px 14px;margin-bottom:4px">
-      <div style="font-size:11px;font-family:'Roboto Mono',monospace;font-weight:700;color:#92400e;margin-bottom:6px">💡 DISCUSSION ITEM — Core Group Only</div>
-      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:6px">
-        <strong>Can we make the playoff bracket more interesting without changing game counts?</strong><br><br>
-        Currently the 3rd/4th game is set by RR — the result is almost predetermined before the game is played. One option: play <strong>2nd vs 3rd</strong> in that slot instead. The winner earns 2nd place, the loser drops to 3rd. 1st place still goes straight to the Grand Final. 4th place plays 5th/6th game winner for final ranking.<br><br>
-        This keeps all 6 teams playing 5 games, adds a meaningful contest in the middle bracket, and doesn't require any schedule changes.
+      <div style="font-size:11px;font-family:'Roboto Mono',monospace;font-weight:700;color:#92400e;margin-bottom:8px">💡 DISCUSSION ITEM — Core Group Only</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:10px">
+        <strong>Can the playoff bracket be more exciting without changing game counts?</strong><br>
+        One option: re-seed the 4:30 PM slot so <strong>#2 vs #3</strong> play instead of #3 vs #4. The winner enters the Grand Final, the loser plays #4 for 3rd. All 6 teams still play exactly 5 games.
       </div>
+
+      <!-- Before/After bracket -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase">Current</div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:3px;overflow:hidden;font-size:11px">
+            <div style="background:var(--light);padding:5px 8px;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted)">4:30 PM</div>
+            <div style="padding:5px 8px;border-bottom:1px solid var(--border2)">#5 vs #6</div>
+            <div style="padding:5px 8px;border-bottom:1px solid var(--border2)">#3 vs #4</div>
+            <div style="background:var(--light);padding:5px 8px;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted)">4:55 PM</div>
+            <div style="padding:5px 8px;font-weight:700">#1 vs #2 🏆</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#92400e;margin-bottom:6px;text-transform:uppercase">Proposed</div>
+          <div style="background:#fff;border:1px solid #fcd34d;border-radius:3px;overflow:hidden;font-size:11px">
+            <div style="background:#fffbeb;padding:5px 8px;border-bottom:1px solid #fde68a;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#92400e">4:30 PM</div>
+            <div style="padding:5px 8px;border-bottom:1px solid var(--border2)">#5 vs #6</div>
+            <div style="padding:5px 8px;border-bottom:1px solid var(--border2);font-weight:700;color:#92400e">#2 vs #3 ← changed</div>
+            <div style="background:#fffbeb;padding:5px 8px;border-bottom:1px solid #fde68a;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#92400e">4:55 PM</div>
+            <div style="padding:5px 8px;font-weight:700">#1 vs winner 🏆</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Who changes -->
+      <div style="overflow-x:auto;margin-bottom:10px">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead><tr style="background:var(--navy);color:#fff">
+            <th style="padding:5px 8px;text-align:left;font-size:10px">Finish</th>
+            <th style="padding:5px 8px;text-align:center;font-size:10px">Current</th>
+            <th style="padding:5px 8px;text-align:center;font-size:10px;background:#b8860b">Proposed</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border2)"><td style="padding:5px 8px;font-weight:700">#1 RR</td><td style="padding:5px 8px;text-align:center">Straight to Final</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">Straight to Final</td></tr>
+            <tr style="border-bottom:1px solid var(--border2);background:var(--light)"><td style="padding:5px 8px;font-weight:700">#2 RR</td><td style="padding:5px 8px;text-align:center">Straight to Final</td><td style="padding:5px 8px;text-align:center;background:#fffbeb;font-weight:700;color:#92400e">Must beat #3 first</td></tr>
+            <tr style="border-bottom:1px solid var(--border2)"><td style="padding:5px 8px;font-weight:700">#3 RR</td><td style="padding:5px 8px;text-align:center">3rd/4th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb;font-weight:700;color:#15803d">Shot at the Final 🏆</td></tr>
+            <tr style="border-bottom:1px solid var(--border2);background:var(--light)"><td style="padding:5px 8px;font-weight:700">#4 RR</td><td style="padding:5px 8px;text-align:center">3rd/4th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">Consolation vs #2/#3 loser</td></tr>
+            <tr style="border-bottom:1px solid var(--border2)"><td style="padding:5px 8px;font-weight:700">#5 RR</td><td style="padding:5px 8px;text-align:center">5th/6th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">5th/6th game</td></tr>
+            <tr><td style="padding:5px 8px;font-weight:700">#6 RR</td><td style="padding:5px 8px;text-align:center">5th/6th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">5th/6th game</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Example -->
+      <div style="background:rgba(0,0,0,.04);border-radius:3px;padding:8px 10px;font-size:11px;line-height:1.6;margin-bottom:8px">
+        <strong>Example — Month 1:</strong> Dragons 1st · Predators 2nd · Falcons 3rd · Spartans 4th<br>
+        <span style="color:var(--muted)">Current:</span> Predators vs Dragons in the Final. Falcons vs Spartans for 3rd.<br>
+        <span style="color:#92400e;font-weight:600">Proposed:</span> Predators vs Falcons at 4:30 PM. Winner faces Dragons in the Grand Final. Loser plays Spartans for 3rd. Falcons get a real shot at the trophy.
+      </div>
+
       <div style="font-size:11px;color:var(--muted);font-style:italic">Not yet confirmed — open for core group discussion.</div>
     </div>
 
