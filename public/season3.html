@@ -473,13 +473,6 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
       </div>
     </div>
 
-    <!-- Possible tweak -->
-    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;padding:12px 14px;margin-bottom:12px">
-      <div style="font-size:11px;font-family:'Roboto Mono',monospace;font-weight:700;color:#92400e;margin-bottom:6px">💡 POSSIBLE IMPROVEMENT WITHIN CURRENT FORMAT</div>
-      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:6px"><strong>Idea — Re-seed the 3rd/4th game:</strong> Instead of 3rd vs 4th (already determined by RR), make it <strong>2nd vs 3rd</strong>. Winner takes 2nd, loser drops to 3rd. 1st goes straight to final, 4th plays 5th/6th winner for 4th place. No time change, no game count change — makes the middle bracket more meaningful.</div>
-      <div style="font-size:11px;color:var(--muted)">This is a discussion item for the core group — not yet confirmed.</div>
-    </div>
-
     <!-- Format comparison table -->
     <div class="card" style="margin-bottom:12px">
       <div class="card-hd" style="font-size:12px;font-weight:700">📋 Format Comparison</div>
@@ -489,8 +482,8 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
             <tr style="background:var(--navy);color:#fff">
               <th style="padding:7px 10px;text-align:left;font-weight:700;white-space:nowrap"></th>
               <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;background:#1a5fb4">Current ⭐</th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Option 1</th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Option 2</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Opt 1 — Knockout</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Opt 2 — KO+Simple</th>
             </tr>
           </thead>
           <tbody id="fmt-table-body"></tbody>
@@ -528,6 +521,17 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
     <!-- Pros/cons -->
     <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px" id="pros-cons"></div>
+
+    <!-- Possible improvement (moved to bottom) -->
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;padding:12px 14px;margin-bottom:4px">
+      <div style="font-size:11px;font-family:'Roboto Mono',monospace;font-weight:700;color:#92400e;margin-bottom:6px">💡 DISCUSSION ITEM — Core Group Only</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:6px">
+        <strong>Can we make the playoff bracket more interesting without changing game counts?</strong><br><br>
+        Currently the 3rd/4th game is set by RR — the result is almost predetermined before the game is played. One option: play <strong>2nd vs 3rd</strong> in that slot instead. The winner earns 2nd place, the loser drops to 3rd. 1st place still goes straight to the Grand Final. 4th place plays 5th/6th game winner for final ranking.<br><br>
+        This keeps all 6 teams playing 5 games, adds a meaningful contest in the middle bracket, and doesn't require any schedule changes.
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-style:italic">Not yet confirmed — open for core group discussion.</div>
+    </div>
 
   </div><!-- /stv-analysis -->
 
@@ -1202,27 +1206,27 @@ function runSim(id, btn){
       <thead><tr style="background:var(--light)">
         <th style="padding:6px 10px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Team</th>
         <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--blue);border-bottom:1px solid var(--border2)">Current ⭐</th>
-        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 1</th>
-        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 2</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 1 — KO</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 2 — KO+Simple</th>
         <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Titles</th>
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-      <div style="background:#e8eef8;border:1px solid #c5d4f0;border-radius:3px;padding:8px 10px">
-        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--blue);margin-bottom:3px">CURRENT ⭐ SPREAD</div>
-        <div style="font-size:18px;font-weight:900;color:var(--blue)">${spread1}pts</div>
-        <div style="font-size:10px;color:var(--blue)">All 6 teams play 5 games</div>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#15803d;margin-bottom:3px">CURRENT ⭐</div>
+        <div style="font-size:18px;font-weight:900;color:#15803d">${spread1}pts</div>
+        <div style="font-size:10px;color:#15803d">All 6 teams · 5 games each</div>
       </div>
       <div style="background:var(--light);border-radius:3px;padding:8px 10px">
-        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPTION 1 SPREAD</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPT 1 — KNOCKOUT</div>
         <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread1}pts</div>
-        <div style="font-size:10px;color:var(--muted)">${contested1} teams within 4pts (5th/6th: 4 games)</div>
+        <div style="font-size:10px;color:var(--muted)">${contested1} within 4pts · 5th/6th: 4 games</div>
       </div>
       <div style="background:var(--light);border-radius:3px;padding:8px 10px">
-        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPTION 2 SPREAD</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPT 2 — KO+SIMPLE</div>
         <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread2}pts</div>
-        <div style="font-size:10px;color:var(--muted)">${contested2} teams within 4pts</div>
+        <div style="font-size:10px;color:var(--muted)">${contested2} within 4pts · 5th/6th: 4 games</div>
       </div>
     </div>`;
 }
