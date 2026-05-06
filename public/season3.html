@@ -1434,7 +1434,200 @@ function setPlayerTeamFilter(team, btn) {
   filterPlayers();
 }
 
-// ── ROTATION ──────────────────────────────────────────────────────────
+// ── SIMULATION ────────────────────────────────────────────────────────
+// Scoring models:
+// Current: 1pt per RR win + positional bonus (1st=6,2nd=5,3rd=4,4th=3,5th=2,6th=1)
+//          All 6 teams play 5 games. Same scoring formula as Opt 1.
+// Opt 1:   Same scoring as Current. Different playoff bracket (semis vs direct).
+//          Points are identical to Current — difference is who gets to play for trophy.
+// Opt 2:   1pt per win only (RR wins + knockout wins). No positional bonus.
+//          5th/6th earn only RR wins. Top 4 earn extra wins from semis/finals.
+//
+// NOTE: Current and Opt1 will always show the same season points because the scoring
+// formula is identical. The difference is purely in playoff structure/experience.
+
+function runSim(id, btn){
+  document.querySelectorAll('#sim-chips .chip').forEach(b=>b.classList.remove('active'));
+  btn?.classList.add('active');
+
+  const BONUS = {1:6,2:5,3:4,4:3,5:2,6:1};
+
+  // Each month entry: {rr: RR wins (0-4), pos: final position (1-6)}
+  // opt2 ko wins: pos1=2wins(semi+final), pos2=1win(final), pos3=2wins(semi+3rd), pos4=1win, pos5=0, pos6=0
+  function monthPts(m, model) {
+    if (model === 'current' || model === 'opt1') {
+      return m.rr + (BONUS[m.pos] || 1);
+    } else { // opt2
+      const koWins = {1:2, 2:1, 3:2, 4:1, 5:0, 6:0}[m.pos] || 0;
+      return m.rr + koWins;
+    }
+  }
+
+  const SIMS = {
+    tight: {
+      label: 'After Month 3 — Tight standings',
+      desc: 'Realistic scenario: wins distributed across teams, no runaway leader after 3 months. Points column shows cumulative season total.',
+      note: '⚠️ Current and Opt 1 always show the same points — their scoring formula is identical. The difference is playoff bracket: Opt 1 gives 3rd/4th teams a semi-final shot at the trophy.',
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:2,pos:3},{rr:3,pos:2}]},
+        {team:'Predators', months:[{rr:3,pos:2},{rr:4,pos:1},{rr:2,pos:4}]},
+        {team:'Falcons',   months:[{rr:2,pos:4},{rr:3,pos:2},{rr:4,pos:1}]},
+        {team:'Spartans',  months:[{rr:3,pos:3},{rr:2,pos:4},{rr:3,pos:3}]},
+        {team:'Titans',    months:[{rr:1,pos:5},{rr:2,pos:5},{rr:1,pos:5}]},
+        {team:'Raptors',   months:[{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6}]},
+      ],
+    },
+    runaway: {
+      label: 'After Month 4 — One team dominant',
+      desc: 'Dragons win 3 of 4 monthly titles. How big is the gap, and can others close it?',
+      note: '⚠️ Notice how Opt 2\'s narrower scale (no bonus) shrinks the gap from leader to bottom — but also reduces separation between 2nd and 5th place.',
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:4,pos:1},{rr:3,pos:1},{rr:4,pos:1}]},
+        {team:'Predators', months:[{rr:3,pos:2},{rr:2,pos:3},{rr:4,pos:2},{rr:2,pos:4}]},
+        {team:'Falcons',   months:[{rr:2,pos:3},{rr:3,pos:2},{rr:2,pos:4},{rr:3,pos:2}]},
+        {team:'Spartans',  months:[{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:3},{rr:2,pos:3}]},
+        {team:'Titans',    months:[{rr:1,pos:5},{rr:2,pos:5},{rr:1,pos:5},{rr:1,pos:5}]},
+        {team:'Raptors',   months:[{rr:1,pos:6},{rr:1,pos:6},{rr:2,pos:6},{rr:2,pos:6}]},
+      ],
+    },
+    comeback: {
+      label: 'After Month 5 — Comeback story',
+      desc: 'Spartans: 5th/6th in M1-M2, then wins M3-M5 in a row. One month left — can they overtake?',
+      note: 'Under Current/Opt 1: Spartans\' 3 titles give them a strong shot. Under Opt 2: early bad months hurt more since no bonus pts were earned.',
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:3,pos:1},{rr:2,pos:3},{rr:2,pos:4},{rr:2,pos:4}]},
+        {team:'Predators', months:[{rr:3,pos:2},{rr:4,pos:2},{rr:3,pos:2},{rr:3,pos:2},{rr:2,pos:3}]},
+        {team:'Falcons',   months:[{rr:3,pos:3},{rr:2,pos:3},{rr:2,pos:4},{rr:2,pos:3},{rr:3,pos:2}]},
+        {team:'Spartans',  months:[{rr:1,pos:5},{rr:1,pos:6},{rr:4,pos:1},{rr:4,pos:1},{rr:4,pos:1}]},
+        {team:'Titans',    months:[{rr:2,pos:4},{rr:3,pos:4},{rr:2,pos:5},{rr:2,pos:5},{rr:2,pos:5}]},
+        {team:'Raptors',   months:[{rr:1,pos:6},{rr:1,pos:5},{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6}]},
+      ],
+    },
+    final: {
+      label: 'Full season — Three-way race to the end',
+      desc: 'All 6 months played. Three teams separated by just 2 pts. Final standings under each model.',
+      note: 'Opt 2 compresses the standings significantly — 6th place earns 0 playoff pts and the full-season spread drops from 39pts to under 20pts.',
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:3,pos:2},{rr:2,pos:3},{rr:4,pos:1},{rr:2,pos:4},{rr:3,pos:2}]},
+        {team:'Predators', months:[{rr:2,pos:3},{rr:4,pos:1},{rr:4,pos:1},{rr:2,pos:3},{rr:4,pos:1},{rr:2,pos:4}]},
+        {team:'Falcons',   months:[{rr:3,pos:2},{rr:2,pos:3},{rr:3,pos:2},{rr:3,pos:2},{rr:3,pos:2},{rr:4,pos:1}]},
+        {team:'Spartans',  months:[{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:3},{rr:2,pos:3}]},
+        {team:'Titans',    months:[{rr:1,pos:5},{rr:1,pos:5},{rr:1,pos:5},{rr:1,pos:5},{rr:1,pos:5},{rr:1,pos:5}]},
+        {team:'Raptors',   months:[{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6}]},
+      ],
+    },
+  };
+
+  const sim = SIMS[id];
+  if (!sim) return;
+
+  const teams = sim.history.map(t=>{
+    const cur  = t.months.reduce((s,m)=>s+monthPts(m,'current'),0);
+    const opt1 = t.months.reduce((s,m)=>s+monthPts(m,'opt1'),0);
+    const opt2 = t.months.reduce((s,m)=>s+monthPts(m,'opt2'),0);
+    const titles = t.months.filter(m=>m.pos===1).length;
+    // Per-month breakdown
+    const breakdown = t.months.map((m,mi)=>({
+      month: mi+1,
+      rr: m.rr,
+      pos: m.pos,
+      curPts: monthPts(m,'current'),
+      opt2Pts: monthPts(m,'opt2'),
+    }));
+    return { team:t.team, cur, opt1, opt2, titles, breakdown };
+  }).sort((a,b)=>b.cur-a.cur);
+
+  const leaderCur  = teams[0].cur;
+  const leaderOpt2 = Math.max(...teams.map(t=>t.opt2));
+  const spread_cur  = leaderCur - teams[teams.length-1].cur;
+  const spread_opt2 = leaderOpt2 - Math.min(...teams.map(t=>t.opt2));
+  const contested_cur  = teams.filter(t=>leaderCur-t.cur<=4).length;
+  const contested_opt2 = teams.filter(t=>leaderOpt2-t.opt2<=4).length;
+
+  const posIcon = p => p===1?'🏆':p===2?'🥈':p===3?'🥉':p+'th';
+
+  // Build per-month expandable rows
+  const tableRows = teams.map((t,i)=>{
+    const uid = 'sim-'+t.team.replace(/\s+/g,'_');
+    const gapCur  = leaderCur - t.cur;
+    const gapOpt2 = leaderOpt2 - t.opt2;
+    const gapStr  = g => g>0 ? `<span style="font-size:9px;color:var(--red)"> -${g}</span>` : '';
+    const monthRows = t.breakdown.map(m=>`
+      <tr style="background:#fafafa;border-bottom:1px solid var(--border2)">
+        <td style="padding:4px 10px 4px 28px;font-size:11px;color:var(--muted);font-family:'Roboto Mono',monospace">M${m.month}</td>
+        <td style="padding:4px 8px;text-align:center;font-size:11px;color:var(--muted)">${posIcon(m.pos)} · ${m.rr}W</td>
+        <td style="padding:4px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;color:#15803d;background:#f0fdf4">${m.curPts}pts</td>
+        <td style="padding:4px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;color:#15803d;background:#f0fdf4">${m.curPts}pts</td>
+        <td style="padding:4px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700">${m.opt2Pts}pts</td>
+        <td></td>
+      </tr>`).join('');
+    return `
+      <tr style="border-bottom:1px solid var(--border2);cursor:pointer;${i===0?'background:#e8f4fd':''}" onclick="toggleSimRow('${uid}')">
+        <td style="padding:7px 10px;font-weight:700;font-size:12px">
+          <span style="display:flex;align-items:center;gap:6px">${dot(t.team,7)}<span>${t.team}</span></span>
+        </td>
+        <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted)">${t.titles>0?`🏆×${t.titles}`:'—'}</td>
+        <td style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;background:#f0fdf4;color:#15803d">${t.cur}${gapStr(gapCur)}</td>
+        <td style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;background:#f0fdf4;color:#15803d">${t.opt1}${gapStr(gapCur)}</td>
+        <td style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700">${t.opt2}${gapStr(gapOpt2)}</td>
+        <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted)">▾</td>
+      </tr>
+      <tr id="${uid}" style="display:none">
+        <td colspan="6" style="padding:0">
+          <table style="width:100%;border-collapse:collapse">
+            <tr style="background:#f5f5f5">
+              <td style="padding:4px 10px 4px 28px;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted)">MONTH</td>
+              <td style="padding:4px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted)">RESULT</td>
+              <td style="padding:4px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#15803d;background:#f0fdf4">CURRENT</td>
+              <td style="padding:4px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#15803d;background:#f0fdf4">OPT 1</td>
+              <td style="padding:4px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted)">OPT 2</td>
+              <td></td>
+            </tr>
+            ${monthRows}
+          </table>
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('sim-output').innerHTML=`
+    <div style="font-size:13px;font-weight:700;margin-bottom:4px">${sim.label}</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${sim.desc}</div>
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:3px;padding:7px 10px;font-size:11px;color:#92400e;margin-bottom:10px;line-height:1.5">${sim.note}</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-style:italic">Tap a team row to see month-by-month breakdown</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px">
+      <thead><tr style="background:var(--navy);color:#fff">
+        <th style="padding:6px 10px;text-align:left;font-size:10px">Team</th>
+        <th style="padding:6px 8px;text-align:center;font-size:10px">Titles</th>
+        <th style="padding:6px 8px;text-align:center;font-size:10px;background:#15803d">Current ⭐</th>
+        <th style="padding:6px 8px;text-align:center;font-size:10px;background:#155e30">Opt 1 — KO</th>
+        <th style="padding:6px 8px;text-align:center;font-size:10px">Opt 2 — KO+Simple</th>
+        <th style="padding:6px 8px;width:20px"></th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#15803d;margin-bottom:3px">CURRENT ⭐</div>
+        <div style="font-size:18px;font-weight:900;color:#15803d">${spread_cur}pts</div>
+        <div style="font-size:10px;color:#15803d">${contested_cur} teams within 4pts · equal games</div>
+      </div>
+      <div style="background:var(--light);border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPT 1 — KNOCKOUT</div>
+        <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread_cur}pts</div>
+        <div style="font-size:10px;color:var(--muted)">Same pts as Current · 5th/6th lose a game</div>
+      </div>
+      <div style="background:var(--light);border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPT 2 — KO+SIMPLE</div>
+        <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread_opt2}pts</div>
+        <div style="font-size:10px;color:var(--muted)">${contested_opt2} within 4pts · compressed spread</div>
+      </div>
+    </div>`;
+}
+
+function toggleSimRow(uid){
+  const el=document.getElementById(uid);
+  if(el) el.style.display = el.style.display==='none' ? 'table-row' : 'none';
+}
 
 // ── PLAYER PROFILE ────────────────────────────────────────────────────
 const SKILL_COLORS = {
