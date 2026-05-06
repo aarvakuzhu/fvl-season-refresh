@@ -468,6 +468,45 @@ app.get('/api/players/profiles', async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── GET /api/admin/seed-status ───────────────────────────────────────────
+app.get('/api/admin/seed-status', async (req, res) => {
+  try {
+    const [events, profiles] = await Promise.all([
+      MonthlyEvent.findOne({ season: 3 }).sort({ updatedAt: -1 }),
+      require('./models').PlayerProfile.findOne().sort({ updatedAt: -1 }),
+    ]);
+    const dates = await MonthlyEvent.find({ season: 3 }).sort({ month: 1 }).select('month label date updatedAt');
+    res.json({
+      schedule: {
+        lastSeeded: events?.updatedAt || null,
+        dates: dates.map(d => ({ month: d.month, label: d.label, date: d.date, updatedAt: d.updatedAt })),
+      },
+      playerProfiles: {
+        lastSeeded: profiles?.updatedAt || null,
+      },
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── POST /api/s3/update-dates ─────────────────────────────────────────────
+// Updates only tournament dates — does NOT touch teams, results, or standings
+app.post('/api/s3/update-dates', async (req, res) => {
+  try {
+    const { password, dates } = req.body; // dates: [{month, date}]
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Wrong password' });
+    const updated = [];
+    for (const { month, date } of (dates || [])) {
+      const ev = await MonthlyEvent.findOneAndUpdate(
+        { season: 3, month: Number(month) },
+        { date },
+        { new: true }
+      );
+      if (ev) updated.push({ month, date, label: ev.label });
+    }
+    res.json({ success: true, updated });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Sitemap ──────────────────────────────────────────────────────────────
 app.get('/sitemap', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sitemap.html'));
