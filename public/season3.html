@@ -391,20 +391,31 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 <!-- STANDINGS (season) -->
 <div class="panel" id="panel-standings">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
-    <span style="font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">🏆 Season 3 · May–Oct 2026</span>
-    <span style="font-size:10px;font-family:'Roboto Mono',monospace;color:var(--muted)">Pts · RR W · Titles</span>
-  </div>
-  <div class="card" style="margin-bottom:12px">
-    <div id="standings-list">
-      <div class="skel" style="height:44px;margin:2px"></div>
-      <div class="skel" style="height:44px;margin:2px"></div>
-      <div class="skel" style="height:44px;margin:2px"></div>
-      <div class="skel" style="height:44px;margin:2px"></div>
-      <div class="skel" style="height:44px;margin:2px"></div>
-      <div class="skel" style="height:44px;margin:2px"></div>
+
+  <!-- Sub-toggle -->
+  <div class="view-toggle-bar" style="margin-bottom:10px">
+    <div class="view-toggle">
+      <button id="st-standings" class="vt-btn active" onclick="setStView('standings')">🏆 Standings</button>
+      <button id="st-analysis"  class="vt-btn"        onclick="setStView('analysis')">📊 Format Analysis</button>
     </div>
   </div>
+
+  <!-- STANDINGS VIEW -->
+  <div id="stv-standings">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
+      <span style="font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">🏆 Season 3 · May–Oct 2026</span>
+      <span style="font-size:10px;font-family:'Roboto Mono',monospace;color:var(--muted)">Pts · RR W · Titles</span>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div id="standings-list">
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+        <div class="skel" style="height:44px;margin:2px"></div>
+      </div>
+    </div>
 
   <!-- Scoring Rules -->
   <div class="card">
@@ -448,7 +459,69 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
       </div>
     </div>
   </div>
-</div>
+  </div><!-- /stv-standings -->
+
+  <!-- FORMAT ANALYSIS VIEW -->
+  <div id="stv-analysis" style="display:none">
+    <!-- Recommendation banner -->
+    <div style="background:linear-gradient(135deg,#1b5e20,#2e7d32);border-radius:4px;padding:14px 16px;margin-bottom:12px">
+      <div style="font-size:11px;font-family:'Roboto Mono',monospace;color:rgba(255,255,255,.65);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">⭐ Recommendation</div>
+      <div style="font-size:16px;font-weight:900;color:#fff;margin-bottom:4px">Option 1 — Knockout Format</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.5">Keep current scoring (RR win + positional bonus). Change playoff format to Semis (1v4, 2v3) → Final + 3rd/4th. Gives 4 teams a shot at the trophy every month. No extra time needed.</div>
+    </div>
+
+    <!-- Format comparison table -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hd" style="font-size:12px;font-weight:700">📋 Format Comparison</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="background:var(--navy);color:#fff">
+              <th style="padding:7px 10px;text-align:left;font-weight:700;white-space:nowrap"></th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Current</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;background:#1b5e20">Option 1 ⭐</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Option 2</th>
+            </tr>
+          </thead>
+          <tbody id="fmt-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Monthly pts comparison -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hd" style="font-size:12px;font-weight:700">💰 Monthly Points — Same Performance</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="background:var(--light)">
+              <th style="padding:7px 10px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Scenario</th>
+              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Current</th>
+              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#1b5e20;border-bottom:1px solid var(--border2)">Opt 1 ⭐</th>
+              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 2</th>
+            </tr>
+          </thead>
+          <tbody id="pts-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Simulation -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hd" style="font-size:12px;font-weight:700">🎲 Season Simulation</div>
+      <div style="padding:10px 13px 4px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Select a mid-season scenario to see how each format affects the standings race.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="sim-chips"></div>
+        <div id="sim-output"></div>
+      </div>
+    </div>
+
+    <!-- Pros/cons -->
+    <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px" id="pros-cons"></div>
+
+  </div><!-- /stv-analysis -->
+
+</div><!-- /panel-standings -->
 
 <!-- ROTATION -->
 <div class="panel" id="panel-rotation">
@@ -909,7 +982,240 @@ function toggleStRow(uid) {
   if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
 }
 
-// ── ROTATION ──────────────────────────────────────────────────────────
+// ── STANDINGS SUB-TOGGLE ──────────────────────────────────────────────
+function setStView(v){
+  document.getElementById('st-standings').classList.toggle('active',v==='standings');
+  document.getElementById('st-analysis').classList.toggle('active',v==='analysis');
+  document.getElementById('stv-standings').style.display=v==='standings'?'':'none';
+  document.getElementById('stv-analysis').style.display=v==='analysis'?'':'none';
+  if(v==='analysis') renderAnalysis();
+}
+
+// ── FORMAT ANALYSIS ───────────────────────────────────────────────────
+function renderAnalysis(){
+  if(document.getElementById('fmt-table-body').children.length) return; // already rendered
+
+  // ── Comparison table ─────────────────────────────────────────────
+  const rows=[
+    ['Playoff format','5th/6th · 3rd/4th · Final','Semis(1v4,2v3) · Final · 3rd/4th','Semis(1v4,2v3) · Final · 3rd/4th'],
+    ['Teams in trophy contention','Top 2 only','Top 4 🏆','Top 4 🏆'],
+    ['Playoff games','3','4','4'],
+    ['Extra time needed','—','None (2 courts)','None (2 courts)'],
+    ['Scoring','RR win+1, bonus 6-1','RR win+1, bonus 6-1','All wins = 1pt, no bonus'],
+    ['Max pts/month','10','10','6'],
+    ['Max season pts','60','60','36'],
+    ['5th/6th earn bonus pts?','Yes (+1/+2)','No (RR pts only)','No (RR pts only)'],
+    ['Season standings spread','Wide','Wide','Narrow'],
+    ['Tiebreakers needed','Occasional','Occasional','Frequent'],
+    ['Complexity','Medium','Medium','Simple'],
+  ];
+  const C=['','#fff8e1','#e8f5e9','#fff8e1'];
+  document.getElementById('fmt-table-body').innerHTML=rows.map((r,ri)=>`
+    <tr style="border-bottom:1px solid var(--border2);${ri%2?'background:var(--light)':''}">
+      <td style="padding:7px 10px;font-weight:600;color:var(--muted);font-size:11px;white-space:nowrap">${r[0]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px">${r[1]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#f0fdf4;font-weight:${ri===1||ri===2?'700':'400'};color:${ri===1?'#15803d':''}">${r[2]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px">${r[3]}</td>
+    </tr>`).join('');
+
+  // ── Monthly pts table ─────────────────────────────────────────────
+  const pts=[
+    ['4W → Champion (via semi)','4+6=10','4+6=10','4+2=6'],
+    ['3W → Champion (via semi)','3+6=9','3+6=9','3+2=5'],
+    ['4W → Finalist','4+5=9','4+5=9','4+1=5'],
+    ['2W → 4th (loses semi)','2+3=5','2+3=5','2+0=2'],
+    ['1W → 5th place','1+2=3','1 (RR only)','1'],
+    ['0W → 6th place','0+1=1','0 (RR only)','0'],
+  ];
+  document.getElementById('pts-table-body').innerHTML=pts.map((r,ri)=>`
+    <tr style="border-bottom:1px solid var(--border2);${ri%2?'background:var(--light)':''}">
+      <td style="padding:6px 10px;color:var(--muted);font-size:11px">${r[0]}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:12px">${r[1]}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:12px;background:#f0fdf4;color:#15803d">${r[2]}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:12px">${r[3]}</td>
+    </tr>`).join('');
+
+  // ── Pros/cons ─────────────────────────────────────────────────────
+  const options=[
+    {label:'Current',color:'#64748b',pros:['Familiar format','5th/6th still get bonus pts','Wide season spread'],cons:['Only top 2 fight for trophy','4 teams eliminated early from title contention','Tight RR cluster makes 1v2 semi predictable']},
+    {label:'Option 1 ⭐ Recommended',color:'#1b5e20',pros:['4 teams in monthly trophy race','Upsets possible — 4th can beat 1st in single game','No schedule change needed (2 courts, same time)','Keeps meaningful positional bonus scoring','Preserves wide season standings spread'],cons:['5th/6th teams only earn RR pts','Semi-finalist who loses gets same pts as current 3rd — but more exciting path']},
+    {label:'Option 2',color:'#1a3566',pros:['Simplest scoring — every win = 1pt','Easy to explain to all players','4 teams in trophy race'],cons:['Narrow season spread (max 36 pts)','Tiebreakers dominate season standings','5th/6th earn 0 playoff points — hard cliff','Season feels arbitrary, not merit-based']},
+  ];
+  document.getElementById('pros-cons').innerHTML=options.map(o=>`
+    <div class="card">
+      <div class="card-hd" style="background:${o.color};color:#fff;font-size:12px;font-weight:700">${o.label}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        <div style="padding:10px 12px;border-right:1px solid var(--border2)">
+          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#15803d;margin-bottom:6px">✅ PROS</div>
+          ${o.pros.map(p=>`<div style="font-size:11px;color:var(--text);padding:2px 0;line-height:1.5">• ${p}</div>`).join('')}
+        </div>
+        <div style="padding:10px 12px">
+          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#c62828;margin-bottom:6px">❌ CONS</div>
+          ${o.cons.map(c=>`<div style="font-size:11px;color:var(--text);padding:2px 0;line-height:1.5">• ${c}</div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+
+  // ── Simulation chips ──────────────────────────────────────────────
+  const scenarios=[
+    {id:'tight',label:'Tight mid-season (M3)'},
+    {id:'runaway',label:'Leader pulling away (M4)'},
+    {id:'comeback',label:'Comeback story (M5)'},
+    {id:'final',label:'Last month decider (M6)'},
+  ];
+  document.getElementById('sim-chips').innerHTML=scenarios.map(s=>
+    `<button class="chip" onclick="runSim('${s.id}',this)">${s.label}</button>`).join('');
+
+  // Run default scenario
+  runSim('tight', document.querySelector('#sim-chips .chip'));
+}
+
+// ── SIMULATION ────────────────────────────────────────────────────────
+function runSim(id, btn){
+  document.querySelectorAll('#sim-chips .chip').forEach(b=>b.classList.remove('active'));
+  btn?.classList.add('active');
+
+  // Simulate season up to a point, then show remaining months' impact
+  const SIMS = {
+    tight: {
+      label: 'After Month 3 — All teams within 5 pts',
+      desc: 'Three teams tied at top going into M4. Who benefits from Option 1 knockout format?',
+      // [team, rrWins per month, finalPos per month] for M1-M3
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:3,pos:2},{rr:2,pos:3}]},
+        {team:'Predators', months:[{rr:3,pos:2},{rr:4,pos:1},{rr:3,pos:3}]},
+        {team:'Falcons',   months:[{rr:2,pos:3},{rr:2,pos:4},{rr:4,pos:1}]},
+        {team:'Spartans',  months:[{rr:3,pos:4},{rr:2,pos:3},{rr:3,pos:2}]},
+        {team:'Titans',    months:[{rr:2,pos:5},{rr:2,pos:5},{rr:2,pos:4}]},
+        {team:'Raptors',   months:[{rr:0,pos:6},{rr:1,pos:6},{rr:0,pos:6}]},
+      ],
+    },
+    runaway: {
+      label: 'After Month 4 — Dragons pulling away',
+      desc: 'Dragons won 3 of 4 monthly trophies. Can the field catch up in M5-M6?',
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:4,pos:1},{rr:3,pos:1},{rr:4,pos:1}]},
+        {team:'Predators', months:[{rr:3,pos:2},{rr:2,pos:3},{rr:4,pos:2},{rr:2,pos:4}]},
+        {team:'Falcons',   months:[{rr:2,pos:3},{rr:3,pos:2},{rr:2,pos:4},{rr:3,pos:2}]},
+        {team:'Spartans',  months:[{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:3},{rr:2,pos:3}]},
+        {team:'Titans',    months:[{rr:1,pos:5},{rr:2,pos:5},{rr:1,pos:5},{rr:1,pos:5}]},
+        {team:'Raptors',   months:[{rr:1,pos:6},{rr:1,pos:6},{rr:2,pos:6},{rr:2,pos:6}]},
+      ],
+    },
+    comeback: {
+      label: 'After Month 5 — Spartans on a run',
+      desc: 'Spartans finished bottom-half in M1-M2, then won M3-M5. One month left.',
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:3,pos:1},{rr:2,pos:3},{rr:2,pos:4},{rr:2,pos:4}]},
+        {team:'Predators', months:[{rr:3,pos:2},{rr:4,pos:2},{rr:3,pos:2},{rr:3,pos:2},{rr:2,pos:3}]},
+        {team:'Falcons',   months:[{rr:3,pos:3},{rr:2,pos:3},{rr:2,pos:4},{rr:2,pos:3},{rr:3,pos:2}]},
+        {team:'Spartans',  months:[{rr:1,pos:5},{rr:1,pos:6},{rr:4,pos:1},{rr:4,pos:1},{rr:4,pos:1}]},
+        {team:'Titans',    months:[{rr:2,pos:4},{rr:3,pos:4},{rr:2,pos:5},{rr:2,pos:5},{rr:2,pos:5}]},
+        {team:'Raptors',   months:[{rr:1,pos:6},{rr:1,pos:5},{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6}]},
+      ],
+    },
+    final: {
+      label: 'Final Month — Three-way title race',
+      desc: 'Three teams separated by 2 pts going into M6. Everything to play for.',
+      history: [
+        {team:'Dragons',   months:[{rr:4,pos:1},{rr:3,pos:2},{rr:2,pos:3},{rr:4,pos:1},{rr:2,pos:4}]},
+        {team:'Predators', months:[{rr:2,pos:3},{rr:4,pos:1},{rr:4,pos:1},{rr:2,pos:3},{rr:4,pos:1}]},
+        {team:'Falcons',   months:[{rr:3,pos:2},{rr:2,pos:3},{rr:3,pos:2},{rr:3,pos:2},{rr:3,pos:2}]},
+        {team:'Spartans',  months:[{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:4},{rr:2,pos:3}]},
+        {team:'Titans',    months:[{rr:1,pos:5},{rr:1,pos:5},{rr:1,pos:5},{rr:1,pos:5},{rr:1,pos:5}]},
+        {team:'Raptors',   months:[{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6},{rr:1,pos:6}]},
+      ],
+    },
+  };
+
+  const sim = SIMS[id];
+  if (!sim) return;
+
+  const BONUS = {1:6,2:5,3:4,4:3,5:2,6:1};
+
+  function calcPoints(team, model) {
+    return team.months.reduce((sum,m)=>{
+      if(model==='current'||model==='opt1') return sum + m.rr + (BONUS[m.pos]||1);
+      else return sum + m.rr + (m.pos<=4 ? Math.min(m.pos<=2?2:1,m.pos<=2?2:1) : 0); // opt2: wins only approx
+    },0);
+  }
+
+  // For simplicity use actual scoring models
+  function calcOpt1(months){ return months.reduce((s,m)=>s+m.rr+(BONUS[m.pos]||1),0); }
+  function calcOpt2(months){
+    // RR wins + 1 per knockout win (semi win + final win if applicable)
+    return months.reduce((s,m)=>{
+      const koWins = m.pos===1?2:m.pos===2?1:m.pos===3?2:m.pos===4?1:0;
+      return s+m.rr+koWins;
+    },0);
+  }
+  function calcCurrent(months){ return calcOpt1(months); } // same formula
+
+  const teams = sim.history.map(t=>({
+    team: t.team,
+    color: teamColor(t.team),
+    current: calcCurrent(t.months),
+    opt1: calcOpt1(t.months),
+    opt2: calcOpt2(t.months),
+    titles: t.months.filter(m=>m.pos===1).length,
+    months: t.months.length,
+  })).sort((a,b)=>b.opt1-a.opt1);
+
+  const maxCurrent = Math.max(...teams.map(t=>t.current));
+
+  const tableRows = teams.map((t,i)=>{
+    const leader = i===0;
+    const gap1 = teams[0].opt1 - t.opt1;
+    const gap2 = teams[0].opt2 - t.opt2;
+    const titles = t.titles>0 ? `🏆×${t.titles}` : '—';
+    return `<tr style="border-bottom:1px solid var(--border2);${leader?'background:#fffbeb':''}">
+      <td style="padding:6px 10px;font-weight:700;font-size:12px">
+        <span style="display:flex;align-items:center;gap:6px">${dot(t.team,7)}<span>${t.team}</span></span>
+      </td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700">${t.current}${gap1>0&&!leader?`<span style="font-size:9px;color:var(--red)"> -${gap1}</span>`:''}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;background:#f0fdf4;color:#15803d">${t.opt1}${gap1>0&&!leader?`<span style="font-size:9px;color:var(--red)"> -${gap1}</span>`:''}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700">${t.opt2}${gap2>0&&!leader?`<span style="font-size:9px;color:var(--red)"> -${gap2}</span>`:''}</td>
+      <td style="padding:6px 8px;text-align:center;font-size:11px;color:var(--muted)">${titles}</td>
+    </tr>`;
+  }).join('');
+
+  // Insight
+  const spread1 = teams[0].opt1 - teams[teams.length-1].opt1;
+  const spread2 = teams[0].opt2 - teams[teams.length-1].opt2;
+  const contested1 = teams.filter(t=>teams[0].opt1-t.opt1<=4).length;
+  const contested2 = teams.filter(t=>teams[0].opt2-t.opt2<=4).length;
+
+  document.getElementById('sim-output').innerHTML=`
+    <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px">${sim.label}</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">${sim.desc}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px">
+      <thead><tr style="background:var(--light)">
+        <th style="padding:6px 10px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Team</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Current</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#15803d;border-bottom:1px solid var(--border2)">Opt 1 ⭐</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 2</th>
+        <th style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Titles</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+      <div style="background:var(--light);border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">CURRENT SPREAD</div>
+        <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread1}pts</div>
+        <div style="font-size:10px;color:var(--muted)">${contested1} teams within 4pts</div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#15803d;margin-bottom:3px">OPTION 1 ⭐</div>
+        <div style="font-size:18px;font-weight:900;color:#15803d">${spread1}pts</div>
+        <div style="font-size:10px;color:#15803d">${contested1} teams within 4pts + knockout upsets</div>
+      </div>
+      <div style="background:var(--light);border-radius:3px;padding:8px 10px">
+        <div style="font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);margin-bottom:3px">OPTION 2 SPREAD</div>
+        <div style="font-size:18px;font-weight:900;color:var(--muted)">${spread2}pts</div>
+        <div style="font-size:10px;color:var(--muted)">${contested2} teams within 4pts</div>
+      </div>
+    </div>`;
+}
 function renderRotation(){
   const n=TEAMS.length;
   let h='<thead><tr><th>Month</th>';
@@ -1113,6 +1419,8 @@ function setPlayerTeamFilter(team, btn) {
   btn.classList.add('active');
   filterPlayers();
 }
+
+// ── ROTATION ──────────────────────────────────────────────────────────
 
 // ── PLAYER PROFILE ────────────────────────────────────────────────────
 const SKILL_COLORS = {
