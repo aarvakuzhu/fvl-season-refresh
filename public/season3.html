@@ -486,9 +486,9 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
           <thead>
             <tr style="background:var(--navy);color:#fff">
               <th style="padding:7px 10px;text-align:left;font-weight:700;white-space:nowrap"></th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;color:#999;font-style:italic">Previous</th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;background:#1b5e20">Current ✅ Implemented</th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Opt — Full KO</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;font-style:italic;color:#aaa">Previous</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;background:#1b5e20;white-space:nowrap">Current ✅</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Option 1 / Option 2</th>
             </tr>
           </thead>
           <tbody id="fmt-table-body"></tbody>
@@ -504,9 +504,9 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
           <thead>
             <tr style="background:var(--light)">
               <th style="padding:7px 10px;text-align:left;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Scenario</th>
-              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Current</th>
-              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#1b5e20;border-bottom:1px solid var(--border2)">Opt 1 ⭐</th>
-              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Opt 2</th>
+              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#aaa;border-bottom:1px solid var(--border2)">Previous</th>
+              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#15803d;border-bottom:1px solid var(--border2)">Current ✅</th>
+              <th style="padding:7px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Option 2</th>
             </tr>
           </thead>
           <tbody id="pts-table-body"></tbody>
@@ -1004,54 +1004,103 @@ function setStView(v){
 }
 
 // ── FORMAT ANALYSIS ───────────────────────────────────────────────────
+// Naming convention used consistently throughout:
+//   "Previous"   = old direct bracket (#1v#2 Final, #3v#4)
+//   "Current ✅" = implemented bracket (#2v#3 at 4:30, #1 vs winner)
+//   "Option 1"   = Full Knockout (Semis: 1v4, 2v3)
+//   "Option 2"   = Full Knockout + Simple Scoring (all wins = 1pt)
+//
+// Trophy contention:
+//   Previous: #1 and #2 only (2 teams)
+//   Current:  #1, #2, #3 — #2 and #3 play each other; winner enters Final (3 teams)
+//   Option 1: #1, #2, #3, #4 — but 5th/6th lose a game (4 teams)
 function renderAnalysis(){
-  if(document.getElementById('fmt-table-body').children.length) return; // already rendered
+  if(document.getElementById('fmt-table-body').children.length) return;
 
   // ── Comparison table ─────────────────────────────────────────────
   const rows=[
-    ['Playoff 4:30 PM','5th/6th + 3rd/4th (old)','✅ 5th/6th + #2v#3 ← implemented','Semis(1v4,2v3) · 5th/6th excluded'],
-    ['Playoff 4:55 PM','#1v#2 Final','✅ #1 vs winner of #2v#3 🏆','Final + 3rd/4th'],
-    ['Games per team','5 each','✅ 5 each','❌ Top4:6 · Bot2:4'],
-    ['Game time equality','✅ Equal','✅ Equal','❌ 5th/6th excluded'],
-    ['Teams in trophy contention','Top 2 only','✅ Top 3 (#3 can reach Final)','Top 4'],
-    ['Courts used at 4:55 PM','1 of 2 idle','✅ 2 of 2','2 of 2'],
-    ['Extra time needed','—','—','—'],
-    ['Scoring','RR win+1, bonus 6-1','✅ RR win+1, bonus 6-1','All wins = 1pt, no bonus'],
-    ['Max pts/month','10','✅ 10','6'],
-    ['5th/6th earn bonus pts?','✅ Yes (+1/+2)','✅ Yes (+1/+2)','❌ RR only'],
-    ['Season standings spread','Wide','✅ Wide','Narrow (max 36)'],
-    ['Fits FVL principle?','✅ Yes','✅ Yes','❌ No'],
+    ['4:30 PM bracket','5th/6th + 3rd/4th','✅ 5th/6th + #2 vs #3','5th/6th excluded · Semis: 1v4, 2v3'],
+    ['4:55 PM bracket','#1 vs #2 Final (C2 idle)','✅ #1 vs winner 🏆 + loser vs #4','Final + 3rd/4th (both courts)'],
+    ['Games per team','5 each','✅ 5 each','❌ Top4: 6 · 5th/6th: 4'],
+    ['Game time equality','✅ Equal for all','✅ Equal for all','❌ 5th/6th sit out playoffs'],
+    ['Courts at 4:55 PM','❌ 1 of 2 (idle)','✅ 2 of 2','✅ 2 of 2'],
+    ['Trophy contention','Top 2 only','✅ Top 3 (see note below)','Top 4 but 5th/6th lose a game'],
+    ['Scoring formula','RR wins + bonus 6→1','✅ RR wins + bonus 6→1','All wins = 1pt, no bonus'],
+    ['Max pts per month','10','✅ 10','6'],
+    ['5th/6th earn bonus pts?','✅ Yes (+1/+2)','✅ Yes (+1/+2)','❌ RR wins only'],
+    ['Season spread (max)','60 pts','✅ 60 pts','36 pts (compressed)'],
+    ['Fits FVL equal-game rule?','✅ Yes','✅ Yes','❌ No'],
   ];
+  // Note row explaining Trophy contention
+  const NOTE_ROW = 5;
   document.getElementById('fmt-table-body').innerHTML=rows.map((r,ri)=>`
     <tr style="border-bottom:1px solid var(--border2);${ri%2?'background:var(--light)':''}">
       <td style="padding:7px 10px;font-weight:600;color:var(--muted);font-size:11px;white-space:nowrap">${r[0]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted);text-decoration:line-through">${r[1]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;color:#aaa;text-decoration:line-through">${r[1]}</td>
       <td style="padding:7px 8px;text-align:center;font-size:11px;background:#f0fdf4;font-weight:700;color:#15803d">${r[2]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#fff8f8;color:#c62828">${r[3]}</td>
-    </tr>`).join('');
+      <td style="padding:7px 8px;text-align:center;font-size:11px;color:${r[3].startsWith('❌')?'#c62828':'var(--text)'}">${r[3]}</td>
+    </tr>${ri===NOTE_ROW?`<tr style="border-bottom:1px solid var(--border2);background:#f0fdf4">
+      <td colspan="4" style="padding:5px 10px;font-size:10px;color:#15803d;font-style:italic">
+        ℹ️ Top 3 explained: #1 goes straight to the Final. #2 and #3 play each other at 4:30 PM — both have a chance to reach the Final. Top 4 would require full knockouts which drops 5th/6th to 4 games, violating the equal-game principle.
+      </td>
+    </tr>`:''}`).join('');
 
   // ── Monthly pts table ─────────────────────────────────────────────
+  // Previous and Current use identical scoring — pts are the same.
+  // The pts column shows what changes between Previous and Current:
+  //   #3 reaching the Final earns 6pts bonus instead of 4pts (was 3rd/4th game winner)
+  //   #2 losing to #3 earns 4pts (drops to 3rd) instead of guaranteed 5pts
   const pts=[
-    ['4W → Champion (via semi)','4+6=10','4+6=10','4+2=6'],
-    ['3W → Champion (via semi)','3+6=9','3+6=9','3+2=5'],
-    ['4W → Finalist','4+5=9','4+5=9','4+1=5'],
-    ['2W → 4th (loses semi)','2+3=5','2+3=5','2+0=2'],
-    ['1W → 5th place','1+2=3','1 (RR only)','1'],
-    ['0W → 6th place','0+1=1','0 (RR only)','0'],
+    ['4W RR · #1 · wins Final','4+6 = 10','4+6 = 10','4+2 = 6'],
+    ['3W RR · #2 · beats #3 · wins Final','3+6 = 9','3+6 = 9','3+2 = 5'],
+    ['2W RR · #3 · beats #2 · wins Final','—','2+6 = 8 ⬆️','2+2 = 4'],
+    ['3W RR · #2 · loses to #3 · gets 3rd','3+5 = 8','3+4 = 7 ⬇️','3+1 = 4'],
+    ['2W RR · #3 · loses to #2','2+4 = 6','2+4 = 6','2+1 = 3'],
+    ['2W RR · #4 · consolation','2+3 = 5','2+3 = 5','2+1 = 3'],
+    ['1W RR · 5th place','1+2 = 3','1+2 = 3','1+0 = 1'],
+    ['0W RR · 6th place','0+1 = 1','0+1 = 1','0+0 = 0'],
   ];
+  const ptsHilite = [false,false,2,3,false,false,false,false]; // col index to highlight change
   document.getElementById('pts-table-body').innerHTML=pts.map((r,ri)=>`
     <tr style="border-bottom:1px solid var(--border2);${ri%2?'background:var(--light)':''}">
       <td style="padding:6px 10px;color:var(--muted);font-size:11px">${r[0]}</td>
-      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:12px">${r[1]}</td>
-      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:12px;background:#f0fdf4;color:#15803d">${r[2]}</td>
-      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:12px">${r[3]}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:11px;${ri===2?'color:#aaa;text-decoration:line-through':''}">${r[1]}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:11px;background:#f0fdf4;color:${ri===2?'#15803d':ri===3?'#c62828':'#15803d'}">${r[2]}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;font-size:11px">${r[3]}</td>
     </tr>`).join('');
 
-  // ── Pros/cons ─────────────────────────────────────────────────────
+  // ── Pros/cons — all 4 options ─────────────────────────────────────
   const options=[
-    {label:'✅ Implemented — #2 vs #3 bracket',color:'#1b5e20',pros:['All 6 teams play exactly 5 games — equal game time','#3 now has a real path to the Grand Final','5th/6th still earn playoff bonus points','Both courts active at 4:55 PM (no idle slot)','Wide season standings spread (max 60 pts)','No schedule changes needed'],cons:['#2 must earn their Final spot — can no longer coast from RR','Slightly more complex to explain than direct bracket']},
-    {label:'Previous Format',color:'#64748b',pros:['Simple direct bracket — RR determines all matchups','Top 2 guaranteed the Final'],cons:['Only top 2 contend for monthly trophy','4:55 PM had one idle court','3rd/4th game largely predetermined by RR']},
-    {label:'Full Knockout (Options 1 & 2)',color:'#94a3b8',pros:['4 teams in trophy race','Upsets possible — 4th can beat 1st'],cons:['❌ Violates FVL principle — 5th/6th play only 4 games','5th/6th sit idle for 50 min playoff window','Bottom teams lose motivation after RR stage']},
+    {label:'✅ Current — Implemented',color:'#1b5e20',
+     pros:['All 6 teams play exactly 5 games — equal game time',
+           '#2 and #3 compete at 4:30 PM — winner earns Grand Final spot',
+           '#3 has a real path to the monthly trophy 🏆',
+           '5th/6th still earn playoff bonus points',
+           'Both courts used at 4:55 PM — no wasted slot',
+           'Same scoring as previous — season standings unaffected',
+           'No extra time needed'],
+     cons:['#2 must earn their Final spot — RR 2nd place no longer guarantees Final',
+           'Only Top 3 in trophy contention (not Top 4)']},
+    {label:'Previous Format',color:'#94a3b8',
+     pros:['Simple — RR finishing position directly determines all playoff matchups'],
+     cons:['Only Top 2 contend for monthly trophy',
+           '4:55 PM C2 sits idle — wasted court',
+           '3rd/4th game largely predetermined by RR standings']},
+    {label:'Option 1 — Full Knockout (Semi-finals)',color:'#64748b',
+     pros:['Top 4 teams all contend for monthly trophy',
+           'Maximum upsets possible — 4th can beat 1st in a single game'],
+     cons:['❌ Violates FVL equal-game principle',
+           '5th/6th play only 4 games vs top 4 playing 6',
+           '5th/6th sit idle for entire 50-min playoff window',
+           'Bottom teams lose motivation once eliminated after RR']},
+    {label:'Option 2 — Full Knockout + Simple Scoring',color:'#64748b',
+     pros:['Top 4 in trophy contention',
+           'Simplest scoring — every win = 1pt, easy to explain'],
+     cons:['❌ Violates FVL equal-game principle',
+           '5th/6th play only 4 games',
+           'Season spread compressed (max 36 pts) — tiebreakers dominate',
+           '5th/6th earn 0 playoff points',
+           'Season standings less meaningful']},
   ];
   document.getElementById('pros-cons').innerHTML=options.map(o=>`
     <div class="card">
@@ -1073,12 +1122,10 @@ function renderAnalysis(){
     {id:'tight',label:'Tight mid-season (M3)'},
     {id:'runaway',label:'Leader pulling away (M4)'},
     {id:'comeback',label:'Comeback story (M5)'},
-    {id:'final',label:'Last month decider (M6)'},
+    {id:'final',label:'Full season (M6)'},
   ];
-  document.getElementById('sim-chips').innerHTML=scenarios.map(s=>
-    `<button class="chip" onclick="runSim('${s.id}',this)">${s.label}</button>`).join('');
-
-  // Run default scenario
+  document.getElementById('sim-chips').innerHTML=scenarios.map(sc=>
+    `<button class="chip" onclick="runSim('${sc.id}',this)">${sc.label}</button>`).join('');
   runSim('tight', document.querySelector('#sim-chips .chip'));
 }
 
@@ -1465,7 +1512,7 @@ function runSim(id, btn){
     tight: {
       label: 'After Month 3 — Tight standings',
       desc: 'Realistic scenario: wins distributed across teams, no runaway leader after 3 months. Points column shows cumulative season total.',
-      note: '⚠️ Current and Opt 1 always show the same points — their scoring formula is identical. The difference is playoff bracket: Opt 1 gives 3rd/4th teams a semi-final shot at the trophy.',
+      note: '⚠️ Current and Previous use the same scoring formula — season points are identical. The difference: in Current, #3 can now reach the Grand Final by beating #2 at 4:30 PM. Option 2 compresses the season spread significantly.',
       history: [
         {team:'Dragons',   months:[{rr:4,pos:1},{rr:2,pos:3},{rr:3,pos:2}]},
         {team:'Predators', months:[{rr:3,pos:2},{rr:4,pos:1},{rr:2,pos:4}]},
@@ -1478,7 +1525,7 @@ function runSim(id, btn){
     runaway: {
       label: 'After Month 4 — One team dominant',
       desc: 'Dragons win 3 of 4 monthly titles. How big is the gap, and can others close it?',
-      note: '⚠️ Notice how Opt 2\'s narrower scale (no bonus) shrinks the gap from leader to bottom — but also reduces separation between 2nd and 5th place.',
+      note: '⚠️ Under Current and Previous, a dominant team leads by more pts due to the positional bonus. Option 2 compresses the lead — teams are closer but standings become less meaningful.',
       history: [
         {team:'Dragons',   months:[{rr:4,pos:1},{rr:4,pos:1},{rr:3,pos:1},{rr:4,pos:1}]},
         {team:'Predators', months:[{rr:3,pos:2},{rr:2,pos:3},{rr:4,pos:2},{rr:2,pos:4}]},
@@ -1491,7 +1538,7 @@ function runSim(id, btn){
     comeback: {
       label: 'After Month 5 — Comeback story',
       desc: 'Spartans: 5th/6th in M1-M2, then wins M3-M5 in a row. One month left — can they overtake?',
-      note: 'Under Current/Opt 1: Spartans\' 3 titles give them a strong shot. Under Opt 2: early bad months hurt more since no bonus pts were earned.',
+      note: 'Under Current: Spartans\' 3 titles (monthly champion bonus) give them a strong comeback. Under Option 2: the narrow spread means the gap is smaller but Spartans\' poor early months are less costly.',
       history: [
         {team:'Dragons',   months:[{rr:4,pos:1},{rr:3,pos:1},{rr:2,pos:3},{rr:2,pos:4},{rr:2,pos:4}]},
         {team:'Predators', months:[{rr:3,pos:2},{rr:4,pos:2},{rr:3,pos:2},{rr:3,pos:2},{rr:2,pos:3}]},
@@ -1504,7 +1551,7 @@ function runSim(id, btn){
     final: {
       label: 'Full season — Three-way race to the end',
       desc: 'All 6 months played. Three teams separated by just 2 pts. Final standings under each model.',
-      note: 'Opt 2 compresses the standings significantly — 6th place earns 0 playoff pts and the full-season spread drops from 39pts to under 20pts.',
+      note: 'Current and Previous produce identical season totals — same formula. Option 2 compresses the standings: 6th earns 0 playoff pts and full-season spread drops from ~39pts to under 20pts.',
       history: [
         {team:'Dragons',   months:[{rr:4,pos:1},{rr:3,pos:2},{rr:2,pos:3},{rr:4,pos:1},{rr:2,pos:4},{rr:3,pos:2}]},
         {team:'Predators', months:[{rr:2,pos:3},{rr:4,pos:1},{rr:4,pos:1},{rr:2,pos:3},{rr:4,pos:1},{rr:2,pos:4}]},
