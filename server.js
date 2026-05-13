@@ -591,8 +591,8 @@ function buildGames(positions) {
   });
   // Finals slots (teams determined after RR — placeholders)
   games.push({ slot:6, type:'fifth',  teamA:'#5', teamB:'#6', court:1, scoreA:null, scoreB:null, played:false });
-  games.push({ slot:6, type:'third',  teamA:'#3', teamB:'#4', court:2, scoreA:null, scoreB:null, played:false });
-  games.push({ slot:7, type:'final',  teamA:'#1', teamB:'#2', court:1, scoreA:null, scoreB:null, played:false });
+  games.push({ slot:6, type:'third',  teamA:'#2', teamB:'#3', court:2, scoreA:null, scoreB:null, played:false }); // semi: #2 vs #3, winner enters Final
+  games.push({ slot:7, type:'final',  teamA:'#1', teamB:'#W', court:1, scoreA:null, scoreB:null, played:false }); // #1 vs winner of third
   return games;
 }
 

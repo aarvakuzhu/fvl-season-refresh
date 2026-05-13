@@ -441,8 +441,8 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
         </tr></thead>
         <tbody>
           <tr style="background:#fffbeb"><td style="padding:5px 10px;font-weight:700">🏆 1st Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#b8860b">+6</td><td style="padding:5px 10px;color:var(--muted)">Grand Final winner</td></tr>
-          <tr><td style="padding:5px 10px;font-weight:700">🥈 2nd Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#9ca3af">+5</td><td style="padding:5px 10px;color:var(--muted)">Grand Final loser</td></tr>
-          <tr style="background:#f8fafc"><td style="padding:5px 10px;font-weight:700">🥉 3rd Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#cd7f32">+4</td><td style="padding:5px 10px;color:var(--muted)">3rd place game winner</td></tr>
+          <tr><td style="padding:5px 10px;font-weight:700">🥈 2nd Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#9ca3af">+5</td><td style="padding:5px 10px;color:var(--muted)">Grand Final loser (winner of semi)</td></tr>
+          <tr style="background:#f8fafc"><td style="padding:5px 10px;font-weight:700">🥉 3rd Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700;color:#cd7f32">+4</td><td style="padding:5px 10px;color:var(--muted)">Semi loser who wins 3rd place game</td></tr>
           <tr><td style="padding:5px 10px;font-weight:700">4th Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700">+3</td><td style="padding:5px 10px;color:var(--muted)">3rd place game loser</td></tr>
           <tr style="background:#f8fafc"><td style="padding:5px 10px;font-weight:700">5th Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700">+2</td><td style="padding:5px 10px;color:var(--muted)">5th place game winner</td></tr>
           <tr><td style="padding:5px 10px;font-weight:700">6th Place</td><td style="padding:5px 10px;text-align:center;font-family:'Roboto Mono',monospace;font-weight:700">+1</td><td style="padding:5px 10px;color:var(--muted)">5th place game loser</td></tr>
@@ -647,7 +647,7 @@ function monthCard(ev, mi) {
     const names = [g.teamA,g.teamB].filter(t=>t&&!t.startsWith('#'));
     const court = g.court||1;
     const courtLbl = g.type!=='rr'
-      ? `${({final:'Final',third:'3rd Place',fifth:'5th Place'}[g.type]||g.type)} · C${court}`
+      ? `${({final:'Final',third:'Semi · #2v#3',fifth:'5th Place'}[g.type]||g.type)} · C${court}`
       : `C${court}`;
     const isP = g.teamA?.startsWith('#')||g.teamB?.startsWith('#');
     const tA = isP ? `<span style="color:var(--muted)">${g.teamA}</span>` : `${dot(g.teamA)} <span class="g-name">${g.teamA}</span>`;
@@ -803,7 +803,7 @@ function renderSVMonth(month){
       const won=g.played&&ms>os, lost=g.played&&ms<os;
       const isFin=g.type!=='rr';
       const cLbl=isFin
-        ? `${({final:'Final',third:'3rd Place',fifth:'5th Place'}[g.type]||g.type)} · C${g.court||1}`
+        ? `${({final:'Final',third:'Semi · #2v#3',fifth:'5th Place'}[g.type]||g.type)} · C${g.court||1}`
         : `C${g.court||1}`;
       const cCol=isFin?'var(--amber)':(g.court||1)===1?'var(--c1)':'var(--c2)';
       const resHtml=g.played
