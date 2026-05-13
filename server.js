@@ -593,6 +593,7 @@ function buildGames(positions) {
   games.push({ slot:6, type:'fifth',  teamA:'#5', teamB:'#6', court:1, scoreA:null, scoreB:null, played:false });
   games.push({ slot:6, type:'third',  teamA:'#2', teamB:'#3', court:2, scoreA:null, scoreB:null, played:false }); // semi: #2 vs #3, winner enters Final
   games.push({ slot:7, type:'final',  teamA:'#1', teamB:'#W', court:1, scoreA:null, scoreB:null, played:false }); // #1 vs winner of third
+  games.push({ slot:7, type:'consol', teamA:'#L', teamB:'#4', court:2, scoreA:null, scoreB:null, played:false }); // loser of semi vs #4 (3rd place)
   return games;
 }
 
@@ -681,9 +682,11 @@ app.post('/api/s3/result', async (req, res) => {
       const fg = ev.games.find(g=>g.type==='final');
       const tg = ev.games.find(g=>g.type==='third');
       const fig = ev.games.find(g=>g.type==='fifth');
+      const cg = ev.games.find(g=>g.type==='consol');
       if (tg)  { tg.teamA  = rrAfterClear.length ? ranked[1] : '#2'; tg.teamB  = rrAfterClear.length ? ranked[2] : '#3'; }
       if (fig) { fig.teamA = rrAfterClear.length ? ranked[4] : '#5'; fig.teamB = rrAfterClear.length ? ranked[5] : '#6'; }
       if (fg)  { fg.teamA  = rrAfterClear.length ? ranked[0] : '#1'; fg.teamB = '#W'; }
+      if (cg)  { cg.teamA = '#L'; cg.teamB = rrAfterClear.length ? ranked[3] : '#4'; }
       ev.markModified('games');
       await ev.save();
       return res.json({ success: true, game: ev.games[gameIndex] });
@@ -701,15 +704,20 @@ app.post('/api/s3/result', async (req, res) => {
       const finalGame  = ev.games.find(g=>g.type==='final');
       const thirdGame  = ev.games.find(g=>g.type==='third');
       const fifthGame  = ev.games.find(g=>g.type==='fifth');
-      // New bracket: third=#2v#3 (winner enters final), final=#1 vs winner, fifth=#5v#6
+      // New bracket: third=semi(#2v#3), final=#1 vs winner, consol=loser vs #4, fifth=#5v#6
+      const consolGame = ev.games.find(g=>g.type==='consol');
       if (thirdGame) { thirdGame.teamA = ranked[1]; thirdGame.teamB = ranked[2]; } // #2 vs #3
       if (fifthGame) { fifthGame.teamA = ranked[4]; fifthGame.teamB = ranked[5]; } // #5 vs #6
+      if (consolGame) { consolGame.teamA = '#L'; consolGame.teamB = ranked[3]; }   // loser vs #4
       // Final: #1 vs winner of third (TBD until third is played)
       if (finalGame) {
         finalGame.teamA = ranked[0]; // always #1
         const thirdPlayed = thirdGame && thirdGame.played;
         if (thirdPlayed) {
-          finalGame.teamB = thirdGame.scoreA > thirdGame.scoreB ? thirdGame.teamA : thirdGame.teamB;
+          const thirdWinner = thirdGame.scoreA > thirdGame.scoreB ? thirdGame.teamA : thirdGame.teamB;
+          const thirdLoser  = thirdGame.scoreA > thirdGame.scoreB ? thirdGame.teamB : thirdGame.teamA;
+          finalGame.teamB = thirdWinner;
+          if (consolGame) { consolGame.teamA = thirdLoser; } // update loser in consolation
         } else {
           finalGame.teamB = '#W'; // winner TBD
         }
@@ -717,19 +725,24 @@ app.post('/api/s3/result', async (req, res) => {
       ev.markModified('games');
     }
 
-    // If the third game was just played, update final.teamB to the winner
+    // If the semi (third) was just played, update final.teamB and consolation.teamA
     const savedGame = ev.games[gameIndex];
     if (savedGame.type === 'third' && savedGame.played) {
-      const finalGame = ev.games.find(g=>g.type==='final');
-      if (finalGame) {
-        finalGame.teamB = savedGame.scoreA > savedGame.scoreB ? savedGame.teamA : savedGame.teamB;
-        ev.markModified('games');
-      }
+      const finalGame  = ev.games.find(g=>g.type==='final');
+      const consolGame = ev.games.find(g=>g.type==='consol');
+      const winner = savedGame.scoreA > savedGame.scoreB ? savedGame.teamA : savedGame.teamB;
+      const loser  = savedGame.scoreA > savedGame.scoreB ? savedGame.teamB : savedGame.teamA;
+      if (finalGame)  { finalGame.teamB  = winner; }
+      if (consolGame) { consolGame.teamA = loser;  }
+      ev.markModified('games');
     }
-    // If third game was cleared, reset final.teamB to TBD
+    // If semi cleared, reset final and consolation
     if (clear && ev.games[gameIndex].type === 'third') {
-      const finalGame = ev.games.find(g=>g.type==='final');
-      if (finalGame) { finalGame.teamB = '#W'; ev.markModified('games'); }
+      const finalGame  = ev.games.find(g=>g.type==='final');
+      const consolGame = ev.games.find(g=>g.type==='consol');
+      if (finalGame)  { finalGame.teamB  = '#W'; }
+      if (consolGame) { consolGame.teamA = '#L'; }
+      ev.markModified('games');
     }
 
     await ev.save();
