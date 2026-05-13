@@ -681,9 +681,9 @@ app.post('/api/s3/result', async (req, res) => {
       const fg = ev.games.find(g=>g.type==='final');
       const tg = ev.games.find(g=>g.type==='third');
       const fig = ev.games.find(g=>g.type==='fifth');
-      if (fg)  { fg.teamA  = rrAfterClear.length ? ranked[0] : '#1'; fg.teamB  = rrAfterClear.length ? ranked[1] : '#2'; }
-      if (tg)  { tg.teamA  = rrAfterClear.length ? ranked[2] : '#3'; tg.teamB  = rrAfterClear.length ? ranked[3] : '#4'; }
+      if (tg)  { tg.teamA  = rrAfterClear.length ? ranked[1] : '#2'; tg.teamB  = rrAfterClear.length ? ranked[2] : '#3'; }
       if (fig) { fig.teamA = rrAfterClear.length ? ranked[4] : '#5'; fig.teamB = rrAfterClear.length ? ranked[5] : '#6'; }
+      if (fg)  { fg.teamA  = rrAfterClear.length ? ranked[0] : '#1'; fg.teamB = '#W'; }
       ev.markModified('games');
       await ev.save();
       return res.json({ success: true, game: ev.games[gameIndex] });
@@ -701,10 +701,35 @@ app.post('/api/s3/result', async (req, res) => {
       const finalGame  = ev.games.find(g=>g.type==='final');
       const thirdGame  = ev.games.find(g=>g.type==='third');
       const fifthGame  = ev.games.find(g=>g.type==='fifth');
-      if (finalGame) { finalGame.teamA = ranked[0]; finalGame.teamB = ranked[1]; }
-      if (thirdGame) { thirdGame.teamA = ranked[2]; thirdGame.teamB = ranked[3]; }
-      if (fifthGame) { fifthGame.teamA = ranked[4]; fifthGame.teamB = ranked[5]; }
+      // New bracket: third=#2v#3 (winner enters final), final=#1 vs winner, fifth=#5v#6
+      if (thirdGame) { thirdGame.teamA = ranked[1]; thirdGame.teamB = ranked[2]; } // #2 vs #3
+      if (fifthGame) { fifthGame.teamA = ranked[4]; fifthGame.teamB = ranked[5]; } // #5 vs #6
+      // Final: #1 vs winner of third (TBD until third is played)
+      if (finalGame) {
+        finalGame.teamA = ranked[0]; // always #1
+        const thirdPlayed = thirdGame && thirdGame.played;
+        if (thirdPlayed) {
+          finalGame.teamB = thirdGame.scoreA > thirdGame.scoreB ? thirdGame.teamA : thirdGame.teamB;
+        } else {
+          finalGame.teamB = '#W'; // winner TBD
+        }
+      }
       ev.markModified('games');
+    }
+
+    // If the third game was just played, update final.teamB to the winner
+    const savedGame = ev.games[gameIndex];
+    if (savedGame.type === 'third' && savedGame.played) {
+      const finalGame = ev.games.find(g=>g.type==='final');
+      if (finalGame) {
+        finalGame.teamB = savedGame.scoreA > savedGame.scoreB ? savedGame.teamA : savedGame.teamB;
+        ev.markModified('games');
+      }
+    }
+    // If third game was cleared, reset final.teamB to TBD
+    if (clear && ev.games[gameIndex].type === 'third') {
+      const finalGame = ev.games.find(g=>g.type==='final');
+      if (finalGame) { finalGame.teamB = '#W'; ev.markModified('games'); }
     }
 
     await ev.save();

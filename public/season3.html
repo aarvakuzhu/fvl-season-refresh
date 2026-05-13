@@ -466,10 +466,15 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
     <!-- Recommendation banner -->
     <div style="background:linear-gradient(135deg,#0d1b2a,#1a3566);border-radius:4px;padding:14px 16px;margin-bottom:12px">
       <div style="font-size:11px;font-family:'Roboto Mono',monospace;color:rgba(255,255,255,.65);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">⭐ Recommendation</div>
-      <div style="font-size:16px;font-weight:900;color:#f5c842;margin-bottom:6px">Current Format — Keep As Is</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:8px">FVL's core principle is <strong style="color:#f5c842">maximum game time for all teams</strong>. The current format gives every team exactly 5 games — 4 RR + 1 playoff. Any knockout alternative (Options 1 &amp; 2) drops 5th/6th teams to 4 games, violating this principle.</div>
-      <div style="background:rgba(255,255,255,.08);border-radius:3px;padding:8px 10px;font-size:11px;color:rgba(255,255,255,.7);line-height:1.6">
-        <strong style="color:#fff">The real trade-off:</strong> Options 1 &amp; 2 make the trophy race more exciting for top 4 but exclude bottom 2 from playoff action. With 2 courts and no extra time, there is no arrangement that gives all 6 teams a playoff game AND runs semi-finals simultaneously — it's one or the other.
+      <div style="font-size:16px;font-weight:900;color:#f5c842;margin-bottom:6px">Updated Bracket — #2 vs #3 at 4:30 PM ✅</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:8px">FVL's core principle is <strong style="color:#f5c842">maximum game time for all teams</strong>. The implemented format gives every team exactly 5 games while making the bracket more exciting — #3 now has a path to the Grand Final.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:rgba(255,255,255,.08);border-radius:3px;padding:8px 10px;font-size:11px;color:rgba(255,255,255,.75);line-height:1.6">
+          <strong style="color:#fff">4:30 PM</strong><br>C1: #5 vs #6<br>C2: #2 vs #3
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:3px;padding:8px 10px;font-size:11px;color:rgba(255,255,255,.75);line-height:1.6">
+          <strong style="color:#fff">4:55 PM</strong><br>C1: #1 vs winner of #2v#3 🏆<br>C2: loser vs #4
+        </div>
       </div>
     </div>
 
@@ -481,9 +486,9 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
           <thead>
             <tr style="background:var(--navy);color:#fff">
               <th style="padding:7px 10px;text-align:left;font-weight:700;white-space:nowrap"></th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;background:#1a5fb4">Current ⭐</th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Opt 1 — Knockout</th>
-              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Opt 2 — KO+Simple</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;color:#999;font-style:italic">Previous</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap;background:#1b5e20">Current ✅ Implemented</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;white-space:nowrap">Opt — Full KO</th>
             </tr>
           </thead>
           <tbody id="fmt-table-body"></tbody>
@@ -522,68 +527,11 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
     <!-- Pros/cons -->
     <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px" id="pros-cons"></div>
 
-    <!-- Possible improvement (moved to bottom) -->
-    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;padding:12px 14px;margin-bottom:4px">
-      <div style="font-size:11px;font-family:'Roboto Mono',monospace;font-weight:700;color:#92400e;margin-bottom:8px">💡 DISCUSSION ITEM — Core Group Only</div>
-      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:10px">
-        <strong>Can the playoff bracket be more exciting without changing game counts?</strong><br>
-        One option: re-seed the 4:30 PM slot so <strong>#2 vs #3</strong> play instead of #3 vs #4. The winner enters the Grand Final, the loser plays #4 for 3rd. All 6 teams still play exactly 5 games.
-      </div>
-
-      <!-- Before/After bracket -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div>
-          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase">Current</div>
-          <div style="background:#fff;border:1px solid var(--border);border-radius:3px;overflow:hidden;font-size:11px">
-            <div style="background:var(--light);padding:5px 8px;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted)">4:30 PM</div>
-            <div style="padding:5px 8px;border-bottom:1px solid var(--border2)">#5 vs #6</div>
-            <div style="padding:5px 8px;border-bottom:1px solid var(--border2)">#3 vs #4</div>
-            <div style="background:var(--light);padding:5px 8px;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:var(--muted)">4:55 PM</div>
-            <div style="padding:5px 8px;font-weight:700">#1 vs #2 🏆</div>
-          </div>
-        </div>
-        <div>
-          <div style="font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:#92400e;margin-bottom:6px;text-transform:uppercase">Proposed</div>
-          <div style="background:#fff;border:1px solid #fcd34d;border-radius:3px;overflow:hidden;font-size:11px">
-            <div style="background:#fffbeb;padding:5px 8px;border-bottom:1px solid #fde68a;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#92400e">4:30 PM</div>
-            <div style="padding:5px 8px;border-bottom:1px solid var(--border2)">#5 vs #6</div>
-            <div style="padding:5px 8px;border-bottom:1px solid var(--border2);font-weight:700;color:#92400e">#2 vs #3 ← changed</div>
-            <div style="background:#fffbeb;padding:5px 8px;border-bottom:1px solid #fde68a;font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#92400e">4:55 PM</div>
-            <div style="padding:5px 8px;font-weight:700">#1 vs winner 🏆</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Who changes -->
-      <div style="overflow-x:auto;margin-bottom:10px">
-        <table style="width:100%;border-collapse:collapse;font-size:11px">
-          <thead><tr style="background:var(--navy);color:#fff">
-            <th style="padding:5px 8px;text-align:left;font-size:10px">Finish</th>
-            <th style="padding:5px 8px;text-align:center;font-size:10px">Current</th>
-            <th style="padding:5px 8px;text-align:center;font-size:10px;background:#b8860b">Proposed</th>
-          </tr></thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border2)"><td style="padding:5px 8px;font-weight:700">#1 RR</td><td style="padding:5px 8px;text-align:center">Straight to Final</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">Straight to Final</td></tr>
-            <tr style="border-bottom:1px solid var(--border2);background:var(--light)"><td style="padding:5px 8px;font-weight:700">#2 RR</td><td style="padding:5px 8px;text-align:center">Straight to Final</td><td style="padding:5px 8px;text-align:center;background:#fffbeb;font-weight:700;color:#92400e">Must beat #3 first</td></tr>
-            <tr style="border-bottom:1px solid var(--border2)"><td style="padding:5px 8px;font-weight:700">#3 RR</td><td style="padding:5px 8px;text-align:center">3rd/4th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb;font-weight:700;color:#15803d">Shot at the Final 🏆</td></tr>
-            <tr style="border-bottom:1px solid var(--border2);background:var(--light)"><td style="padding:5px 8px;font-weight:700">#4 RR</td><td style="padding:5px 8px;text-align:center">3rd/4th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">Consolation vs #2/#3 loser</td></tr>
-            <tr style="border-bottom:1px solid var(--border2)"><td style="padding:5px 8px;font-weight:700">#5 RR</td><td style="padding:5px 8px;text-align:center">5th/6th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">5th/6th game</td></tr>
-            <tr><td style="padding:5px 8px;font-weight:700">#6 RR</td><td style="padding:5px 8px;text-align:center">5th/6th game</td><td style="padding:5px 8px;text-align:center;background:#fffbeb">5th/6th game</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Example -->
-      <div style="background:rgba(0,0,0,.04);border-radius:3px;padding:8px 10px;font-size:11px;line-height:1.6;margin-bottom:8px">
-        <strong>Example — Month 1:</strong> Dragons 1st · Predators 2nd · Falcons 3rd · Spartans 4th<br>
-        <span style="color:var(--muted)">Current:</span> Predators vs Dragons in the Final. Falcons vs Spartans for 3rd.<br>
-        <span style="color:#92400e;font-weight:600">Proposed:</span> Predators vs Falcons at 4:30 PM. Winner faces Dragons in the Grand Final. Loser plays Spartans for 3rd. Falcons get a real shot at the trophy.
-      </div>
-
-      <div style="font-size:11px;color:var(--muted);font-style:italic">Not yet confirmed — open for core group discussion.</div>
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:10px 14px;margin-bottom:4px">
+      <div style="font-size:11px;font-family:'Roboto Mono',monospace;font-weight:700;color:#15803d;margin-bottom:4px">✅ IMPLEMENTED — Season 3</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.5">The re-seeded bracket (#2 vs #3 at 4:30 PM) is now live for all Season 3 monthly tournaments. The Grand Final is #1 vs the winner of that game.</div>
     </div>
-
-  </div><!-- /stv-analysis -->
+    </div><!-- /stv-analysis -->
 
 </div><!-- /panel-standings -->
 
@@ -1061,25 +1009,25 @@ function renderAnalysis(){
 
   // ── Comparison table ─────────────────────────────────────────────
   const rows=[
-    ['Playoff format','5th/6th · 3rd/4th · Final','Semis(1v4,2v3) · Final · 3rd/4th','Semis(1v4,2v3) · Final · 3rd/4th'],
-    ['Games per team (all)','✅ 5 each','❌ 4 (5th/6th) · 6 (top 4)','❌ 4 (5th/6th) · 6 (top 4)'],
-    ['Game time equality','✅ Equal for all','❌ 5th/6th excluded','❌ 5th/6th excluded'],
-    ['Teams in trophy contention','Top 2 only','Top 4','Top 4'],
-    ['Courts used at 4:55 PM','1 of 2 (1 idle)','2 of 2','2 of 2'],
+    ['Playoff 4:30 PM','5th/6th + 3rd/4th (old)','✅ 5th/6th + #2v#3 ← implemented','Semis(1v4,2v3) · 5th/6th excluded'],
+    ['Playoff 4:55 PM','#1v#2 Final','✅ #1 vs winner of #2v#3 🏆','Final + 3rd/4th'],
+    ['Games per team','5 each','✅ 5 each','❌ Top4:6 · Bot2:4'],
+    ['Game time equality','✅ Equal','✅ Equal','❌ 5th/6th excluded'],
+    ['Teams in trophy contention','Top 2 only','✅ Top 3 (#3 can reach Final)','Top 4'],
+    ['Courts used at 4:55 PM','1 of 2 idle','✅ 2 of 2','2 of 2'],
     ['Extra time needed','—','—','—'],
-    ['Scoring','RR win+1, bonus 6-1','RR win+1, bonus 6-1','All wins = 1pt, no bonus'],
-    ['Max pts/month','10','10','6'],
-    ['5th/6th earn bonus pts?','✅ Yes (+1/+2)','❌ RR only','❌ RR only'],
-    ['Season standings spread','Wide','Wide','Narrow (max 36)'],
-    ['Tiebreakers needed','Occasional','Occasional','Frequent'],
-    ['Fits FVL principle?','✅ Yes','❌ No','❌ No'],
+    ['Scoring','RR win+1, bonus 6-1','✅ RR win+1, bonus 6-1','All wins = 1pt, no bonus'],
+    ['Max pts/month','10','✅ 10','6'],
+    ['5th/6th earn bonus pts?','✅ Yes (+1/+2)','✅ Yes (+1/+2)','❌ RR only'],
+    ['Season standings spread','Wide','✅ Wide','Narrow (max 36)'],
+    ['Fits FVL principle?','✅ Yes','✅ Yes','❌ No'],
   ];
   document.getElementById('fmt-table-body').innerHTML=rows.map((r,ri)=>`
     <tr style="border-bottom:1px solid var(--border2);${ri%2?'background:var(--light)':''}">
       <td style="padding:7px 10px;font-weight:600;color:var(--muted);font-size:11px;white-space:nowrap">${r[0]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;${ri===1||ri===11?'font-weight:700;color:#15803d':''}">${r[1]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#fff8f8;${ri===1||ri===2||ri===11?'font-weight:700;color:#c62828':''}">${r[2]}</td>
-      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#fff8f8;${ri===1||ri===2||ri===11?'font-weight:700;color:#c62828':''}">${r[3]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted);text-decoration:line-through">${r[1]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#f0fdf4;font-weight:700;color:#15803d">${r[2]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:11px;background:#fff8f8;color:#c62828">${r[3]}</td>
     </tr>`).join('');
 
   // ── Monthly pts table ─────────────────────────────────────────────
@@ -1101,9 +1049,9 @@ function renderAnalysis(){
 
   // ── Pros/cons ─────────────────────────────────────────────────────
   const options=[
-    {label:'Current Format ⭐ Recommended',color:'#1a3566',pros:['All 6 teams play exactly 5 games — equal game time','5th/6th still earn playoff bonus points','No one sits idle for 50 minutes at end of day','RR performance directly determines your playoff game','Wide season standings spread (max 60 pts)'],cons:['Only top 2 contend for monthly trophy','4:55 PM has one idle court slot','Tight RR standings can make the final feel predictable']},
-    {label:'Option 1 — Knockout',color:'#64748b',pros:['4 teams in monthly trophy race','Upsets possible — 4th can beat 1st','No extra time needed','Keeps positional bonus scoring'],cons:['❌ Violates FVL principle — 5th/6th play only 4 games','5th/6th teams sit out entire 50-min playoff window','Disconnects trophy from RR dominance','Bottom teams lose motivation after RR stage']},
-    {label:'Option 2 — Knockout + Simple Scoring',color:'#64748b',pros:['Simplest scoring model','4 teams in trophy race','Intuitive — every win = 1pt'],cons:['❌ Violates FVL principle — 5th/6th play only 4 games','Narrow season spread (max 36 pts) — tiebreakers dominate','5th/6th earn 0 playoff points','Season standings feel arbitrary, not merit-based']},
+    {label:'✅ Implemented — #2 vs #3 bracket',color:'#1b5e20',pros:['All 6 teams play exactly 5 games — equal game time','#3 now has a real path to the Grand Final','5th/6th still earn playoff bonus points','Both courts active at 4:55 PM (no idle slot)','Wide season standings spread (max 60 pts)','No schedule changes needed'],cons:['#2 must earn their Final spot — can no longer coast from RR','Slightly more complex to explain than direct bracket']},
+    {label:'Previous Format',color:'#64748b',pros:['Simple direct bracket — RR determines all matchups','Top 2 guaranteed the Final'],cons:['Only top 2 contend for monthly trophy','4:55 PM had one idle court','3rd/4th game largely predetermined by RR']},
+    {label:'Full Knockout (Options 1 & 2)',color:'#94a3b8',pros:['4 teams in trophy race','Upsets possible — 4th can beat 1st'],cons:['❌ Violates FVL principle — 5th/6th play only 4 games','5th/6th sit idle for 50 min playoff window','Bottom teams lose motivation after RR stage']},
   ];
   document.getElementById('pros-cons').innerHTML=options.map(o=>`
     <div class="card">
