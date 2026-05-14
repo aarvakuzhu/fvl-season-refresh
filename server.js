@@ -819,23 +819,35 @@ app.get('/api/s3/standings', async (req, res) => {
 // ── Helpers ───────────────────────────────────────────────────────────
 function computeRRStandings(rrGames, positions) {
   const stats = {};
-  positions.forEach(t => { stats[t] = { wins:0, losses:0, points:0, scoreDiff:0 }; });
+  positions.forEach(t => { stats[t] = { wins:0, losses:0, points:0, scoreDiff:0, ptsFor:0, gamesPlayed:0 }; });
   rrGames.filter(g=>g.played).forEach(g => {
     const a = g.teamA, b = g.teamB;
     const sa = g.scoreA, sb = g.scoreB;
     if (!stats[a] || !stats[b]) return;
-    stats[a].scoreDiff += (sa - sb);
-    stats[b].scoreDiff += (sb - sa);
+    stats[a].scoreDiff += (sa - sb);  stats[b].scoreDiff += (sb - sa);
+    stats[a].ptsFor    += sa;         stats[b].ptsFor    += sb;
+    stats[a].gamesPlayed++;           stats[b].gamesPlayed++;
     if (sa > sb) {
-      stats[a].wins++; stats[a].points += 2;
+      stats[a].wins++; stats[a].points++;
       stats[b].losses++;
     } else {
-      stats[b].wins++; stats[b].points += 2;
+      stats[b].wins++; stats[b].points++;
       stats[a].losses++;
     }
   });
   return Object.entries(stats)
-    .sort(([,a],[,b]) => b.points-a.points || b.scoreDiff-a.scoreDiff)
+    .sort(([,a],[,b]) => {
+      // 1. RR wins
+      if (b.points !== a.points) return b.points - a.points;
+      // 2. Score differential
+      if (b.scoreDiff !== a.scoreDiff) return b.scoreDiff - a.scoreDiff;
+      // 3. Average points scored per game (rounded to 1 decimal)
+      const aAvg = a.gamesPlayed ? a.ptsFor / a.gamesPlayed : 0;
+      const bAvg = b.gamesPlayed ? b.ptsFor / b.gamesPlayed : 0;
+      if (Math.round(bAvg*10) !== Math.round(aAvg*10)) return Math.round(bAvg*10) - Math.round(aAvg*10);
+      // 4. Coin toss — Tournament Director
+      return 0;
+    })
     .map(([t]) => t);
 }
 
