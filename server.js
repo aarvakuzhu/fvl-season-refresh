@@ -788,19 +788,28 @@ app.post('/api/s3/lock/:month', async (req, res) => {
 // ── GET /api/s3/standings ─────────────────────────────────────────────
 app.get('/api/s3/standings', async (req, res) => {
   try {
-    // Sort: totalPoints → monthly titles → monthly runner-ups → total wins → coin toss
+    // Sort: 6-step tiebreaker chain
     let standings = await S3Standing.find({ season:3 });
     standings = standings.sort((a,b) => {
+      // 1. Total season points (= total wins)
       if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-      // Tiebreaker 1: most monthly championships
-      if (b.championships !== a.championships) return b.championships - a.championships;
-      // Tiebreaker 2: most monthly runner-up finishes (position===2)
-      const bRunners = (b.months||[]).filter(m=>m.position===2).length;
-      const aRunners = (a.months||[]).filter(m=>m.position===2).length;
-      if (bRunners !== aRunners) return bRunners - aRunners;
-      // Tiebreaker 3: total wins (RR + playoff)
-      if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-      // Tiebreaker 4: coin toss
+      // 2. Most monthly championships
+      if ((b.championships||0) !== (a.championships||0)) return (b.championships||0) - (a.championships||0);
+      // 3. Most monthly runner-up finishes
+      const bRU = (b.months||[]).filter(m=>m.position===2).length;
+      const aRU = (a.months||[]).filter(m=>m.position===2).length;
+      if (bRU !== aRU) return bRU - aRU;
+      // 4. Best cumulative score differential (all completed games)
+      const bDiff = (b.months||[]).reduce((s,m)=>s+(m.scoreDiff||0),0);
+      const aDiff = (a.months||[]).reduce((s,m)=>s+(m.scoreDiff||0),0);
+      if (bDiff !== aDiff) return bDiff - aDiff;
+      // 5. Best average points scored per game (1 decimal, all completed games)
+      const bGames = (b.months||[]).reduce((s,m)=>s+(m.gamesPlayed||0),0);
+      const aGames = (a.months||[]).reduce((s,m)=>s+(m.gamesPlayed||0),0);
+      const bAvg = bGames ? (b.months||[]).reduce((s,m)=>s+(m.ptsFor||0),0) / bGames : 0;
+      const aAvg = aGames ? (a.months||[]).reduce((s,m)=>s+(m.ptsFor||0),0) / aGames : 0;
+      if (Math.round(bAvg*10) !== Math.round(aAvg*10)) return Math.round(bAvg*10) - Math.round(aAvg*10);
+      // 6. Coin toss — Tournament Director
       return 0;
     });
     res.json(standings);
@@ -864,14 +873,24 @@ function computeFullStandings(ev) {
       else position = i+1; // 5th/6th by RR
     }
 
+    // Points for/against across ALL completed games (RR + playoff)
+    const allGames = ev.games.filter(g=>g.played && (g.teamA===team||g.teamB===team));
+    const ptsFor     = allGames.reduce((a,g)=>a+(g.teamA===team?g.scoreA:g.scoreB),0);
+    const ptsAgainst = allGames.reduce((a,g)=>a+(g.teamA===team?g.scoreB:g.scoreA),0);
+    const allDiff    = ptsFor - ptsAgainst;
+    const gamesPlayed = allGames.length;
+
     result[team] = {
       position,
       rrWins,
       playoffWins: poWins,
-      points: rrWins + poWins, // 1pt per win, no bonus
-      scoreDiff,
-      champion:  position===1,
-      runnerup:  position===2,
+      points: rrWins + poWins,
+      scoreDiff: allDiff,
+      ptsFor,
+      ptsAgainst,
+      gamesPlayed,
+      champion: position===1,
+      runnerup: position===2,
     };
   });
   return result;
