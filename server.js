@@ -590,10 +590,9 @@ function buildGames(positions) {
     slot++;
   });
   // Finals slots (teams determined after RR — placeholders)
-  games.push({ slot:6, type:'fifth',  teamA:'#5', teamB:'#6', court:1, scoreA:null, scoreB:null, played:false });
-  games.push({ slot:6, type:'third',  teamA:'#2', teamB:'#3', court:2, scoreA:null, scoreB:null, played:false }); // semi: #2 vs #3, winner enters Final
-  games.push({ slot:7, type:'final',  teamA:'#1', teamB:'#W', court:1, scoreA:null, scoreB:null, played:false }); // #1 vs winner of third
-  games.push({ slot:7, type:'consol', teamA:'#L', teamB:'#4', court:2, scoreA:null, scoreB:null, played:false }); // loser of semi vs #4 (3rd place)
+  games.push({ slot:6, type:'semi1', teamA:'#1', teamB:'#4', court:1, scoreA:null, scoreB:null, played:false }); // Semi 1: #1 vs #4
+  games.push({ slot:6, type:'semi2', teamA:'#2', teamB:'#3', court:2, scoreA:null, scoreB:null, played:false }); // Semi 2: #2 vs #3
+  games.push({ slot:7, type:'final',  teamA:'#W1', teamB:'#W2', court:1, scoreA:null, scoreB:null, played:false }); // Grand Final: winners
   return games;
 }
 
@@ -682,11 +681,11 @@ app.post('/api/s3/result', async (req, res) => {
       const fg = ev.games.find(g=>g.type==='final');
       const tg = ev.games.find(g=>g.type==='third');
       const fig = ev.games.find(g=>g.type==='fifth');
-      const cg = ev.games.find(g=>g.type==='consol');
-      if (tg)  { tg.teamA  = rrAfterClear.length ? ranked[1] : '#2'; tg.teamB  = rrAfterClear.length ? ranked[2] : '#3'; }
-      if (fig) { fig.teamA = rrAfterClear.length ? ranked[4] : '#5'; fig.teamB = rrAfterClear.length ? ranked[5] : '#6'; }
-      if (fg)  { fg.teamA  = rrAfterClear.length ? ranked[0] : '#1'; fg.teamB = '#W'; }
-      if (cg)  { cg.teamA = '#L'; cg.teamB = rrAfterClear.length ? ranked[3] : '#4'; }
+      const s1g = ev.games.find(g=>g.type==='semi1');
+      const s2g = ev.games.find(g=>g.type==='semi2');
+      if (s1g) { s1g.teamA = rrAfterClear.length ? ranked[0] : '#1'; s1g.teamB = rrAfterClear.length ? ranked[3] : '#4'; }
+      if (s2g) { s2g.teamA = rrAfterClear.length ? ranked[1] : '#2'; s2g.teamB = rrAfterClear.length ? ranked[2] : '#3'; }
+      if (fg)  { fg.teamA = '#W1'; fg.teamB = '#W2'; }
       ev.markModified('games');
       await ev.save();
       return res.json({ success: true, game: ev.games[gameIndex] });
@@ -704,45 +703,41 @@ app.post('/api/s3/result', async (req, res) => {
       const finalGame  = ev.games.find(g=>g.type==='final');
       const thirdGame  = ev.games.find(g=>g.type==='third');
       const fifthGame  = ev.games.find(g=>g.type==='fifth');
-      // New bracket: third=semi(#2v#3), final=#1 vs winner, consol=loser vs #4, fifth=#5v#6
-      const consolGame = ev.games.find(g=>g.type==='consol');
-      if (thirdGame) { thirdGame.teamA = ranked[1]; thirdGame.teamB = ranked[2]; } // #2 vs #3
-      if (fifthGame) { fifthGame.teamA = ranked[4]; fifthGame.teamB = ranked[5]; } // #5 vs #6
-      if (consolGame) { consolGame.teamA = '#L'; consolGame.teamB = ranked[3]; }   // loser vs #4
-      // Final: #1 vs winner of third (TBD until third is played)
+      // New bracket: semi1=#1v#4, semi2=#2v#3, final=W1 vs W2. No 3rd/4th or 5th/6th games.
+      const semi1Game = ev.games.find(g=>g.type==='semi1');
+      const semi2Game = ev.games.find(g=>g.type==='semi2');
+      if (semi1Game) { semi1Game.teamA = ranked[0]; semi1Game.teamB = ranked[3]; } // #1 vs #4
+      if (semi2Game) { semi2Game.teamA = ranked[1]; semi2Game.teamB = ranked[2]; } // #2 vs #3
+      // Final: winners of both semis (TBD until semis played)
       if (finalGame) {
-        finalGame.teamA = ranked[0]; // always #1
-        const thirdPlayed = thirdGame && thirdGame.played;
-        if (thirdPlayed) {
-          const thirdWinner = thirdGame.scoreA > thirdGame.scoreB ? thirdGame.teamA : thirdGame.teamB;
-          const thirdLoser  = thirdGame.scoreA > thirdGame.scoreB ? thirdGame.teamB : thirdGame.teamA;
-          finalGame.teamB = thirdWinner;
-          if (consolGame) { consolGame.teamA = thirdLoser; } // update loser in consolation
-        } else {
-          finalGame.teamB = '#W'; // winner TBD
-        }
+        const s1w = semi1Game?.played ? (semi1Game.scoreA>semi1Game.scoreB?semi1Game.teamA:semi1Game.teamB) : '#W1';
+        const s2w = semi2Game?.played ? (semi2Game.scoreA>semi2Game.scoreB?semi2Game.teamA:semi2Game.teamB) : '#W2';
+        finalGame.teamA = s1w;
+        finalGame.teamB = s2w;
       }
       ev.markModified('games');
     }
 
-    // If the semi (third) was just played, update final.teamB and consolation.teamA
+    // After semi played → update final with winners
     const savedGame = ev.games[gameIndex];
-    if (savedGame.type === 'third' && savedGame.played) {
-      const finalGame  = ev.games.find(g=>g.type==='final');
-      const consolGame = ev.games.find(g=>g.type==='consol');
-      const winner = savedGame.scoreA > savedGame.scoreB ? savedGame.teamA : savedGame.teamB;
-      const loser  = savedGame.scoreA > savedGame.scoreB ? savedGame.teamB : savedGame.teamA;
-      if (finalGame)  { finalGame.teamB  = winner; }
-      if (consolGame) { consolGame.teamA = loser;  }
-      ev.markModified('games');
+    if ((savedGame.type === 'semi1' || savedGame.type === 'semi2') && savedGame.played) {
+      const finalGame = ev.games.find(g=>g.type==='final');
+      const s1 = ev.games.find(g=>g.type==='semi1');
+      const s2 = ev.games.find(g=>g.type==='semi2');
+      if (finalGame) {
+        finalGame.teamA = s1?.played ? (s1.scoreA>s1.scoreB?s1.teamA:s1.teamB) : '#W1';
+        finalGame.teamB = s2?.played ? (s2.scoreA>s2.scoreB?s2.teamA:s2.teamB) : '#W2';
+        ev.markModified('games');
+      }
     }
-    // If semi cleared, reset final and consolation
-    if (clear && ev.games[gameIndex].type === 'third') {
-      const finalGame  = ev.games.find(g=>g.type==='final');
-      const consolGame = ev.games.find(g=>g.type==='consol');
-      if (finalGame)  { finalGame.teamB  = '#W'; }
-      if (consolGame) { consolGame.teamA = '#L'; }
-      ev.markModified('games');
+    // If semi cleared → reset final placeholder
+    if (clear && (ev.games[gameIndex].type === 'semi1' || ev.games[gameIndex].type === 'semi2')) {
+      const finalGame = ev.games.find(g=>g.type==='final');
+      const isS1 = ev.games[gameIndex].type === 'semi1';
+      if (finalGame) {
+        if (isS1) finalGame.teamA = '#W1'; else finalGame.teamB = '#W2';
+        ev.markModified('games');
+      }
     }
 
     await ev.save();
@@ -781,8 +776,8 @@ app.post('/api/s3/lock/:month', async (req, res) => {
       st.months = st.months.filter(m => m.month !== ev.month);
       st.months.push({ month: ev.month, label: ev.label, ...data, champion: team === champion });
       st.totalPoints   = st.months.reduce((a,m)=>a+(m.points||0),0);
-      st.totalWins     = st.months.reduce((a,m)=>a+(m.rrWins||m.wins||0),0);
-      st.championships = st.months.filter(m=>m.champion).length;
+      st.totalWins     = st.months.reduce((a,m)=>a+(m.points||0),0); // points = wins, same thing
+      st.championships = st.months.filter(m=>m.champion||m.position===1).length;
       await st.save();
     }
 
@@ -793,23 +788,19 @@ app.post('/api/s3/lock/:month', async (req, res) => {
 // ── GET /api/s3/standings ─────────────────────────────────────────────
 app.get('/api/s3/standings', async (req, res) => {
   try {
-    // Sort: totalPoints → championships → count of 2nd/3rd/etc positions → totalWins
+    // Sort: totalPoints → monthly titles → monthly runner-ups → total wins → coin toss
     let standings = await S3Standing.find({ season:3 });
     standings = standings.sort((a,b) => {
       if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-      // Tiebreaker 1: most monthly championships (1st place finishes)
+      // Tiebreaker 1: most monthly championships
       if (b.championships !== a.championships) return b.championships - a.championships;
-      // Tiebreaker 2-5: most 2nd, 3rd, 4th, 5th place finishes
-      for (const pos of [2,3,4,5]) {
-        const bCount = (b.months||[]).filter(m=>m.position===pos).length;
-        const aCount = (a.months||[]).filter(m=>m.position===pos).length;
-        if (bCount !== aCount) return bCount - aCount;
-      }
-      // Tiebreaker 6: total RR wins across season
-      const bRR = (b.months||[]).reduce((s,m)=>s+(m.rrWins||m.wins||0),0);
-      const aRR = (a.months||[]).reduce((s,m)=>s+(m.rrWins||m.wins||0),0);
-      if (bRR !== aRR) return bRR - aRR;
-      // Tiebreaker 7: coin toss (random, stable per request)
+      // Tiebreaker 2: most monthly runner-up finishes (position===2)
+      const bRunners = (b.months||[]).filter(m=>m.position===2).length;
+      const aRunners = (a.months||[]).filter(m=>m.position===2).length;
+      if (bRunners !== aRunners) return bRunners - aRunners;
+      // Tiebreaker 3: total wins (RR + playoff)
+      if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+      // Tiebreaker 4: coin toss
       return 0;
     });
     res.json(standings);
@@ -841,43 +832,46 @@ function computeRRStandings(rrGames, positions) {
 
 function computeFullStandings(ev) {
   const result = {};
-  const rrGames  = ev.games.filter(g=>g.type==='rr'&&g.played);
-  const finGame  = ev.games.find(g=>g.type==='final'&&g.played);
-  const thdGame  = ev.games.find(g=>g.type==='third'&&g.played);
-  const fifGame  = ev.games.find(g=>g.type==='fifth'&&g.played);
+  const rrGames    = ev.games.filter(g=>g.type==='rr'&&g.played);
+  const semi1Game  = ev.games.find(g=>g.type==='semi1'&&g.played);
+  const semi2Game  = ev.games.find(g=>g.type==='semi2'&&g.played);
+  const finalGame  = ev.games.find(g=>g.type==='final'&&g.played);
 
-  // Determine final positions from playoff results
-  const positions = {}; // team → final position (1-6)
-  if (finGame) {
-    positions[finGame.scoreA>finGame.scoreB?finGame.teamA:finGame.teamB] = 1;
-    positions[finGame.scoreA>finGame.scoreB?finGame.teamB:finGame.teamA] = 2;
-  }
-  if (thdGame) {
-    positions[thdGame.scoreA>thdGame.scoreB?thdGame.teamA:thdGame.teamB] = 3;
-    positions[thdGame.scoreA>thdGame.scoreB?thdGame.teamB:thdGame.teamA] = 4;
-  }
-  if (fifGame) {
-    positions[fifGame.scoreA>fifGame.scoreB?fifGame.teamA:fifGame.teamB] = 5;
-    positions[fifGame.scoreA>fifGame.scoreB?fifGame.teamB:fifGame.teamA] = 6;
-  }
-
-  const BONUS = {1:6, 2:5, 3:4, 4:3, 5:2, 6:1};
+  // 1pt per win across all games (RR + semis + final). No bonus.
   const ranked = computeRRStandings(rrGames, ev.positions);
 
   ranked.forEach((team, i) => {
     const myRR = rrGames.filter(g=>g.teamA===team||g.teamB===team);
     const rrWins = myRR.filter(g=>(g.teamA===team&&g.scoreA>g.scoreB)||(g.teamB===team&&g.scoreB>g.scoreA)).length;
     const scoreDiff = myRR.reduce((a,g)=>a+(g.teamA===team?g.scoreA-g.scoreB:g.scoreB-g.scoreA),0);
-    const finalPos = positions[team] || (i+1); // fallback to RR rank if playoffs not played
-    const posBonus = BONUS[finalPos] || 1;
-    const totalPts = rrWins + posBonus; // 1pt per RR win + positional bonus
+
+    // Count playoff wins
+    let poWins = 0;
+    for (const pg of [semi1Game, semi2Game, finalGame]) {
+      if (!pg) continue;
+      if (pg.teamA===team && pg.scoreA>pg.scoreB) poWins++;
+      if (pg.teamB===team && pg.scoreB>pg.scoreA) poWins++;
+    }
+
+    // Determine final position
+    let position = i+1; // fallback to RR rank
+    if (finalGame) {
+      const champ   = finalGame.scoreA>finalGame.scoreB?finalGame.teamA:finalGame.teamB;
+      const runnerup= finalGame.scoreA>finalGame.scoreB?finalGame.teamB:finalGame.teamA;
+      if (team===champ) position=1;
+      else if (team===runnerup) position=2;
+      else if ([semi1Game,semi2Game].some(sg=>sg&&(sg.teamA===team||sg.teamB===team))) position=3; // semi loser
+      else position = i+1; // 5th/6th by RR
+    }
+
     result[team] = {
-      position:     finalPos,
+      position,
       rrWins,
-      losses:       myRR.length - rrWins,
-      positionBonus: posBonus,
-      points:       totalPts,
+      playoffWins: poWins,
+      points: rrWins + poWins, // 1pt per win, no bonus
       scoreDiff,
+      champion:  position===1,
+      runnerup:  position===2,
     };
   });
   return result;
