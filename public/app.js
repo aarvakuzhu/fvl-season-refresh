@@ -211,6 +211,36 @@ function renderChecklists() {
 // ── Init — load overview panel first ──────────────────────────────
 // Mark overview as pre-loaded (it's in the HTML shell)
 _loaded['overview'] = true;
+function handleCoreBtnClick() {
+  if (isCoreAuth()) {
+    coreLogout();
+    applyCoreVisibility();
+    updateCoreBtn();
+  } else {
+    promptCoreLogin(() => {
+      updateCoreBtn();
+      renderStandings && renderStandings();
+      renderCurrentMonthWidget && renderCurrentMonthWidget();
+    });
+  }
+}
+
+function updateCoreBtn() {
+  const btn = document.getElementById('core-btn');
+  if (!btn) return;
+  if (isCoreAuth()) {
+    btn.textContent = '🔓 Core';
+    btn.style.color = '#f5c842';
+    btn.style.borderColor = 'rgba(245,200,66,.5)';
+  } else {
+    btn.textContent = '🔐 Core';
+    btn.style.color = 'rgba(255,255,255,.85)';
+    btn.style.borderColor = 'rgba(255,255,255,.4)';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', updateCoreBtn);
+
 // Run overview renderers immediately
 renderStandings();
 renderCurrentMonthWidget();
