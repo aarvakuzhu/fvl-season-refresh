@@ -573,6 +573,7 @@ const S3_MONTHS = [
 // No team ever sits out 2 consecutive slots
 const MONTH_SCHEDULES = [
   // May (month 1) — bye: Dragons-Spartans, Predators-Titans, Falcons-Raptors
+  // Opens: Falcons vs Titans (C1) | Dragons vs Predators (C2)
   [
     { slot:0, c1:['Falcons','Titans'],    c2:['Dragons','Predators'] },
     { slot:1, c1:['Spartans','Raptors'],  c2:['Dragons','Falcons']   },
@@ -582,49 +583,54 @@ const MONTH_SCHEDULES = [
     { slot:5, c1:['Predators','Raptors'], c2:['Falcons','Spartans']  },
   ],
   // Jun (month 2) — bye: Dragons-Predators, Falcons-Spartans, Titans-Raptors
-  [
-    { slot:0, c1:['Dragons','Falcons'],   c2:['Predators','Spartans']},
-    { slot:1, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
-    { slot:2, c1:['Dragons','Titans'],    c2:['Predators','Raptors'] },
-    { slot:3, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
-    { slot:4, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
-    { slot:5, c1:['Dragons','Raptors'],   c2:['Predators','Titans']  },
-  ],
-  // Jul (month 3) — bye: Dragons-Raptors, Predators-Falcons, Spartans-Titans
-  [
-    { slot:0, c1:['Spartans','Raptors'],  c2:['Dragons','Predators'] },
-    { slot:1, c1:['Dragons','Falcons'],   c2:['Titans','Raptors']    },
-    { slot:2, c1:['Predators','Spartans'],c2:['Falcons','Titans']    },
-    { slot:3, c1:['Predators','Raptors'], c2:['Dragons','Spartans']  },
-    { slot:4, c1:['Dragons','Titans'],    c2:['Falcons','Raptors']   },
-    { slot:5, c1:['Predators','Titans'],  c2:['Falcons','Spartans']  },
-  ],
-  // Aug (month 4) — bye: Dragons-Predators, Falcons-Titans, Spartans-Raptors
+  // Opens: Predators vs Spartans (C1) | Dragons vs Falcons (C2)
   [
     { slot:0, c1:['Predators','Spartans'],c2:['Dragons','Falcons']   },
     { slot:1, c1:['Dragons','Titans'],    c2:['Predators','Raptors'] },
-    { slot:2, c1:['Falcons','Spartans'],  c2:['Titans','Raptors']    },
-    { slot:3, c1:['Predators','Falcons'], c2:['Dragons','Spartans']  },
-    { slot:4, c1:['Dragons','Raptors'],   c2:['Predators','Titans']  },
+    { slot:2, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
+    { slot:3, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
+    { slot:4, c1:['Predators','Titans'],  c2:['Dragons','Raptors']   },
     { slot:5, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
   ],
-  // Sep (month 5) — bye: Dragons-Falcons, Predators-Spartans, Titans-Raptors
+  // Jul (month 3) — bye: Dragons-Raptors, Predators-Falcons, Spartans-Titans
+  // Opens: Titans vs Raptors (C1) | Dragons vs Spartans (C2)
+  [
+    { slot:0, c1:['Titans','Raptors'],    c2:['Dragons','Spartans']  },
+    { slot:1, c1:['Falcons','Spartans'],  c2:['Dragons','Predators'] },
+    { slot:2, c1:['Predators','Titans'],  c2:['Falcons','Raptors']   },
+    { slot:3, c1:['Spartans','Raptors'],  c2:['Dragons','Titans']    },
+    { slot:4, c1:['Dragons','Falcons'],   c2:['Predators','Spartans']},
+    { slot:5, c1:['Falcons','Titans'],    c2:['Predators','Raptors'] },
+  ],
+  // Aug (month 4) — bye: Dragons-Predators, Falcons-Titans, Spartans-Raptors
+  // Opens: Dragons vs Titans (C1) | Predators vs Raptors (C2)
   [
     { slot:0, c1:['Dragons','Titans'],    c2:['Predators','Raptors'] },
-    { slot:1, c1:['Dragons','Predators'], c2:['Falcons','Spartans']  },
-    { slot:2, c1:['Spartans','Raptors'],  c2:['Falcons','Titans']    },
-    { slot:3, c1:['Predators','Titans'],  c2:['Dragons','Raptors']   },
+    { slot:1, c1:['Predators','Spartans'],c2:['Dragons','Falcons']   },
+    { slot:2, c1:['Titans','Raptors'],    c2:['Falcons','Spartans']  },
+    { slot:3, c1:['Dragons','Raptors'],   c2:['Predators','Titans']  },
     { slot:4, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
     { slot:5, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
   ],
-  // Oct (month 6) — bye: Dragons-Titans, Predators-Raptors, Falcons-Spartans
+  // Sep (month 5) — bye: Dragons-Falcons, Predators-Spartans, Titans-Raptors
+  // Opens: Spartans vs Titans (C1) | Falcons vs Raptors (C2)
   [
-    { slot:0, c1:['Predators','Spartans'],c2:['Dragons','Falcons']   },
-    { slot:1, c1:['Titans','Raptors'],    c2:['Dragons','Predators'] },
-    { slot:2, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
-    { slot:3, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
-    { slot:4, c1:['Predators','Titans'],  c2:['Dragons','Raptors']   },
-    { slot:5, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
+    { slot:0, c1:['Spartans','Titans'],   c2:['Falcons','Raptors']   },
+    { slot:1, c1:['Falcons','Spartans'],  c2:['Dragons','Predators'] },
+    { slot:2, c1:['Predators','Raptors'], c2:['Dragons','Titans']    },
+    { slot:3, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
+    { slot:4, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
+    { slot:5, c1:['Dragons','Raptors'],   c2:['Predators','Titans']  },
+  ],
+  // Oct (month 6) — bye: Dragons-Titans, Predators-Raptors, Falcons-Spartans
+  // Opens: Predators vs Falcons (C1) | Spartans vs Raptors (C2)
+  [
+    { slot:0, c1:['Predators','Falcons'], c2:['Spartans','Raptors']  },
+    { slot:1, c1:['Falcons','Titans'],    c2:['Dragons','Predators'] },
+    { slot:2, c1:['Dragons','Spartans'],  c2:['Titans','Raptors']    },
+    { slot:3, c1:['Predators','Spartans'],c2:['Falcons','Raptors']   },
+    { slot:4, c1:['Predators','Titans'],  c2:['Dragons','Falcons']   },
+    { slot:5, c1:['Dragons','Raptors'],   c2:['Spartans','Titans']   },
   ],
 ];
 
