@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="/core.js"></script>
   <title>FVL S3 — Draft Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -122,7 +123,7 @@
     .skf-btn.skf-on.sk-f-Developing{background:#ffedd5;border-color:#c2410c;color:#c2410c}
   </style>
 </head>
-<body>
+<body onload="if(!isCoreAuth()){document.body.innerHTML='<div style=\"min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f0f2f5\"><div style=\"text-align:center;padding:40px\"><div style=\"font-size:32px;margin-bottom:12px\">🔐</div><div style=\"font-size:16px;font-weight:700;color:#0d1b2a;margin-bottom:8px\">Core Member Access Required</div><div style=\"font-size:13px;color:#64748b;margin-bottom:20px\">The draft simulator is for core members only.</div><button onclick=\"location.reload()\" style=\"padding:10px 24px;background:#0d1b2a;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer\">🔐 Unlock on reload</button></div></div>';}">
 
 <!-- HEADER -->
 <div id="hdr">
@@ -265,6 +266,16 @@ const ss = {
 };
 
 // ── STATE ──────────────────────────────────────────────────────────
+function showDraftGate() {
+  document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f0f2f5"><div style="text-align:center;padding:40px"><div style="font-size:32px;margin-bottom:12px">🔐</div><div style="font-size:16px;font-weight:700;color:#0d1b2a;margin-bottom:8px">Core Member Access Required</div><div style="font-size:13px;color:#64748b;margin-bottom:20px">The draft simulator is for core members only.</div><div id=\"gate-btn-wrap\"></div></div></div>';
+  const btn = document.createElement('button');
+  btn.textContent = '🔐 Unlock';
+  btn.style.cssText = 'padding:10px 24px;background:#0d1b2a;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer';
+  btn.onclick = () => promptCoreLogin(() => location.reload());
+  document.getElementById('gate-btn-wrap').appendChild(btn);
+}
+if (!isCoreAuth()) { showDraftGate(); } else {
+
 const S = {
   caps: [
     {name:'Anil',      po:1, er:4, tier:'B', col:'#4a148c'},
@@ -766,6 +777,7 @@ window.addEventListener('beforeunload', e => {
 
 // ── BOOT ───────────────────────────────────────────────────────────
 init();
+} // end core auth
 </script>
 
 <div style="text-align:center;padding:20px;font-size:11px;color:#888">

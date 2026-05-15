@@ -7,6 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>FVL — Player Roster</title>
+  <script src="/core.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -441,7 +442,27 @@ async function savePlayer(uid) {
 let _tt;
 function toast(msg,dur=2500){const e=document.getElementById('toast');e.textContent=msg;e.classList.remove('hide');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.add('hide'),dur);}
 
-load();
+if (isCoreAuth()) {
+  load();
+} else {
+  showRosterGate();
+}
+function showRosterGate() {
+  const el = document.getElementById('roster-grid');
+  el.innerHTML = '';
+  const div = document.createElement('div');
+  div.style.cssText = 'padding:40px;text-align:center';
+  div.innerHTML = '<div style="font-size:32px;margin-bottom:12px">🔐</div>' +
+    '<div style="font-size:16px;font-weight:700;color:#0d1b2a;margin-bottom:8px">Core Member Access Required</div>' +
+    '<div style="font-size:13px;color:#64748b;margin-bottom:20px">The player roster is visible to core members only.</div>';
+  const btn = document.createElement('button');
+  btn.textContent = '🔐 Unlock';
+  btn.style.cssText = 'padding:10px 24px;background:#0d1b2a;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer';
+  btn.onclick = () => promptCoreLogin(() => { el.innerHTML=''; load(); });
+  div.appendChild(btn);
+  el.appendChild(div);
+  document.getElementById('count-lbl').textContent = '';
+}
 </script>
 
 <div style="text-align:center;padding:20px;font-size:11px;color:#888">

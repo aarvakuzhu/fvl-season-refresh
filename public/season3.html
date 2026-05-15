@@ -7,6 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>FVL Season 3</title>
+<script src="/core.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -238,7 +239,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <span class="hbadge">FVL</span>
   <span class="htitle"><span class="hfull">Season <span>3</span> · Mini League</span><span class="hshort">Season <span>3</span></span></span>
   <div class="hright">
-    <button class="hbtn hbtn-admin" id="admin-btn" onclick="toggleAdmin()">🏆 Tournament Director</button>
+    <button class="hbtn hbtn-admin" id="admin-btn" onclick="handleTDClick()">🏆 Tournament Director</button>
     <a href="/" class="hbtn">← Home</a>
   </div>
 </div>
@@ -407,7 +408,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <div class="view-toggle-bar" style="margin-bottom:10px">
     <div class="view-toggle">
       <button id="st-standings" class="vt-btn active" onclick="setStView('standings')">🏆 Standings</button>
-      <button id="st-analysis"  class="vt-btn"        onclick="setStView('analysis')">📊 Format Analysis</button>
+      <button id="st-analysis" data-core="true" class="vt-btn" onclick="setStView('analysis')">📊 Format Analysis</button>
     </div>
   </div>
 
@@ -1818,6 +1819,13 @@ function closeProfile() {
   document.body.style.overflow = '';
 }
 
+function handleTDClick() {
+  if (!isCoreAuth()) {
+    promptCoreLogin(() => { toggleAdmin(); });
+  } else {
+    toggleAdmin();
+  }
+}
 // ── BOOT ──────────────────────────────────────────────────────────────
 loadOverview();
 // Pre-fetch standings so it's ready when tab is clicked

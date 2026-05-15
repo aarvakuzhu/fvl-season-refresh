@@ -19,14 +19,15 @@
     <div class="header-actions">
       <a href="/season3" class="hbtn" style="background:#f5c842;color:#0d1b2a;font-weight:900;border:none">🏐 Season 3</a>
       <a href="/season2" class="hbtn hbtn-white">📋 Season 2</a>
-      <a href="/roster" class="hbtn hbtn-white">👥 Roster</a>
+      <a href="/roster" class="hbtn hbtn-white" data-core="true">👥 Roster</a>
+      <button class="hbtn" id="core-btn" onclick="handleCoreBtnClick()" style="border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.6);font-size:11px">🔐 Core</button>
     </div>
   </div>
   <div id="tabbar">
     <button class="tab active" onclick="switchTab('overview')"   data-tab="overview">Overview</button>
-    <button class="tab"        onclick="switchTab('feedback')"   data-tab="feedback">Feedback</button>
+    <button class="tab" data-core="true"  onclick="switchTab('feedback')"   data-tab="feedback">Feedback</button>
     <button class="tab"        onclick="switchTab('format')"     data-tab="format">Rules &amp; Governance</button>
-    <button class="tab"        onclick="switchTab('actions')"    data-tab="actions">Actions <span class="tab-badge" id="open-count">3</span></button>
+    <button class="tab" data-core="true"  onclick="switchTab('actions')"    data-tab="actions">Actions <span class="tab-badge" id="open-count">3</span></button>
   </div>
 </div>
 
@@ -123,14 +124,14 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
     Overview
   </button>
-  <button class="bnav-item" id="bnav-feedback" onclick="switchTab('feedback')">
+  <button class="bnav-item" id="bnav-feedback" data-core="true" onclick="switchTab('feedback')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     Feedback
   </button>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     Governance
   </button>
-  <button class="bnav-item" id="bnav-actions" onclick="switchTab('actions')">
+  <button class="bnav-item" id="bnav-actions" data-core="true" onclick="switchTab('actions')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9,11 12,14 22,4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     Actions
   </button>
@@ -148,6 +149,7 @@
   </span>
 </footer>
 
+<script src="/core.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>
