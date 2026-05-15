@@ -583,8 +583,8 @@ const MONTH_SCHEDULES = [
   ],
   // Jun (month 2) — bye: Dragons-Predators, Falcons-Spartans, Titans-Raptors
   [
-    { slot:0, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
-    { slot:1, c1:['Dragons','Falcons'],   c2:['Predators','Spartans']},
+    { slot:0, c1:['Dragons','Falcons'],   c2:['Predators','Spartans']},
+    { slot:1, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
     { slot:2, c1:['Dragons','Titans'],    c2:['Predators','Raptors'] },
     { slot:3, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
     { slot:4, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
@@ -619,9 +619,9 @@ const MONTH_SCHEDULES = [
   ],
   // Oct (month 6) — bye: Dragons-Titans, Predators-Raptors, Falcons-Spartans
   [
-    { slot:0, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
+    { slot:0, c1:['Predators','Spartans'],c2:['Dragons','Falcons']   },
     { slot:1, c1:['Titans','Raptors'],    c2:['Dragons','Predators'] },
-    { slot:2, c1:['Predators','Spartans'],c2:['Dragons','Falcons']   },
+    { slot:2, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
     { slot:3, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
     { slot:4, c1:['Predators','Titans'],  c2:['Dragons','Raptors']   },
     { slot:5, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
