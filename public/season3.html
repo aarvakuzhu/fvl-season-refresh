@@ -677,7 +677,7 @@ function monthCard(ev, mi) {
     return `<div class="game-row" data-teams="${names.join(',').toLowerCase()}" data-court="${court}" data-type="${g.type}">
       <div class="time-cell">${TIMES[g.slot]||''}</div>
       <div class="court-cell">${courtLbl}</div>
-      <div class="game-cell">${g.type!=='rr'?`<span class="g-type ${g.type}">${{final:'FINAL',third:'3RD',fifth:'5TH'}[g.type]}</span>`:''}${tA}${scoreD}${tB}</div>
+      <div class="game-cell">${g.type!=='rr'?`<span class="g-type ${g.type}">${({final:'FINAL',semi1:'SEMI 1',semi2:'SEMI 2',third:'3RD',fifth:'5TH',consol:'3RD'}[g.type]||g.type.toUpperCase())}</span>`:''}''}${tA}${scoreD}${tB}</div>
     </div>`;
   }).join('');
   const isOpen = mi===0;
