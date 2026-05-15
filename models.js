@@ -167,7 +167,7 @@ const S3TeamSchema = new mongoose.Schema({
 // ── Monthly Event ─────────────────────────────────────────────────────
 const GameSchema = new mongoose.Schema({
   slot:     { type: Number, required: true },  // 0-7
-  type:     { type: String, enum: ['rr','final','third','fifth'], default: 'rr' },
+  type:     { type: String, enum: ['rr','final','third','fifth','semi1','semi2','consol'], default: 'rr' },
   teamA:    { type: String },
   teamB:    { type: String },
   scoreA:   { type: Number, default: null },
