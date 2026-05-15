@@ -558,41 +558,87 @@ const S3_MONTHS = [
   { month:6, label:'October 2026',  date:'Sun 4 Oct 2026' },
 ];
 
-// Fixed RR matchup pairs (positions T1-T6, not real teams)
-// Optimised to eliminate 3-in-a-row: every team has max 2 consecutive games
-// Each slot: [[posA, posB, court], [posA, posB, court]]
-const RR_SLOTS = [
-  [[1,2,1],[3,5,2]],
-  [[1,3,1],[4,6,2]],
-  [[2,4,1],[5,6,2]],
-  [[1,5,1],[2,3,2]],
-  [[3,4,1],[1,6,2]],
-  [[2,6,1],[4,5,2]],
+// Per-month RR schedules — hardcoded by team name.
+// Bye pairs per month (teams that don't play each other):
+//   May: Dragons-Spartans | Predators-Titans | Falcons-Raptors
+//   Jun: Dragons-Predators | Falcons-Spartans | Titans-Raptors
+//   Jul: Dragons-Raptors   | Predators-Falcons | Spartans-Titans
+//   Aug: Dragons-Predators | Falcons-Titans    | Spartans-Raptors
+//   Sep: Dragons-Falcons   | Predators-Spartans | Titans-Raptors
+//   Oct: Dragons-Titans    | Predators-Raptors  | Falcons-Spartans
+// Season pairs (miss each other twice): Dragons↔Predators, Falcons↔Spartans, Titans↔Raptors
+// Court balance: all teams exactly 12 C1 / 12 C2 across season
+// Start time: all teams 4× 2:00 PM and 2× 2:25 PM
+// Max back-to-back: May=3 (unavoidable), all other months=2
+// No team ever sits out 2 consecutive slots
+const MONTH_SCHEDULES = [
+  // May (month 1) — bye: Dragons-Spartans, Predators-Titans, Falcons-Raptors
+  [
+    { slot:0, c1:['Falcons','Titans'],    c2:['Dragons','Predators'] },
+    { slot:1, c1:['Spartans','Raptors'],  c2:['Dragons','Falcons']   },
+    { slot:2, c1:['Predators','Spartans'],c2:['Dragons','Titans']    },
+    { slot:3, c1:['Predators','Falcons'], c2:['Titans','Raptors']    },
+    { slot:4, c1:['Spartans','Titans'],   c2:['Dragons','Raptors']   },
+    { slot:5, c1:['Predators','Raptors'], c2:['Falcons','Spartans']  },
+  ],
+  // Jun (month 2) — bye: Dragons-Predators, Falcons-Spartans, Titans-Raptors
+  [
+    { slot:0, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
+    { slot:1, c1:['Dragons','Falcons'],   c2:['Predators','Spartans']},
+    { slot:2, c1:['Dragons','Titans'],    c2:['Predators','Raptors'] },
+    { slot:3, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
+    { slot:4, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
+    { slot:5, c1:['Dragons','Raptors'],   c2:['Predators','Titans']  },
+  ],
+  // Jul (month 3) — bye: Dragons-Raptors, Predators-Falcons, Spartans-Titans
+  [
+    { slot:0, c1:['Spartans','Raptors'],  c2:['Dragons','Predators'] },
+    { slot:1, c1:['Dragons','Falcons'],   c2:['Titans','Raptors']    },
+    { slot:2, c1:['Predators','Spartans'],c2:['Falcons','Titans']    },
+    { slot:3, c1:['Predators','Raptors'], c2:['Dragons','Spartans']  },
+    { slot:4, c1:['Dragons','Titans'],    c2:['Falcons','Raptors']   },
+    { slot:5, c1:['Predators','Titans'],  c2:['Falcons','Spartans']  },
+  ],
+  // Aug (month 4) — bye: Dragons-Predators, Falcons-Titans, Spartans-Raptors
+  [
+    { slot:0, c1:['Predators','Spartans'],c2:['Dragons','Falcons']   },
+    { slot:1, c1:['Dragons','Titans'],    c2:['Predators','Raptors'] },
+    { slot:2, c1:['Falcons','Spartans'],  c2:['Titans','Raptors']    },
+    { slot:3, c1:['Predators','Falcons'], c2:['Dragons','Spartans']  },
+    { slot:4, c1:['Dragons','Raptors'],   c2:['Predators','Titans']  },
+    { slot:5, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
+  ],
+  // Sep (month 5) — bye: Dragons-Falcons, Predators-Spartans, Titans-Raptors
+  [
+    { slot:0, c1:['Dragons','Titans'],    c2:['Predators','Raptors'] },
+    { slot:1, c1:['Dragons','Predators'], c2:['Falcons','Spartans']  },
+    { slot:2, c1:['Spartans','Raptors'],  c2:['Falcons','Titans']    },
+    { slot:3, c1:['Predators','Titans'],  c2:['Dragons','Raptors']   },
+    { slot:4, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
+    { slot:5, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
+  ],
+  // Oct (month 6) — bye: Dragons-Titans, Predators-Raptors, Falcons-Spartans
+  [
+    { slot:0, c1:['Falcons','Titans'],    c2:['Spartans','Raptors']  },
+    { slot:1, c1:['Titans','Raptors'],    c2:['Dragons','Predators'] },
+    { slot:2, c1:['Predators','Spartans'],c2:['Dragons','Falcons']   },
+    { slot:3, c1:['Falcons','Raptors'],   c2:['Spartans','Titans']   },
+    { slot:4, c1:['Predators','Titans'],  c2:['Dragons','Raptors']   },
+    { slot:5, c1:['Dragons','Spartans'],  c2:['Predators','Falcons'] },
+  ],
 ];
 
-// Shift-right rotation: month 0 = base order, each month shifts all teams right by 1
-function getPositions(monthIdx) {
-  // Base: Dragons=0, Predators=1, ..., Raptors=5
-  const base = S3_TEAMS.map(t => t.name);
-  const n = base.length;
-  // Shift right by monthIdx: team[i] goes to position (i + monthIdx) % n
-  const positions = new Array(n);
-  base.forEach((team, i) => { positions[(i + monthIdx) % n] = team; });
-  return positions; // positions[0] = T1, positions[1] = T2, etc.
-}
-
-function buildGames(positions) {
+function buildGames(monthIdx) {
+  const sched = MONTH_SCHEDULES[monthIdx];
   const games = [];
-  let slot = 0;
-  RR_SLOTS.forEach(([g1, g2]) => {
-    games.push({ slot, type:'rr', teamA:positions[g1[0]-1], teamB:positions[g1[1]-1], court:g1[2], scoreA:null, scoreB:null, played:false });
-    games.push({ slot, type:'rr', teamA:positions[g2[0]-1], teamB:positions[g2[1]-1], court:g2[2], scoreA:null, scoreB:null, played:false });
-    slot++;
+  sched.forEach(({ slot, c1, c2 }) => {
+    games.push({ slot, type:'rr', teamA:c1[0], teamB:c1[1], court:1, scoreA:null, scoreB:null, played:false });
+    games.push({ slot, type:'rr', teamA:c2[0], teamB:c2[1], court:2, scoreA:null, scoreB:null, played:false });
   });
-  // Finals slots (teams determined after RR — placeholders)
-  games.push({ slot:6, type:'semi1', teamA:'#1', teamB:'#4', court:1, scoreA:null, scoreB:null, played:false }); // Semi 1: #1 vs #4
-  games.push({ slot:6, type:'semi2', teamA:'#2', teamB:'#3', court:2, scoreA:null, scoreB:null, played:false }); // Semi 2: #2 vs #3
-  games.push({ slot:7, type:'final',  teamA:'#W1', teamB:'#W2', court:1, scoreA:null, scoreB:null, played:false }); // Grand Final: winners
+  // Finals slots
+  games.push({ slot:6, type:'semi1', teamA:'#1', teamB:'#4', court:1, scoreA:null, scoreB:null, played:false });
+  games.push({ slot:6, type:'semi2', teamA:'#2', teamB:'#3', court:2, scoreA:null, scoreB:null, played:false });
+  games.push({ slot:7, type:'final',  teamA:'#W1', teamB:'#W2', court:1, scoreA:null, scoreB:null, played:false });
   return games;
 }
 
@@ -619,11 +665,12 @@ app.post('/api/s3/seed', async (req, res) => {
     // Seed all 6 monthly events
     const events = [];
     for (const m of S3_MONTHS) {
-      const positions = getPositions(m.month - 1);
-      const games = buildGames(positions);
+      const monthIdx = m.month - 1;
+      const games = buildGames(monthIdx);
+      const positions = ['Dragons','Predators','Falcons','Spartans','Titans','Raptors']; // kept for RR standings compat
       const ev = await MonthlyEvent.findOneAndUpdate(
         { season: 3, month: m.month },
-        { ...m, season: 3, rotation: m.month - 1, positions, games, locked: false, champion: null },
+        { ...m, season: 3, rotation: monthIdx, positions, games, locked: false, champion: null },
         { upsert: true, new: true }
       );
       events.push(ev);

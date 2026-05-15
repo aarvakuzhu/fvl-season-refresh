@@ -254,7 +254,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <div class="tab"        data-panel="players"  onclick="switchTab(this)">🏐 Players</div>
   <div class="tab"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</div>
   <div class="tab"        data-panel="standings" onclick="switchTab(this)">🏆 Season Standings</div>
-  <div class="tab"        data-panel="rotation" onclick="switchTab(this)">🔄 Rotation</div>
+  <div class="tab"        data-panel="rotation" onclick="switchTab(this)">📋 Matchup Plan</div>
 </div>
 
 <!-- MODAL -->
@@ -323,7 +323,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
       <div class="ov-cell"><div class="ov-lbl">Players / team</div><div class="ov-val">7</div><div class="ov-sub">Cap + 6 players</div></div>
       <div class="ov-cell"><div class="ov-lbl">Format</div><div class="ov-val" style="font-size:15px">Option A</div><div class="ov-sub">6 RR + Finals · 2:00–5:20 PM</div></div>
       <div class="ov-cell"><div class="ov-lbl">Scoring</div><div class="ov-val" style="font-size:15px">Win = 2 pts</div><div class="ov-sub">21–25, win by 2</div></div>
-      <div class="ov-cell"><div class="ov-lbl">Rotation</div><div class="ov-val" style="font-size:15px">Shift-right</div><div class="ov-sub">New matchups each month</div></div>
+      <div class="ov-cell"><div class="ov-lbl">Rotation</div><div class="ov-val" style="font-size:15px">Bye-pair</div><div class="ov-sub">Pair misses 2 months apart</div></div>
     </div>
   </div>
 </div>
@@ -553,9 +553,31 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 <!-- ROTATION -->
 <div class="panel" id="panel-rotation">
-  <div class="sec" style="padding-top:0">Shift-right rotation — each team moves +1 position every month</div>
+  <div class="sec" style="padding-top:0">Season Matchup Plan</div>
   <span class="sec-line"></span>
-  <div style="overflow-x:auto"><table class="rot-table" id="rot-table"></table></div>
+
+  <!-- Explanation -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-body" style="font-size:13px;line-height:1.7;color:var(--text)">
+      Teams are grouped into 3 season pairs: <strong>Dragons↔Predators</strong>, <strong>Falcons↔Spartans</strong>, <strong>Titans↔Raptors</strong>.<br>
+      Every team plays all 5 opponents across the season — except their pair, who they miss in 2 different months.<br>
+      Those 2 months are never consecutive.
+    </div>
+  </div>
+
+  <!-- Miss matrix -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd" style="font-size:12px;font-weight:700">📋 Opponent Miss Matrix — who each team sits out against each month</div>
+    <div style="overflow-x:auto">
+      <table class="rot-table" id="rot-table"></table>
+    </div>
+  </div>
+
+  <!-- Bye pairs per month -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd" style="font-size:12px;font-weight:700">🚫 Bye Pairs Per Month</div>
+    <div id="bye-pairs-table" style="overflow-x:auto"></div>
+  </div>
 </div>
 
 </div><!-- /page -->
@@ -1295,19 +1317,62 @@ function runSim(id, btn){
     </div>`;
 }
 function renderRotation(){
-  const n=TEAMS.length;
-  let h='<thead><tr><th>Month</th>';
-  for(let i=1;i<=6;i++) h+=`<th>T${i}</th>`;
-  h+='</tr></thead><tbody>';
-  MONTH_LABELS.forEach((lbl,mi)=>{
-    const pos=new Array(n);
-    TEAMS.forEach((t,i)=>{pos[(i+mi)%n]=t;});
-    h+=`<tr><td>${lbl.split(' ')[0]}</td>`;
-    pos.forEach(t=>{h+=`<td><span class="rot-chip" style="background:${t.color}18;color:${t.color};border:1px solid ${t.color}44">${dot(t.name,6)} ${t.name}</span></td>`;});
+  const BYES = [
+    {month:'May', pairs:[['Dragons','Spartans'],['Predators','Titans'],['Falcons','Raptors']]},
+    {month:'Jun', pairs:[['Dragons','Predators'],['Falcons','Spartans'],['Titans','Raptors']]},
+    {month:'Jul', pairs:[['Dragons','Raptors'],['Predators','Falcons'],['Spartans','Titans']]},
+    {month:'Aug', pairs:[['Dragons','Predators'],['Falcons','Titans'],['Spartans','Raptors']]},
+    {month:'Sep', pairs:[['Dragons','Falcons'],['Predators','Spartans'],['Titans','Raptors']]},
+    {month:'Oct', pairs:[['Dragons','Titans'],['Predators','Raptors'],['Falcons','Spartans']]},
+  ];
+  const SEASON_PAIRS = [['Dragons','Predators'],['Falcons','Spartans'],['Titans','Raptors']];
+
+  // Build miss map: team → [misses per month]
+  const missMap = {};
+  TEAMS.forEach(t=>missMap[t.name]=[]);
+  BYES.forEach(({pairs})=>pairs.forEach(([a,b])=>{missMap[a].push(b);missMap[b].push(a);}));
+
+  // Miss matrix table
+  let h='<thead><tr><th>Team</th>';
+  BYES.forEach(({month})=>h+=`<th>${month}</th>`);
+  h+='<th>Misses 2×</th></tr></thead><tbody>';
+  TEAMS.forEach(t=>{
+    const col=t.color;
+    const misses=missMap[t.name];
+    const pair=SEASON_PAIRS.find(([a,b])=>a===t.name||b===t.name);
+    const pairOpp=pair?pair.find(x=>x!==t.name):'';
+    h+=`<tr><td><span style="display:flex;align-items:center;gap:6px">${dot(t.name,7)} ${t.name}</span></td>`;
+    misses.forEach((opp,mi)=>{
+      const isDouble=opp===pairOpp;
+      h+=`<td style="${isDouble?'background:#fff8e1;font-weight:700':''}">`;
+      const oc=TEAMS.find(x=>x.name===opp);
+      h+=`<span style="font-size:11px;color:${oc?oc.color:'var(--muted)'}">${opp}</span></td>`;
+    });
+    h+=`<td><span style="background:#fff8e1;border:1px solid #fcd34d;color:#92400e;font-size:11px;padding:2px 7px;border-radius:2px">${pairOpp}</span></td>`;
     h+='</tr>';
   });
   h+='</tbody>';
   document.getElementById('rot-table').innerHTML=h;
+
+  // Bye pairs table
+  let b='<table style="width:100%;border-collapse:collapse;font-size:12px">';
+  b+='<thead><tr style="background:var(--light)">';
+  b+='<th style="padding:7px 12px;text-align:left;font-family:\'Roboto Mono\',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Month</th>';
+  b+='<th style="padding:7px 12px;text-align:left;font-family:\'Roboto Mono\',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Bye Pair 1</th>';
+  b+='<th style="padding:7px 12px;text-align:left;font-family:\'Roboto Mono\',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Bye Pair 2</th>';
+  b+='<th style="padding:7px 12px;text-align:left;font-family:\'Roboto Mono\',monospace;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border2)">Bye Pair 3</th>';
+  b+='</tr></thead><tbody>';
+  BYES.forEach(({month,pairs},mi)=>{
+    b+=`<tr style="${mi%2?'background:var(--light)':''}">`;
+    b+=`<td style="padding:7px 12px;font-family:'Roboto Mono',monospace;font-weight:700">${month}</td>`;
+    pairs.forEach(([a,bName])=>{
+      const ca=TEAMS.find(x=>x.name===a), cb=TEAMS.find(x=>x.name===bName);
+      b+=`<td style="padding:7px 12px"><span style="color:${ca?ca.color:'inherit'}">${a}</span> <span style="color:var(--muted)">vs</span> <span style="color:${cb?cb.color:'inherit'}">${bName}</span></td>`;
+    });
+    b+='</tr>';
+  });
+  b+='</tbody></table>';
+  document.getElementById('bye-pairs-table').innerHTML=b;
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────
