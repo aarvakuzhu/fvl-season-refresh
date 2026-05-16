@@ -350,11 +350,15 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
 
 <!-- SCHEDULE -->
 <div class="panel" id="panel-schedule">
-  <div class="view-toggle-bar">
+  <div class="view-toggle-bar" style="display:flex;align-items:center;justify-content:space-between">
     <div class="view-toggle">
       <button id="vt-schedule" class="vt-btn active" onclick="setScheduleView('schedule')">📅 Schedule</button>
       <button id="vt-standings" class="vt-btn" onclick="setScheduleView('standings')">📊 Standings</button>
     </div>
+    <a href="/FVL_Season3_Schedule.pdf" target="_blank" download
+       style="display:inline-flex;align-items:center;gap:5px;background:#1a3566;color:#f5c842;text-decoration:none;font-size:11px;font-weight:700;padding:5px 10px;border-radius:4px;font-family:'Roboto Mono',monospace;letter-spacing:.3px;flex-shrink:0">
+      🖨️ Print Schedule
+    </a>
   </div>
   <!-- Schedule view -->
   <div id="view-schedule">
