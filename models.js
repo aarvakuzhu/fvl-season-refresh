@@ -209,7 +209,20 @@ const S3StandingSchema = new mongoose.Schema({
   championships:  { type: Number, default: 0 },
 }, { timestamps: true });
 
+// ── Transfer Window CR ───────────────────────────────────────────────────
+const CROutcomeSchema = new mongoose.Schema({
+  season:       { type: Number, default: 3 },
+  month:        { type: Number },           // month when CR was triggered (1-6)
+  bottomTeam:   { type: String },           // team raising the CR
+  targetTeam:   { type: String },           // top team they requested swap with
+  meetingDate:  { type: String },           // date of 30-min window
+  outcome:      { type: String, enum: ['Swap','No Swap','Deferred','Pending'], default:'Pending' },
+  notes:        { type: String, default:'' },
+  createdAt:    { type: Date, default: Date.now },
+});
+
 module.exports = {
+
   Team:         mongoose.model('Team',         TeamSchema),
   Standing:     mongoose.model('Standing',     StandingSchema),
   Season:       mongoose.model('Season',       SeasonSchema),
@@ -223,5 +236,6 @@ module.exports = {
   S3Team:       mongoose.model('S3Team',       S3TeamSchema),
   MonthlyEvent: mongoose.model('MonthlyEvent', MonthlyEventSchema),
   S3Standing:    mongoose.model('S3Standing',    S3StandingSchema),
+  CROutcome:     mongoose.model('CROutcome',     CROutcomeSchema),
   PlayerProfile: mongoose.model('PlayerProfile', PlayerProfileSchema),
 };

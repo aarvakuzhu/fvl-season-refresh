@@ -255,6 +255,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <div class="tab"        data-panel="schedule" onclick="switchTab(this)">📅 Schedule</div>
   <div class="tab"        data-panel="standings" onclick="switchTab(this)">🏆 Season Standings</div>
   <div class="tab" data-core="true"  data-panel="rotation" onclick="switchTab(this)">📋 Matchup Plan</div>
+  <div class="tab" data-core="true"  data-panel="transfer" onclick="switchTab(this)">🔄 Transfer Window</div>
 </div>
 
 <!-- MODAL -->
@@ -590,6 +591,78 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   </div>
 </div>
 
+<div class="panel" id="panel-transfer">
+  <div class="sec" style="padding-top:0;color:var(--amber)">🔄 Mid-Season Transfer Window</div>
+  <span class="sec-line" style="background:var(--amber)"></span>
+
+  <!-- Rule summary -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd" style="font-size:12px;font-weight:700">📋 Qualifying Rule</div>
+    <div style="padding:10px 14px;font-size:12px;line-height:1.7">
+      A team qualifies for a Change Request (CR) if they win <strong>≤2 RR games in each of 2 consecutive months</strong>.<br>
+      <span style="color:var(--muted)">They may then request a swap discussion with either of the Top 2 teams in current season standings.</span>
+    </div>
+  </div>
+
+  <!-- Eligibility status -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd" style="font-size:12px;font-weight:700">🔍 Current Eligibility</div>
+    <div id="tw-eligibility" style="padding:12px 14px;font-size:12px;color:var(--muted)">Loading…</div>
+  </div>
+
+  <!-- Log CR outcome -->
+  <div class="card" style="margin-bottom:12px" id="tw-log-section" style="display:none">
+    <div class="card-hd" style="font-size:12px;font-weight:700">➕ Log CR Meeting Outcome</div>
+    <div style="padding:12px 14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">Bottom Team</div>
+          <select id="cr-bottom" style="width:100%;padding:7px;border:1px solid var(--border);border-radius:3px;font-size:12px;background:var(--white)">
+            <option value="">Select team…</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">Target Team (Top 2)</div>
+          <select id="cr-target" style="width:100%;padding:7px;border:1px solid var(--border);border-radius:3px;font-size:12px;background:var(--white)">
+            <option value="">Select team…</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">Month Triggered</div>
+          <select id="cr-month" style="width:100%;padding:7px;border:1px solid var(--border);border-radius:3px;font-size:12px;background:var(--white)">
+            <option value="">Select month…</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">Meeting Date</div>
+          <input id="cr-date" type="text" placeholder="e.g. 28 Jun 2026" style="width:100%;padding:7px;border:1px solid var(--border);border-radius:3px;font-size:12px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">Outcome</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="radio" name="cr-outcome" value="Pending" checked> Pending</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="radio" name="cr-outcome" value="Swap"> Swap</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="radio" name="cr-outcome" value="No Swap"> No Swap</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="radio" name="cr-outcome" value="Deferred"> Deferred</label>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">Notes</div>
+        <textarea id="cr-notes" rows="2" placeholder="Optional notes…" style="width:100%;padding:7px;border:1px solid var(--border);border-radius:3px;font-size:12px;resize:vertical;box-sizing:border-box"></textarea>
+      </div>
+      <button onclick="submitCR()" style="background:var(--ci-blue);color:#fff;border:none;padding:8px 16px;border-radius:3px;font-size:13px;font-weight:700;cursor:pointer">Save CR Record</button>
+      <span id="cr-msg" style="font-size:12px;margin-left:10px"></span>
+    </div>
+  </div>
+
+  <!-- CR history -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd" style="font-size:12px;font-weight:700">📁 CR History</div>
+    <div id="tw-history" style="padding:10px 14px;font-size:12px;color:var(--muted)">No records yet.</div>
+  </div>
+</div>
+
 </div><!-- /page -->
 <div class="toast hide" id="toast"></div>
 
@@ -630,6 +703,7 @@ function switchTab(el) {
   if(el.dataset.panel==='schedule')  loadSchedule();
   if(el.dataset.panel==='standings') { const sp=window.scrollY; loadStandings().then(()=>window.scrollTo(0,sp)); }
   if(el.dataset.panel==='rotation')  renderRotation();
+  if(el.dataset.panel==='transfer')   loadTransferWindow();
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────
@@ -1326,6 +1400,93 @@ function runSim(id, btn){
       </div>
     </div>`;
 }
+// ── TRANSFER WINDOW ───────────────────────────────────────────────────
+let twData = null;
+
+async function loadTransferWindow() {
+  const pw = sessionStorage.getItem('fvl_core_auth')==='1' ? 'fvl2026' : null;
+  if (!pw) return;
+  try {
+    const r = await fetch('/api/s3/transfer-window?password=' + pw);
+    twData = await r.json();
+    if (twData.error) { document.getElementById('tw-eligibility').innerHTML='<span style="color:var(--red)">'+twData.error+'</span>'; return; }
+    renderTWEligibility();
+    renderTWHistory();
+    populateCRForm();
+    document.getElementById('tw-log-section').style.display='';
+  } catch(e) { document.getElementById('tw-eligibility').innerHTML='Error loading data.'; }
+}
+
+function renderTWEligibility() {
+  const el = document.getElementById('tw-eligibility');
+  if (!twData) return;
+  const { qualifying, top2 } = twData;
+  if (!qualifying.length) {
+    el.innerHTML = '<div style="color:var(--green);font-weight:700">✅ No teams currently qualify for a CR.</div><div style="color:var(--muted);margin-top:4px">A team must win ≤2 RR games in each of 2 consecutive months to qualify.</div>';
+    return;
+  }
+  const MN = ['','May','Jun','Jul','Aug','Sep','Oct'];
+  let h = '<div style="margin-bottom:8px;color:var(--amber);font-weight:700">⚠️ '+qualifying.length+' team(s) eligible for CR:</div>';
+  qualifying.forEach(q => {
+    h += `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2)">
+      <span style="display:flex;align-items:center;gap:6px;font-weight:700;min-width:100px">${dot(q.team,8)} ${q.team}</span>
+      <span style="font-family:'Roboto Mono',monospace;font-size:11px;background:#fff8e1;border:1px solid #fcd34d;color:#92400e;padding:2px 8px;border-radius:3px">CR Eligible</span>
+      <span style="font-size:11px;color:var(--muted)">${MN[q.months[0]]}: ${q.rrWins[0]}W · ${MN[q.months[1]]}: ${q.rrWins[1]}W</span>
+    </div>`;
+  });
+  h += `<div style="margin-top:10px;padding:8px 10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:3px;font-size:12px">
+    <strong>Top 2 (eligible targets):</strong> ${top2.map(t=>`<span style="color:${teamColor(t)};font-weight:700">${t}</span>`).join(' · ')||'—'}
+  </div>`;
+  el.innerHTML = h;
+}
+
+function renderTWHistory() {
+  const el = document.getElementById('tw-history');
+  if (!twData?.crOutcomes?.length) { el.innerHTML='<div style="color:var(--muted)">No CR records yet.</div>'; return; }
+  const MN=['','May','Jun','Jul','Aug','Sep','Oct'];
+  const OC={'Swap':'#15803d','No Swap':'#c62828','Deferred':'#92400e','Pending':'#0369a1'};
+  let h='<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:var(--light)"><th style="padding:5px 8px;text-align:left">Month</th><th style="padding:5px 8px;text-align:left">Bottom Team</th><th style="padding:5px 8px;text-align:left">Target</th><th style="padding:5px 8px;text-align:left">Meeting</th><th style="padding:5px 8px;text-align:left">Outcome</th><th style="padding:5px 8px;text-align:left">Notes</th></tr></thead><tbody>';
+  twData.crOutcomes.forEach((cr,i)=>{
+    const oc=OC[cr.outcome]||'#555';
+    h+=`<tr style="border-bottom:1px solid var(--border2);${i%2?'background:var(--light)':''}">
+      <td style="padding:5px 8px">${MN[cr.month]||cr.month}</td>
+      <td style="padding:5px 8px;font-weight:700;color:${teamColor(cr.bottomTeam)}">${cr.bottomTeam}</td>
+      <td style="padding:5px 8px;font-weight:700;color:${teamColor(cr.targetTeam)}">${cr.targetTeam}</td>
+      <td style="padding:5px 8px">${cr.meetingDate||'—'}</td>
+      <td style="padding:5px 8px"><span style="color:${oc};font-weight:700">${cr.outcome}</span></td>
+      <td style="padding:5px 8px;color:var(--muted)">${cr.notes||'—'}</td>
+    </tr>`;
+  });
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+
+function populateCRForm() {
+  if (!twData) return;
+  const MN=['','May','Jun','Jul','Aug','Sep','Oct'];
+  const bottomSel=document.getElementById('cr-bottom');
+  const targetSel=document.getElementById('cr-target');
+  const monthSel=document.getElementById('cr-month');
+  bottomSel.innerHTML='<option value="">Select team…</option>';
+  targetSel.innerHTML='<option value="">Select team…</option>';
+  monthSel.innerHTML='<option value="">Select month…</option>';
+  twData.qualifying.forEach(q=>{ const o=document.createElement('option');o.value=q.team;o.textContent=q.team;bottomSel.appendChild(o); });
+  twData.top2.forEach(t=>{ const o=document.createElement('option');o.value=t;o.textContent=t;targetSel.appendChild(o); });
+  twData.monthLabels.forEach(m=>{ const o=document.createElement('option');o.value=m.month;o.textContent=m.label;monthSel.appendChild(o); });
+}
+
+async function submitCR() {
+  const pw='fvl2026';
+  const body={password:pw,month:document.getElementById('cr-month').value,bottomTeam:document.getElementById('cr-bottom').value,targetTeam:document.getElementById('cr-target').value,meetingDate:document.getElementById('cr-date').value,outcome:document.querySelector('input[name="cr-outcome"]:checked')?.value||'Pending',notes:document.getElementById('cr-notes').value};
+  if(!body.bottomTeam||!body.targetTeam||!body.month){document.getElementById('cr-msg').textContent='Fill in all required fields.';document.getElementById('cr-msg').style.color='var(--red)';return;}
+  try {
+    const r=await fetch('/api/s3/cr-outcome',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(d.success){document.getElementById('cr-msg').textContent='✅ Saved';document.getElementById('cr-msg').style.color='var(--green)';twData=null;await loadTransferWindow();}
+    else{document.getElementById('cr-msg').textContent='❌ '+d.error;document.getElementById('cr-msg').style.color='var(--red)';}
+  }catch(e){document.getElementById('cr-msg').textContent='Network error';}
+}
+
 function renderRotation(){
   const BYES = [
     {month:'May', pairs:[['Dragons','Spartans'],['Predators','Titans'],['Falcons','Raptors']]},

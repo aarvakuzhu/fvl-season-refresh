@@ -507,6 +507,78 @@ app.post('/api/s3/update-dates', async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── Transfer Window / CR API ─────────────────────────────────────────────
+app.get('/api/s3/transfer-window', async (req, res) => {
+  try {
+    const { password } = req.query;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Unauthorised' });
+
+    // Get all locked months
+    const events = await MonthlyEvent.find({ season:3, locked:true }).sort({ month:1 });
+    // For each team, collect wins per locked month
+    const teamMonthWins = {}; // teamMonthWins[team][month] = wins
+    const S3Teams = (await require('./models').S3Team.find({ season:3 })).map(t=>t.name);
+    S3Teams.forEach(t => teamMonthWins[t] = {});
+
+    events.forEach(ev => {
+      const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+      S3Teams.forEach(t => {
+        const myGames = rrGames.filter(g=>g.teamA===t||g.teamB===t);
+        const wins = myGames.filter(g=>(g.teamA===t&&g.scoreA>g.scoreB)||(g.teamB===t&&g.scoreB>g.scoreA)).length;
+        // Also count playoff wins
+        const playoffWins = ev.games
+          .filter(g=>g.played&&g.type!=='rr'&&(g.teamA===t||g.teamB===t))
+          .filter(g=>(g.teamA===t&&g.scoreA>g.scoreB)||(g.teamB===t&&g.scoreB>g.scoreA)).length;
+        teamMonthWins[t][ev.month] = wins; // use RR wins only for qualifying
+      });
+    });
+
+    // Find qualifying teams: <=2 RR wins in each of 2 consecutive locked months
+    const monthNums = events.map(e=>e.month).sort((a,b)=>a-b);
+    const qualifying = []; // {team, months:[m1,m2], wins:[w1,w2]}
+    for (let i=0; i<monthNums.length-1; i++) {
+      const m1=monthNums[i], m2=monthNums[i+1];
+      if (m2 !== m1+1) continue; // must be consecutive
+      S3Teams.forEach(t => {
+        const w1=teamMonthWins[t][m1]||0, w2=teamMonthWins[t][m2]||0;
+        if (w1<=2 && w2<=2) {
+          // Avoid duplicate entries for same team+months combo
+          if (!qualifying.find(q=>q.team===t&&q.months[0]===m1))
+            qualifying.push({ team:t, months:[m1,m2], rrWins:[w1,w2] });
+        }
+      });
+    }
+
+    // Get current top 2 from season standings
+    const standings = await require('./models').S3Standing.find({ season:3 }).sort({ totalPoints:-1 }).limit(2);
+    const top2 = standings.map(s=>s.team);
+
+    // Get existing CR outcomes
+    const crOutcomes = await require('./models').CROutcome.find({ season:3 }).sort({ createdAt:-1 });
+
+    res.json({ qualifying, top2, crOutcomes, monthLabels: events.map(e=>({month:e.month,label:e.label})) });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/s3/cr-outcome', async (req, res) => {
+  try {
+    const { password, month, bottomTeam, targetTeam, meetingDate, outcome, notes } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Unauthorised' });
+    const cr = new (require('./models').CROutcome)({ season:3, month, bottomTeam, targetTeam, meetingDate, outcome, notes });
+    await cr.save();
+    res.json({ success: true, cr });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/s3/cr-outcome/:id', async (req, res) => {
+  try {
+    const { password, outcome, notes, meetingDate } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Unauthorised' });
+    const cr = await require('./models').CROutcome.findByIdAndUpdate(req.params.id, { outcome, notes, meetingDate }, { new:true });
+    res.json({ success: true, cr });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Sitemap ──────────────────────────────────────────────────────────────
 app.get('/sitemap', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sitemap.html'));

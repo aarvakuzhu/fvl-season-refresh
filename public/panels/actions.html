@@ -1,14 +1,12 @@
 <div class="page"><div class="pgrid">
 <div class="main">
 
-  <!-- OPEN ITEMS FIRST -->
+  <!-- OPEN ITEMS -->
   <div class="sec" style="padding-top:0;color:var(--amber)">⚡ Pending Decisions</div>
   <span class="sec-line" style="background:var(--amber)"></span>
   <div class="card" style="margin-bottom:14px;border-left:4px solid var(--amber)">
-    <div class="card-hd" style="background:#fffbeb;color:var(--amber)">3 items require core member discussion</div>
+    <div class="card-hd" style="background:#fffbeb;color:var(--amber)">1 item pending</div>
     <div class="card-body" style="padding:0">
-      <div class="agenda-item"><div class="ag-n" style="background:var(--amber)">!</div><div><div class="ag-t">Mid-Season Transfer Window</div><div class="ag-d">Define if and when a controlled transfer window applies — eligibility criteria, captain consent rules, number of transfers permitted per team.</div></div></div>
-      <div class="agenda-item"><div class="ag-n" style="background:var(--amber)">!</div><div><div class="ag-t">Replacement Process — Low Availability</div><div class="ag-d">Define the process when a team has fewer than 6 players available — replacement eligibility, approval process, and cap per event.</div></div></div>
       <div class="agenda-item" style="border-bottom:none"><div class="ag-n" style="background:var(--amber)">!</div><div><div class="ag-t">Season-End Standings &amp; Season 4 Draft Order</div><div class="ag-d">How are monthly results aggregated into final season standings? How does this determine Season 4 draft pick order?</div></div></div>
     </div>
   </div>
@@ -30,18 +28,56 @@
   <!-- COMPLETED -->
   <div class="sec" style="color:var(--green)">✅ Completed Decisions</div>
   <span class="sec-line" style="background:var(--green)"></span>
+
+  <!-- Mid-season transfer -->
+  <div class="card" style="margin-bottom:10px;border-left:4px solid var(--green)">
+    <div class="card-hd" style="background:var(--green2);color:var(--green)">✅ Mid-Season Transfer Window — Confirmed</div>
+    <div class="card-body" style="padding:10px 14px;font-size:12px;line-height:1.7">
+      <div style="font-weight:700;margin-bottom:6px">Qualifying Criteria</div>
+      <div style="background:#f8fafc;border-left:3px solid var(--blue);padding:8px 10px;margin-bottom:8px;border-radius:0 3px 3px 0">
+        A team that wins <strong>2 or fewer games in each of 2 consecutive months</strong> is identified as a bottom performer and may raise a Change Request (CR).<br>
+        <span style="color:var(--muted);font-size:11px">Example: 3 wins in Month 1 + 1 win in Month 2 = does NOT qualify (Month 1 > 2). Both months must individually be ≤2 wins.</span>
+      </div>
+      <div style="font-weight:700;margin-bottom:4px">CR Process</div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
+        <div style="display:flex;gap:8px"><span style="font-family:'Roboto Mono',monospace;font-weight:700;color:var(--blue);min-width:20px">1.</span><span>Qualifying team raises a CR. Swap can be requested with either of the <strong>Top 2 teams</strong> in season standings at that point.</span></div>
+        <div style="display:flex;gap:8px"><span style="font-family:'Roboto Mono',monospace;font-weight:700;color:var(--blue);min-width:20px">2.</span><span><strong>30-minute discussion window</strong> — captains and wingmen of both teams. Held on the following week's practice game day after the second qualifying month.</span></div>
+        <div style="display:flex;gap:8px"><span style="font-family:'Roboto Mono',monospace;font-weight:700;color:var(--blue);min-width:20px">3.</span><span>Rolling every month thereafter based on the 2 most recent consecutive months.</span></div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:6px 10px;font-size:11px;color:#15803d">
+        Transfer Window eligibility is tracked automatically in the Season 3 → Transfer Window tab (core members only).
+      </div>
+    </div>
+  </div>
+
+  <!-- Replacement process -->
+  <div class="card" style="margin-bottom:10px;border-left:4px solid var(--green)">
+    <div class="card-hd" style="background:var(--green2);color:var(--green)">✅ Replacement Process (Low Availability) — Confirmed</div>
+    <div class="card-body" style="padding:10px 14px;font-size:12px;line-height:1.7">
+      Decided on game day from sitting teams' players, in consensus with the opponent captain and the requested player's captain. No pre-approval needed — handled in the moment.
+    </div>
+  </div>
+
+  <!-- Season 1 trophies -->
+  <div class="card" style="margin-bottom:10px;border-left:4px solid var(--green)">
+    <div class="card-hd" style="background:var(--green2);color:var(--green)">✅ Season 1 Individual Trophies — One-Time Exception</div>
+    <div class="card-body" style="padding:10px 14px;font-size:12px;line-height:1.7">
+      8 trophies awarded to <strong>Spartans</strong> (Season 1 winners) as a one-time retrospective honour. Captain and wingman to decide individual recipient names. No public celebration. <strong>No future retrofits for any other season or team.</strong>
+    </div>
+  </div>
+
+  <!-- Prior completed decisions -->
   <div class="card" style="margin-bottom:14px;border-left:4px solid var(--green)">
-    <div class="card-hd" style="background:var(--green2);color:var(--green)">9 decisions confirmed — April 2026</div>
+    <div class="card-hd" style="background:var(--green2);color:var(--green)">✅ 9 Earlier Decisions — April 2026</div>
     <div class="card-body" style="padding:0">
       <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Team Size</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> 7 players per team (captain + 6).</div></div></div>
-      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Team Count &amp; Structure</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> 6 teams, single division. No Nano tier.</div></div></div>
-      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Draft Format</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Snake draft. R0 bonus round for weaker captains. 6 rounds × 6 picks = 36 players.</div></div></div>
-      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Draft Option</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Option 2 — R0 bonus picks for late-entry captains, skip rounds as compensation.</div></div></div>
+      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Team Count &amp; Structure</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> 6 teams, single division.</div></div></div>
+      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Draft Format</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Snake draft. R0 bonus round. Option 2.</div></div></div>
       <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Captains Confirmed</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Anil · Pratik · Harsha · Shanthan · Koti · Karthik.</div></div></div>
-      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Monthly Event Format</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Option A — 6 RR slots (each team plays 4) + finals. 2:00–5:20 PM, 2 courts.</div></div></div>
-      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Season Scoring</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> 1pt per RR win + positional bonus (6/5/4/3/2/1). Max 10pts/month.</div></div></div>
-      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Team Rotation</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Shift-right rotation — all teams shift +1 each month.</div></div></div>
-      <div class="agenda-item" style="border-bottom:none"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Final Rosters Locked</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> All 6 team rosters confirmed and locked for Season 3.</div></div></div>
+      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Monthly Event Format</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Option A — 6 RR slots + semis + final.</div></div></div>
+      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Season Scoring</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> 1pt per win (RR + playoff). No bonus.</div></div></div>
+      <div class="agenda-item"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Team Rotation</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> Bye-pair system — Dragons↔Predators, Falcons↔Spartans, Titans↔Raptors.</div></div></div>
+      <div class="agenda-item" style="border-bottom:none"><div class="ag-n" style="background:var(--green)">✓</div><div><div class="ag-t" style="text-decoration:line-through;color:var(--muted)">Final Rosters Locked</div><div class="ag-d"><strong style="color:var(--green)">Done:</strong> All 6 team rosters confirmed for Season 3.</div></div></div>
     </div>
   </div>
 
@@ -69,5 +105,10 @@
     <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:4px 11px;font-size:13px;font-weight:600">Sachin</span>
     <span style="background:#e8eef8;border:1px solid #c5d4f0;color:var(--ci-blue);padding:4px 11px;font-size:13px;font-weight:600">Sunil</span>
   </div></div>
+  <div style="padding:10px 0 4px">
+    <div style="font-size:11px;color:var(--muted);line-height:1.6;padding:8px 0">
+      Transfer window eligibility and CR outcomes are tracked in Season 3 under the Transfer Window tab (core members only).
+    </div>
+  </div>
 </div>
 </div></div>
