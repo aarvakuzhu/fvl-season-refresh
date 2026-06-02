@@ -551,11 +551,11 @@ const S3_TEAMS = [
 // Month schedule: May–Oct 2026 (Sundays)
 const S3_MONTHS = [
   { month:1, label:'May 2026',      date:'Sun 17 May 2026' },
-  { month:2, label:'June 2026',     date:'Sun 21 Jun 2026' },
-  { month:3, label:'July 2026',     date:'Sun 19 Jul 2026' },
-  { month:4, label:'August 2026',   date:'Sun 2 Aug 2026' },
-  { month:5, label:'September 2026',date:'Sun 6 Sep 2026' },
-  { month:6, label:'October 2026',  date:'Sun 4 Oct 2026' },
+  { month:2, label:'June 2026',     date:'Sat 14 Jun 2026' },
+  { month:3, label:'July 2026',     date:'Sat 19 Jul 2026' },
+  { month:4, label:'August 2026',   date:'Sat 16 Aug 2026' },
+  { month:5, label:'September 2026',date:'Sat 13 Sep 2026' },
+  { month:6, label:'October 2026',  date:'TBD'             },
 ];
 
 // Per-month RR schedules — hardcoded by team name.
