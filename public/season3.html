@@ -756,9 +756,18 @@ async function loadSchedule() {
 }
 
 function renderSchedule() {
-  document.getElementById('schedule-list').innerHTML = events.map((ev,mi) => monthCard(ev,mi)).join('');
-  const first = document.getElementById('mb-1');
-  if(first){ first.classList.add('open'); first.previousElementSibling?.querySelector('.chevron')?.classList.add('open'); }
+  // Unlocked (upcoming/active) months first, locked (completed) months at bottom
+  const sorted = [...events].sort((a,b) => {
+    if (a.locked === b.locked) return a.month - b.month;
+    return a.locked ? 1 : -1;
+  });
+  document.getElementById('schedule-list').innerHTML = sorted.map((ev,mi) => monthCard(ev,mi)).join('');
+  // Open the first unlocked month (most recent upcoming)
+  const firstUnlocked = sorted.find(ev=>!ev.locked);
+  if (firstUnlocked) {
+    const mb = document.getElementById('mb-'+firstUnlocked.month);
+    if (mb) { mb.classList.add('open'); mb.previousElementSibling?.querySelector('.chevron')?.classList.add('open'); }
+  }
 }
 
 function monthCard(ev, mi) {
