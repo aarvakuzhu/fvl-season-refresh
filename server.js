@@ -590,11 +590,31 @@ app.post('/api/s3/recompute-standings', async (req, res) => {
     if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Unauthorised' });
     const lockedEvents = await MonthlyEvent.find({ season:3, locked:true }).sort({ month:1 });
     let updated = 0;
+
+    // Derive all team names from game data (S3Team collection may be empty)
+    const teamSet = new Set();
+    lockedEvents.forEach(ev => {
+      ev.games.filter(g=>g.type==='rr').forEach(g=>{
+        if(g.teamA&&!g.teamA.startsWith('#')) teamSet.add(g.teamA);
+        if(g.teamB&&!g.teamB.startsWith('#')) teamSet.add(g.teamB);
+      });
+    });
+    const allTeams = [...teamSet];
+
+    // Ensure S3Standing records exist for all teams
+    for (const team of allTeams) {
+      await S3Standing.findOneAndUpdate(
+        { season:3, team },
+        { $setOnInsert: { season:3, team, months:[], totalPoints:0, totalWins:0, championships:0 } },
+        { upsert:true }
+      );
+    }
+
     for (const ev of lockedEvents) {
       const champion = ev.champion;
-      const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
-      const ranked = computeRRStandings(rrGames, ev.positions);
-      const monthStandings = computeFullStandings(ev);
+      // Use derived teams as positions for computeFullStandings
+      const evWithPositions = { ...ev.toObject(), positions: allTeams };
+      const monthStandings = computeFullStandings(evWithPositions);
       for (const [team, data] of Object.entries(monthStandings)) {
         const st = await S3Standing.findOne({ season:3, team });
         if (!st) continue;
@@ -607,7 +627,7 @@ app.post('/api/s3/recompute-standings', async (req, res) => {
         updated++;
       }
     }
-    res.json({ success: true, lockedMonths: lockedEvents.map(e=>e.month), updated });
+    res.json({ success: true, lockedMonths: lockedEvents.map(e=>e.month), updated, teams: allTeams });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
