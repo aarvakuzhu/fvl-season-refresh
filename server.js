@@ -526,24 +526,16 @@ app.get('/api/s3/transfer-window', async (req, res) => {
     });
     const S3Teams = [...teamSet];
 
-    const debug = {
-      lockedMonths: events.map(e=>e.month),
-      teamCount: S3Teams.length,
-      teams: S3Teams,
-    };
-
-    // For each team, collect RR wins per locked month
+    const debug = {};
     const teamMonthWins = {};
     S3Teams.forEach(t => teamMonthWins[t] = {});
 
     events.forEach(ev => {
       const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
-      debug['month'+ev.month+'_rrPlayed'] = rrGames.length;
       S3Teams.forEach(t => {
         const myGames = rrGames.filter(g=>g.teamA===t||g.teamB===t);
         const wins = myGames.filter(g=>(g.teamA===t&&g.scoreA>g.scoreB)||(g.teamB===t&&g.scoreB>g.scoreA)).length;
         teamMonthWins[t][ev.month] = wins;
-        debug['month'+ev.month+'_'+t] = wins+'W';
       });
     });
 
@@ -570,7 +562,7 @@ app.get('/api/s3/transfer-window', async (req, res) => {
     // Get existing CR outcomes
     const crOutcomes = await require('./models').CROutcome.find({ season:3 }).sort({ createdAt:-1 });
 
-    res.json({ qualifying, top2, crOutcomes, monthLabels: events.map(e=>({month:e.month,label:e.label})), debug });
+    res.json({ qualifying, top2, crOutcomes, monthLabels: events.map(e=>({month:e.month,label:e.label})) });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
