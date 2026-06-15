@@ -78,14 +78,14 @@
       <div class="sec-sub">Updates dates only — does not touch teams, results or standings. Safe to run at any time.</div>
       <div class="last-seeded" id="dates-last">Loading…</div>
       <div style="background:rgba(76,175,80,.12);border:1px solid rgba(76,175,80,.3);border-radius:4px;padding:8px 10px;margin-bottom:10px;font-size:11px;color:#4caf50;font-family:monospace">
-        ✅ May 2026 completed — locked and not editable
+        ✅ May 2026 &amp; June 2026 completed — locked and not editable
       </div>
       <div class="dates-grid" id="dates-grid">
         <div class="date-row" style="opacity:.4;pointer-events:none">
           <span class="date-label">May ✅</span>
           <input class="date-input" id="d-1" value="Sun 17 May 2026" disabled style="cursor:not-allowed;color:#555">
         </div>
-        <div class="date-row"><span class="date-label">June</span><input class="date-input" id="d-2" value="Sun 14 Jun 2026"></div>
+        <div class="date-row" style="opacity:.4;pointer-events:none"><span class="date-label">June ✅</span><input class="date-input" id="d-2" value="Sun 14 Jun 2026" disabled style="cursor:not-allowed;color:#555"></div>
         <div class="date-row"><span class="date-label">July</span><input class="date-input" id="d-3" value="Sun 19 Jul 2026"></div>
         <div class="date-row"><span class="date-label">August</span><input class="date-input" id="d-4" value="Sun 16 Aug 2026"></div>
         <div class="date-row"><span class="date-label">September</span><input class="date-input" id="d-5" value="Sun 13 Sep 2026"></div>
@@ -195,8 +195,8 @@
 
   async function runUpdateDates() {
     const btn=document.getElementById('dates-btn'), log=document.getElementById('dates-log'), st=document.getElementById('dates-st');
-    // Skip month 1 (May completed) and TBD entries
-    const dates = [2,3,4,5,6].map(m => ({ month:m, date: document.getElementById('d-'+m).value.trim() })).filter(d=>d.date && d.date !== 'TBD');
+    // Skip months 1+2 (May/June completed) and TBD entries
+    const dates = [3,4,5,6].map(m => ({ month:m, date: document.getElementById('d-'+m).value.trim() })).filter(d=>d.date && d.date !== 'TBD');
     btn.disabled=true; btn.textContent='⏳ Saving…';
     log.className='log show'; log.innerHTML=''; st.className='st';
     try {
