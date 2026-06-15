@@ -709,9 +709,6 @@ function switchTab(el) {
 // ── ADMIN ─────────────────────────────────────────────────────────────
 function toggleAdmin() {
   if (!isAdmin) {
-    const pw = prompt('Admin password:');
-    if (!pw) return;
-    if (pw!=='fvl2026') { alert('Wrong password'); return; }
     isAdmin = true;
   } else isAdmin = false;
   document.getElementById('admin-btn').classList.toggle('on', isAdmin);
