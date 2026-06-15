@@ -427,7 +427,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <div id="stv-standings">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
       <span style="font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">🏆 Season 3 · May–Oct 2026</span>
-      <span style="font-size:10px;font-family:'Roboto Mono',monospace;color:var(--muted)">Wins · 🏆 · 🥈 · Diff · Avg</span>
+      <span style="font-size:10px;font-family:'Roboto Mono',monospace;color:var(--muted)">Wins · 🏆 · 🥈 · Diff · Avg/G</span>
     </div>
     <div class="card" style="margin-bottom:12px">
       <div id="standings-list">
@@ -1101,7 +1101,7 @@ async function loadStandings(){
         }
       }).join('');
       return `<div>
-        <div style="display:grid;grid-template-columns:28px 1fr 36px 28px 28px 52px 40px 36px 20px;align-items:center;padding:10px 13px;border-bottom:1px solid var(--border2);cursor:pointer;gap:5px" onclick="toggleStRow('${uid}')">
+        <div style="display:grid;grid-template-columns:28px 1fr 36px 28px 28px 52px 40px 20px;align-items:center;padding:10px 13px;border-bottom:1px solid var(--border2);cursor:pointer;gap:5px" onclick="toggleStRow('${uid}')">
           <span style="font-size:${i<3?'17':'13'}px;font-weight:700;color:${i===0?'#b8860b':i===1?'#9ca3af':i===2?'#cd7f32':'var(--muted)'};text-align:center;line-height:1">${rankIcon}</span>
           <span style="display:flex;align-items:center;gap:5px;font-weight:700;font-size:12px;min-width:0">${dot(s.team,7)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.team}</span></span>
           <span style="font-family:'Roboto Mono',monospace;font-weight:900;font-size:15px;color:${col};text-align:right">${s.totalPoints}</span>
@@ -1109,7 +1109,6 @@ async function loadStandings(){
           <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:#9ca3af;text-align:center">${runners>0?'🥈'+runners:''}</span>
           <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);text-align:center">${scoreDiff>=0?'+':''}${scoreDiff}</span>
           <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);text-align:right">${avgPts}</span>
-          <span style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--muted);text-align:right">avg</span>
           <span id="${uid}-chev" style="color:var(--muted);font-size:11px;transition:transform .2s;text-align:center">▾</span>
         </div>
         <div id="${uid}" style="display:none">${monthRows}</div>
