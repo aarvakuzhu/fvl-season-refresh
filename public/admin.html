@@ -259,6 +259,8 @@
       st.className='st err'; btn.disabled=false; btn.textContent='🔄 Retry';
     }
   }
+
+  async function runProfileSeed() {
     const btn=document.getElementById('pp-btn'), log=document.getElementById('pp-log'), st=document.getElementById('pp-st');
     btn.disabled=true; btn.textContent='⏳ Seeding…';
     log.className='log show'; log.innerHTML=''; st.className='st';
