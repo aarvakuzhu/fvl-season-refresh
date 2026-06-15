@@ -583,6 +583,34 @@ app.put('/api/s3/cr-outcome/:id', async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── POST /api/s3/recompute-standings — recompute all locked months ────────
+app.post('/api/s3/recompute-standings', async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Unauthorised' });
+    const lockedEvents = await MonthlyEvent.find({ season:3, locked:true }).sort({ month:1 });
+    let updated = 0;
+    for (const ev of lockedEvents) {
+      const champion = ev.champion;
+      const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+      const ranked = computeRRStandings(rrGames, ev.positions);
+      const monthStandings = computeFullStandings(ev);
+      for (const [team, data] of Object.entries(monthStandings)) {
+        const st = await S3Standing.findOne({ season:3, team });
+        if (!st) continue;
+        st.months = st.months.filter(m => m.month !== ev.month);
+        st.months.push({ month: ev.month, label: ev.label, ...data, champion: team === champion });
+        st.totalPoints   = st.months.reduce((a,m)=>a+(m.points||0),0);
+        st.totalWins     = st.months.reduce((a,m)=>a+(m.points||0),0);
+        st.championships = st.months.filter(m=>m.champion||m.position===1).length;
+        await st.save();
+        updated++;
+      }
+    }
+    res.json({ success: true, lockedMonths: lockedEvents.map(e=>e.month), updated });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Sitemap ──────────────────────────────────────────────────────────────
 app.get('/sitemap', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sitemap.html'));

@@ -116,6 +116,15 @@
       <div class="st" id="pp-st"></div>
     </div>
 
+    <!-- RECOMPUTE STANDINGS -->
+    <div class="section">
+      <div class="sec-title">🔄 Recompute Season Standings</div>
+      <div class="sec-sub">Recalculates all locked months — fixes score differential and average points data without re-entering scores. Safe to run anytime.</div>
+      <button class="btn btn-blue" id="recompute-btn" onclick="runRecompute()">🔄 Recompute Standings</button>
+      <div class="log" id="recompute-log"></div>
+      <div class="st" id="recompute-st"></div>
+    </div>
+
     <div class="divider"></div>
     <a class="back" href="/">← Back to FVL Site</a>
   </div>
@@ -231,7 +240,25 @@
     }
   }
 
-  async function runProfileSeed() {
+  async function runRecompute() {
+    const btn=document.getElementById('recompute-btn'), log=document.getElementById('recompute-log'), st=document.getElementById('recompute-st');
+    btn.disabled=true; btn.textContent='⏳ Recomputing…';
+    log.className='log show'; log.innerHTML=''; st.className='st';
+    try {
+      const r=await fetch('/api/s3/recompute-standings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:PW})});
+      const d=await r.json();
+      if(d.success){
+        log.innerHTML=`<div class="log-line ok">✅ Recomputed months: ${d.lockedMonths.join(', ')}</div><div class="log-line ok">✅ ${d.updated} team-month records updated</div>`;
+        st.textContent='✅ Done'; st.className='st ok'; btn.textContent='✅ Done';
+      } else {
+        log.innerHTML=`<div class="log-line err">❌ ${d.error}</div>`;
+        st.textContent='❌ Failed'; st.className='st err'; btn.disabled=false; btn.textContent='🔄 Retry';
+      }
+    } catch(e) {
+      log.innerHTML=`<div class="log-line err">Network error: ${e.message}</div>`;
+      st.className='st err'; btn.disabled=false; btn.textContent='🔄 Retry';
+    }
+  }
     const btn=document.getElementById('pp-btn'), log=document.getElementById('pp-log'), st=document.getElementById('pp-st');
     btn.disabled=true; btn.textContent='⏳ Seeding…';
     log.className='log show'; log.innerHTML=''; st.className='st';
