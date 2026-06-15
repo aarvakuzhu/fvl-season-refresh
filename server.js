@@ -989,7 +989,11 @@ app.get('/api/s3/standings', async (req, res) => {
       // 6. Coin toss — Tournament Director
       return 0;
     });
-    res.json(standings);
+    res.json(standings.map(s => {
+      const obj = s.toObject();
+      obj._debug = (obj.months||[]).map(m=>({month:m.month,pts:m.points,ptsFor:m.ptsFor,gp:m.gamesPlayed,diff:m.scoreDiff}));
+      return obj;
+    }));
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
