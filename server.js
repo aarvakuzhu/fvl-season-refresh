@@ -515,21 +515,27 @@ app.get('/api/s3/transfer-window', async (req, res) => {
 
     // Get all locked months
     const events = await MonthlyEvent.find({ season:3, locked:true }).sort({ month:1 });
-    // For each team, collect wins per locked month
-    const teamMonthWins = {}; // teamMonthWins[team][month] = wins
     const S3Teams = (await require('./models').S3Team.find({ season:3 })).map(t=>t.name);
+
+    // Debug: log what we find
+    const debug = {
+      lockedMonths: events.map(e=>e.month),
+      teamCount: S3Teams.length,
+      teams: S3Teams,
+    };
+
+    // For each team, collect RR wins per locked month
+    const teamMonthWins = {};
     S3Teams.forEach(t => teamMonthWins[t] = {});
 
     events.forEach(ev => {
       const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+      debug['month'+ev.month+'_rrPlayed'] = rrGames.length;
       S3Teams.forEach(t => {
         const myGames = rrGames.filter(g=>g.teamA===t||g.teamB===t);
         const wins = myGames.filter(g=>(g.teamA===t&&g.scoreA>g.scoreB)||(g.teamB===t&&g.scoreB>g.scoreA)).length;
-        // Also count playoff wins
-        const playoffWins = ev.games
-          .filter(g=>g.played&&g.type!=='rr'&&(g.teamA===t||g.teamB===t))
-          .filter(g=>(g.teamA===t&&g.scoreA>g.scoreB)||(g.teamB===t&&g.scoreB>g.scoreA)).length;
-        teamMonthWins[t][ev.month] = wins; // use RR wins only for qualifying
+        teamMonthWins[t][ev.month] = wins;
+        debug['month'+ev.month+'_'+t] = wins+'W';
       });
     });
 
@@ -556,7 +562,7 @@ app.get('/api/s3/transfer-window', async (req, res) => {
     // Get existing CR outcomes
     const crOutcomes = await require('./models').CROutcome.find({ season:3 }).sort({ createdAt:-1 });
 
-    res.json({ qualifying, top2, crOutcomes, monthLabels: events.map(e=>({month:e.month,label:e.label})) });
+    res.json({ qualifying, top2, crOutcomes, monthLabels: events.map(e=>({month:e.month,label:e.label})), debug });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
