@@ -515,9 +515,17 @@ app.get('/api/s3/transfer-window', async (req, res) => {
 
     // Get all locked months
     const events = await MonthlyEvent.find({ season:3, locked:true }).sort({ month:1 });
-    const S3Teams = (await require('./models').S3Team.find({ season:3 })).map(t=>t.name);
 
-    // Debug: log what we find
+    // Derive team names from actual RR game data (S3Team collection may be empty)
+    const teamSet = new Set();
+    events.forEach(ev => {
+      ev.games.filter(g=>g.type==='rr').forEach(g=>{
+        if(g.teamA&&!g.teamA.startsWith('#')) teamSet.add(g.teamA);
+        if(g.teamB&&!g.teamB.startsWith('#')) teamSet.add(g.teamB);
+      });
+    });
+    const S3Teams = [...teamSet];
+
     const debug = {
       lockedMonths: events.map(e=>e.month),
       teamCount: S3Teams.length,
