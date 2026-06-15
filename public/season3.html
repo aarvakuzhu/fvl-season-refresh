@@ -599,7 +599,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   <div class="card" style="margin-bottom:12px">
     <div class="card-hd" style="font-size:12px;font-weight:700">📋 Qualifying Rule</div>
     <div style="padding:10px 14px;font-size:12px;line-height:1.7">
-      A team qualifies for a Change Request (CR) if they win <strong>≤2 RR games in each of 2 consecutive months</strong>.<br>
+      A team qualifies for a Change Request (CR) if they win <strong>≤2 total games (RR + playoff) in each of 2 consecutive months</strong>.<br>
       <span style="color:var(--muted)">They may then request a swap discussion with either of the Top 2 teams in current season standings.</span>
     </div>
   </div>
@@ -1431,7 +1431,7 @@ function renderTWEligibility() {
   if (!twData) return;
   const { qualifying, top2 } = twData;
   if (!qualifying.length) {
-    el.innerHTML = '<div style="color:var(--green);font-weight:700">✅ No teams currently qualify for a CR.</div><div style="color:var(--muted);margin-top:4px">A team must win ≤2 RR games in each of 2 consecutive months to qualify.</div>';
+    el.innerHTML = '<div style="color:var(--green);font-weight:700">✅ No teams currently qualify for a CR.</div><div style="color:var(--muted);margin-top:4px">A team must win ≤2 total games (RR + playoff) in each of 2 consecutive months to qualify.</div>';
     return;
   }
   const MN = ['','May','Jun','Jul','Aug','Sep','Oct'];
@@ -1440,7 +1440,7 @@ function renderTWEligibility() {
     h += `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2)">
       <span style="display:flex;align-items:center;gap:6px;font-weight:700;min-width:100px">${dot(q.team,8)} ${q.team}</span>
       <span style="font-family:'Roboto Mono',monospace;font-size:11px;background:#fff8e1;border:1px solid #fcd34d;color:#92400e;padding:2px 8px;border-radius:3px">CR Eligible</span>
-      <span style="font-size:11px;color:var(--muted)">${MN[q.months[0]]}: ${q.rrWins[0]}W · ${MN[q.months[1]]}: ${q.rrWins[1]}W</span>
+      <span style="font-size:11px;color:var(--muted)">${MN[q.months[0]]}: ${q.rrWins[0]}W total · ${MN[q.months[1]]}: ${q.rrWins[1]}W total</span>
     </div>`;
   });
   h += `<div style="margin-top:10px;padding:8px 10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:3px;font-size:12px">

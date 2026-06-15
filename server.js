@@ -526,29 +526,27 @@ app.get('/api/s3/transfer-window', async (req, res) => {
     });
     const S3Teams = [...teamSet];
 
-    const debug = {};
     const teamMonthWins = {};
     S3Teams.forEach(t => teamMonthWins[t] = {});
 
     events.forEach(ev => {
-      const rrGames = ev.games.filter(g=>g.type==='rr'&&g.played);
+      const allPlayed = ev.games.filter(g=>g.played);
       S3Teams.forEach(t => {
-        const myGames = rrGames.filter(g=>g.teamA===t||g.teamB===t);
+        const myGames = allPlayed.filter(g=>g.teamA===t||g.teamB===t);
         const wins = myGames.filter(g=>(g.teamA===t&&g.scoreA>g.scoreB)||(g.teamB===t&&g.scoreB>g.scoreA)).length;
         teamMonthWins[t][ev.month] = wins;
       });
     });
 
-    // Find qualifying teams: <=2 RR wins in each of 2 consecutive locked months
+    // Find qualifying teams: <=2 total wins (RR + playoff) in each of 2 consecutive locked months
     const monthNums = events.map(e=>e.month).sort((a,b)=>a-b);
-    const qualifying = []; // {team, months:[m1,m2], wins:[w1,w2]}
+    const qualifying = [];
     for (let i=0; i<monthNums.length-1; i++) {
       const m1=monthNums[i], m2=monthNums[i+1];
-      if (m2 !== m1+1) continue; // must be consecutive
+      if (m2 !== m1+1) continue;
       S3Teams.forEach(t => {
         const w1=teamMonthWins[t][m1]||0, w2=teamMonthWins[t][m2]||0;
         if (w1<=2 && w2<=2) {
-          // Avoid duplicate entries for same team+months combo
           if (!qualifying.find(q=>q.team===t&&q.months[0]===m1))
             qualifying.push({ team:t, months:[m1,m2], rrWins:[w1,w2] });
         }
