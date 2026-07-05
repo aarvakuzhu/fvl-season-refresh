@@ -611,7 +611,7 @@ body{background:var(--bg);color:var(--text);font-family:'Roboto',sans-serif;min-
   </div>
 
   <!-- Log CR outcome -->
-  <div class="card" style="margin-bottom:12px" id="tw-log-section" style="display:none">
+  <div class="card" style="margin-bottom:12px" id="tw-log-section">
     <div class="card-hd" style="font-size:12px;font-weight:700">➕ Log CR Meeting Outcome</div>
     <div style="padding:12px 14px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
@@ -1420,7 +1420,6 @@ async function loadTransferWindow() {
     renderTWEligibility();
     renderTWHistory();
     populateCRForm();
-    document.getElementById('tw-log-section').style.display='';
   } catch(e) { document.getElementById('tw-eligibility').innerHTML='Error loading data.'; }
 }
 
