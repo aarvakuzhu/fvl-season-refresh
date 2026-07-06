@@ -424,6 +424,21 @@ const PLAYER_REGISTRY = [
   {name:"Surendra K",photo:'https://lh3.googleusercontent.com/d/1LeTFALHEyQ_yR5f1dgrbu-9zd48rEZ-l=w400',skills:["Setter"],seasons:[{season:3,team:"Titans",role:"Player",championMonths:[],seasonChampion:false}]},
 ];
 
+// ── POST /api/players/rename — rename a single player ─────────────────
+app.post('/api/players/rename', async (req, res) => {
+  try {
+    const { password, oldName, newName } = req.body;
+    if (password !== S3_PASSWORD) return res.status(401).json({ error: 'Unauthorised' });
+    const result = await PlayerProfile.findOneAndUpdate(
+      { shortName: oldName },
+      { $set: { shortName: newName, name: newName } },
+      { new: true }
+    );
+    if (!result) return res.status(404).json({ error: `Player "${oldName}" not found` });
+    res.json({ success: true, updated: result.shortName });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── POST /api/players/seed-profiles ──────────────────────────────────
 app.post('/api/players/seed-profiles', async (req, res) => {
   try {

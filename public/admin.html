@@ -126,6 +126,22 @@
     </div>
 
     <div class="divider"></div>
+
+    <!-- RENAME PLAYER -->
+    <div class="section">
+      <div class="sec-title">✏️ Rename Player</div>
+      <div class="sec-sub">Update a single player's name without touching other profiles.</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
+        <input id="rename-old" type="text" placeholder="Current name" style="padding:7px 10px;border:1px solid #dde3ed;border-radius:4px;font-size:13px;width:130px">
+        <span style="color:#64748b">→</span>
+        <input id="rename-new" type="text" placeholder="New name" style="padding:7px 10px;border:1px solid #dde3ed;border-radius:4px;font-size:13px;width:130px">
+        <button class="btn btn-blue" onclick="runRename()">✏️ Rename</button>
+      </div>
+      <div class="log" id="rename-log"></div>
+      <div class="st" id="rename-st"></div>
+    </div>
+
+    <div class="divider"></div>
     <a class="back" href="/">← Back to FVL Site</a>
   </div>
 </div>
@@ -237,6 +253,24 @@
     } catch(e) {
       log.innerHTML=`<div class="log-line err">Network: ${e.message}</div>`;
       st.className='st err'; btn.disabled=false; btn.textContent='🏐 Retry';
+    }
+  }
+
+  async function runRename() {
+    const oldName = document.getElementById('rename-old').value.trim();
+    const newName = document.getElementById('rename-new').value.trim();
+    const log = document.getElementById('rename-log');
+    const st  = document.getElementById('rename-st');
+    if (!oldName || !newName) { log.className='log show'; log.innerHTML='<div class="log-line err">Enter both names.</div>'; return; }
+    log.className='log show'; log.innerHTML=''; st.className='st';
+    const r = await fetch('/api/players/rename', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:PW,oldName,newName})});
+    const d = await r.json();
+    if (d.success) {
+      log.innerHTML=`<div class="log-line ok">✅ "${oldName}" renamed to "${d.updated}"</div>`;
+      st.textContent='✅ Done'; st.className='st ok';
+    } else {
+      log.innerHTML=`<div class="log-line err">❌ ${d.error}</div>`;
+      st.className='st err';
     }
   }
 
